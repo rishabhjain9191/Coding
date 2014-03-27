@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<macromedia-extension id="com.creativeworx.timetracker.x" name="com.creativeworx.timetracker.x" requires-restart="true" version="1.0.0">
+  <author name="Unknown"/>
+  <description/>
+  <license-agreement/>
+  <products>
+    <product familyname="Illustrator" maxversion="17.9" version="17.0"/>
+    <product familyname="Photoshop" maxversion="14.9" version="14.0"/>
+    <product maxversion="10.0" name="InDesign" version="9.1"/>
+  </products>
+  <files>
+    <file destination="" file-type="CSXS" products="" source="TimeTrackerCSExtension.zxp"/>
+    <file destination="$automate" maxVersion="14.9" minVersion="14.0" platform="win" products="Photoshop32" shared="true" source="csadapters-3.0/ps_host_adapter/win32/PSHostAdapter.8li"/>
+    <file destination="$automate" maxVersion="14.9" minVersion="14.0" platform="win" products="Photoshop64" shared="true" source="csadapters-3.0/ps_host_adapter/win64/PSHostAdapter.8li"/>
+    <file destination="$automate" maxVersion="14.9" minVersion="14.0" platform="mac" products="Photoshop" shared="true" source="csadapters-3.0/ps_host_adapter/mac/PSHostAdapter.plugin"/>
+  </files>
+</macromedia-extension>
