@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<ExtensionList>
+    <Extension Id="com.example.Sample2.extension1">
+        <HostList>
+           <Host Name="PHXS" Port="8088"/> 
+		   <Host Name="IDSN" Port="8088"/> 
+        </HostList>
+    </Extension>
+</ExtensionList>

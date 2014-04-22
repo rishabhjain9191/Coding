@@ -9,7 +9,7 @@ function onLoaded() {
     	loadJSX();
     }    
     
-    var appNames = ["ILST","PHXS","IDSN"];
+    var appNames = ["IDSN"];
     for (var i = 0; i < appNames.length; i++) {
         var name = appNames[i];
         if (appName.indexOf(name) >= 0) {

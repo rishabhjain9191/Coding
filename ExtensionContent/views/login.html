@@ -1,0 +1,8 @@
+<form name='loginUser'>
+<input type='text' placeholder='User Name' ng-model='user.email'/>
+<input type='text' placeholder='Password' ng-model='user.password'/>
+<input type='checkbox' ng-model='keepLoggedIn'>Keep Me Logged In</input>
+<button ng-click='login()'>Submit</button>
+<div ng-show='message'>{{message}}</div>
+</form>
+
