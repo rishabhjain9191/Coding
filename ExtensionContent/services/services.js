@@ -118,14 +118,56 @@ services.factory('Constants',function(){
 
 
 
-services.factory('Config',function(){
+services.factory('Config', ['Constants','$q',function(Constants, $q){
 	var config={};
-	config.userName="rishabh.jain9191@gmail.com";
+	config.data='';
+
+	config.serviceAddress = Constants.URL_SERVICE;
+	config.siteAddress = Constants.URL_SITE;
+	config.updateAddress = Constants.URL_UPDATE;
+	config.timeInterval = Constants.TIMEINTERVAL;
+	config.checkOnlineTimeInterval = Constants.CHECK_ONLINE_TIMEINTERVAL;
+	config.imageTimeInterval = Constants.IMAGE_TIMEINTERVAL;
+	config.batchSize = Constants.BATCH_SIZE;
+	config.thresholdCount = Constants.THRESHOLD_COUNT;
+	config.batchDataSendAddress = Constants.BATCHDATA_SEND_ADDRESS;
+	config.checkStatusAddress = Constants.CHECK_STATUS_ADDRESS;
+	config.fileUploadAddress = Constants.FILE_UPLOAD_ADDRESS;
+	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
+	config.logEnabled = Constants.LOG_ENABLE;
+	config.configversion = 1;
+	
+  
+	/* config.userName="rishabh.jain9191@gmail.com";
 	config.password="0a27b76628db3a7e47d627e71d3d4cc2";
-	config.logInReq=1;
-	config.keepMeLoggedIn="false";
+	config.keepMeLoggedIn="true"; */
+	
+	// var init=function(){
+	//var deferred=$q.defer();
+	 // new CSInterface().evalScript('$._ext.isExists()',function(data){
+		// if(data == "1"){
+			// new CSInterface().evalScript('$._ext.readConfig()', function(data1){
+				// console.log(data1);
+				// console.log(JSON.parse(data1));
+				// config=JSON.parse(data1);
+				// console.log(config);
+				// deferred.resolve("0");
+				
+			// });
+		// }
+		
+	// });
+	//return deferred.promise;
+	
+	
+	//config.write=function(){
+		
+	//};
+	// init();
 	return config;
-	});
+	
+	
+	}]);
 	
 
 	
@@ -161,6 +203,29 @@ function(Constants, Config, $http, $q){
 services.factory('projectUtils',['Constants', 'Config', '$http', '$q',
 function(Constants, Config, $http, $q){
 	var utils={};
+	utils.selectedProjectId=0;
+	utils.selectedProjectIndex=0;
+	utils.currentProjectId=0;
+	utils.setCurrentProjectId=function(val){
+		this.currentProjectId=val;
+	};
+	utils.setSelectedProjectIndex=function(val){
+		this.SelectedProjectIndex=val;
+	};
+	
+	utils.getSelectedProjectIndex=function(){
+		return (this.selectedProjectIndex);
+	};
+	
+	utils.getCurrentProjectId=function(){
+		return this.currentProjectId;
+	};
+	utils.setSelectedProjectId=function(value){
+		this.selectedprojectId=value;
+	};
+	utils.getSelectedProjectId=function(){
+		return(this.selectedprojectId);
+	};
 	utils.getProjects=function(username, password, userid){
 		var deferred=$q.defer();
 		var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS+'?username='+username+'&password='+password+'&userid='+userid;
@@ -176,3 +241,17 @@ function(Constants, Config, $http, $q){
 	return utils;
 
 }]);
+
+
+function loadJSX() {
+    var csInterface = new CSInterface();
+    var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/";
+    csInterface.evalScript('$._ext.evalFiles("' + extensionRoot + '")');
+	}
+	
+function evalScript(script, callback) {
+    new CSInterface().evalScript(script, callback);
+	}
+	
+	
+	

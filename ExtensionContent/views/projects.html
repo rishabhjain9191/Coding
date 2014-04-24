@@ -1,22 +1,9 @@
 Project Page
-
-<script src="scripts/jquery-1.10.2.js"></script>
-
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-
-<!-- Optional theme -->
-<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-
-
+{{res}}
 <ul class='projects'>
 	 <li ng-repeat='project in projects'>
-		<div ng-click='selectProject(project.name)' >
-		<a rel='tooltip' tooltip="project.jobid">{{project.name}}</a>
-		
+		<div ng-click='processProject(project.pid, $index)' ng-style="projectNo[$index]">
+		{{project.name}}
 		
 		</div>
 	</li> 

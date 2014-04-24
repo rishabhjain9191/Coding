@@ -1,3 +1,8 @@
+// constants
+var pathToConfigFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxConfig.xml";
+var XMLHeader = '<\?xml version=\"1.0\" encoding=\"UTF-8\"?>';
+
+
 if(typeof($)=='undefined')
 	$={};
 
@@ -18,5 +23,24 @@ $._ext = {
                 $._ext.evalFile(jsxFile);
             }
         }
-    }
+    },
+	
+	getCurrentDoc:function(){
+	
+		//alert("JXS Called");
+		if(app.documents.length==0){
+			//No Document Open
+			return "0";
+		}
+		else{
+			return "1";
+		}
+	}
 };
+
+
+
+
+
+
+

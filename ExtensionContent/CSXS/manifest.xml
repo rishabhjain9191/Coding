@@ -8,6 +8,7 @@
 	<ExecutionEnvironment>
 		<HostList>
 			<Host Name="IDSN" Version="[9.1,10.0]" />
+			<Host Name="ILST" Version="[17.0,17.9]" />
 		</HostList>
 		<LocaleList>
 			<Locale Code="All" />
