@@ -206,11 +206,20 @@ function(Constants, Config, $http, $q){
 	utils.selectedProjectId=0;
 	utils.selectedProjectIndex=0;
 	utils.currentProjectId=0;
+	utils.selectStyle={'color':'red'};
+	utils.deselectStyle={'color':'black'};
+	
+	utils.selectedStyle=function(){
+		return this.selectStyle;
+	};
+	utils.deselectedStyle=function(){
+		return this.deselectStyle;
+	};
 	utils.setCurrentProjectId=function(val){
 		this.currentProjectId=val;
 	};
 	utils.setSelectedProjectIndex=function(val){
-		this.SelectedProjectIndex=val;
+		this.selectedProjectIndex=val;
 	};
 	
 	utils.getSelectedProjectIndex=function(){
@@ -237,6 +246,32 @@ function(Constants, Config, $http, $q){
 		.error(function(data){deferred.reject(data);})
 		return deferred.promise;
 	};
+	
+	utils.addProject=function(projectName, jobId, budgetHrs, color){
+		var deferred=$q.defer();
+		var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
+		console.log(url);
+		$http({method:'get',
+		url:url
+		})
+		.success(function(data){deferred.resolve(data);})
+		.error(function(data){deferred.reject(data);})
+		return deferred.promise;
+	};
+	
+	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color){
+		var deferred=$q.defer();
+		var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?projectid='+projectId+'&userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
+		console.log(url);
+		$http({method:'get',
+		url:url
+		})
+		.success(function(data){deferred.resolve(data);})
+		.error(function(data){deferred.reject(data);})
+		return deferred.promise;
+	};
+	
+	
 	
 	return utils;
 

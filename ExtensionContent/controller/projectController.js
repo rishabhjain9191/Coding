@@ -1,7 +1,10 @@
 app.controller('projectCtrl', ['$scope', '$location', 'Config', 'projectUtils','$q', 
 function($scope, $location, Config, projectUtils,$q){
 	
-	var projectNo=new Array(20);
+	var prev_index;
+	$scope.projectNo=new Array();
+	for(i=0;i<20;i++)$scope.projectNo.push(new projectNo());
+	console.log($scope.projectNo);
 	var refreshProjects=function(){
 	alert("Refreshing Projects");
 	projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
@@ -12,8 +15,8 @@ function($scope, $location, Config, projectUtils,$q){
 		new CSInterface().evalScript('$._extXMP.removeXMP()',function(){
 			projectUtils.setCurrentProjectId(0);
 			//Change Style on Project Deselect
-			projectNo[projectUtils.getSelectedProjectIndex()]={'color':'green'};
-			
+			$scope.projectNo[projectUtils.getSelectedProjectIndex()].style=projectUtils.deselectedStyle();
+			$scope.projectNo[projectUtils.getSelectedProjectIndex()].message="";
 		});
 		
 	};
@@ -25,7 +28,11 @@ function($scope, $location, Config, projectUtils,$q){
 			projectUtils.setCurrentProjectId(projectUtils.getSelectedProjectId());
 		});
 		//Change Style on Project Select
-		projectNo[projectUtils.getSelectedProjectIndex()]={'color':'red'};
+		$scope.projectNo[prev_index].style=projectUtils.deselectedStyle();
+		$scope.projectNo[prev_index].message="";
+		$scope.projectNo[projectUtils.getSelectedProjectIndex()].style=projectUtils.selectedStyle();
+		$scope.projectNo[projectUtils.getSelectedProjectIndex()].message="In Progress";
+		
 	};
 	var matchProjectIds=function(){
 		console.log(projectUtils.getCurrentProjectId());
@@ -55,6 +62,8 @@ function($scope, $location, Config, projectUtils,$q){
 	
 	
 	$scope.processProject=function(projectId, index){
+		prev_index=projectUtils.getSelectedProjectIndex();
+		console.log("previous index : "+index);
 		projectUtils.setSelectedProjectId(projectId);
 		projectUtils.setSelectedProjectIndex(index);
 		var csInterface=new CSInterface();
@@ -66,7 +75,6 @@ function($scope, $location, Config, projectUtils,$q){
 			}
 			else{alert("Please Open a document to continus further");return;}
 		});
-		console.log(index);
 		alert("done")
 	};
 	
@@ -80,5 +88,18 @@ function($scope, $location, Config, projectUtils,$q){
 		} 
 	}
 	
+	$scope.create=function(){
+		$location.path('createNew');
+	}
+	$scope.edit=function(){
+		$location.path('editProject');
+	}
+	
 	
 }]);
+
+
+function projectNo(){
+	this.style={'color':'black'};
+	this.message="";
+};

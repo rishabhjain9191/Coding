@@ -9,6 +9,14 @@ app.config(['$routeProvider', function($routeProvider){
 		controller:'projectCtrl',
 		templateUrl:'./views/projects.html'
 		})
+		.when('/createNew',{
+			controller:'createNewProject',
+			templateUrl:'./views/newProject.html'
+		})
+		.when('/editProject',{
+			controller:'editProjectController',
+			templateUrl:'./views/editProject.html'
+		})
 		.otherwise({redirectTo:'/',template:'<html>Loading...</html>'});
 }]);
 

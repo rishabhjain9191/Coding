@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ExtensionManifest Version="4.0" ExtensionBundleId="com.example.Sample2" ExtensionBundleVersion="1.0.0"
-		ExtensionBundleName="Sample2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ExtensionManifest Version="4.0" ExtensionBundleId="com.creativeworx.tthtml" ExtensionBundleVersion="1.0.0"
+		ExtensionBundleName="tthtml5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<ExtensionList>
-		<Extension Id="com.example.Sample2.extension1" Version="1.0" />
+		<Extension Id="com.creativeworx.tthtml.extension1" Version="1.0" />
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
@@ -19,18 +19,18 @@
 		</RequiredRuntimeList>
 	</ExecutionEnvironment>
 	<DispatchInfoList>
-		<Extension Id="com.example.Sample2.extension1">
+		<Extension Id="com.creativeworx.tthtml.extension1">
 			<DispatchInfo >
 				<Resources>
 				<MainPath>./index.html</MainPath>
-				<ScriptPath>./Sample2.jsx</ScriptPath>
+				<ScriptPath>./tthtml5.jsx</ScriptPath>
 				</Resources>
 				<Lifecycle>
 					<AutoVisible>true</AutoVisible>
 				</Lifecycle>
 				<UI>
 					<Type>Panel</Type>
-					<Menu>Sample2</Menu>
+					<Menu>Time_Tracker_HTML5</Menu>
 					<Geometry>
 						<Size>
 							<Height>200</Height>
