@@ -24,7 +24,7 @@ function($scope, $location, Config, projectUtils,$q){
 		//Modify XMP data of the project.
 		console.log("Selecting Project");
 		new CSInterface().evalScript('$._extXMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
-			alert("Inserted");
+			console.log("XMP Inserted");
 			projectUtils.setCurrentProjectId(projectUtils.getSelectedProjectId());
 		});
 		//Change Style on Project Select
@@ -69,13 +69,16 @@ function($scope, $location, Config, projectUtils,$q){
 		var csInterface=new CSInterface();
 		csInterface.evalScript('$._ext.getCurrentDoc()', function(data){
 			if(data=='1'){
-				alert("welcome to TT!");
+				//alert("welcome to TT!");
 				checkDocXMP();
 				//alert(res);
 			}
-			else{alert("Please Open a document to continus further");return;}
+			else{
+				console.log("No document open");
+				//alert("Please Open a document to continus further");
+			}
 		});
-		alert("done")
+		//alert("done")
 	};
 	
 	$scope.checkSelected=function(projectId){

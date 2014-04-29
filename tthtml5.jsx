@@ -27,7 +27,7 @@ $._ext = {
 	
 	getCurrentDoc:function(){
 	
-		alert("JXS Called");
+		//alert("JXS Called");
 		if(app.documents.length==0){
 			//No Document Open
 			return "0";

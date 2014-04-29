@@ -23,6 +23,11 @@ $._extXMP={
 	
 	insertXMP:function(value){
 		var myDocument=app.activeDocument;
+		var value1=myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
+        //alert("value="+value1);
+        if(value1==""){
+                    var myNewContainer = myDocument.metadataPreferences.createContainerItem("http://ns.adobe.com/xap/1.0/", "projectID");
+            }
 		myDocument.metadataPreferences.setProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]",value);
 	}
 };
