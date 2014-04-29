@@ -1,0 +1,14 @@
+Edit a Project
+<select ng-model='project' ng-change='name=project.name' ng-options='p.name for p in projects'>
+	<option value="">--Choose Project</option>
+</select>
+<br>
+Project Name:<input ng-model='name' />
+JobId:		 <input ng-model='project.jobid' />
+Color:		 <input ng-model='project.colorcode' />
+BudgetHrd:	 <input ng-model='project.budget' />
+<button ng-click='save()'>Save</button>
+<button ng-click='cancel()'>Cancel</button>
+
+
+
