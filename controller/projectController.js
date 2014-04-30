@@ -1,6 +1,6 @@
-app.controller('projectCtrl', ['$scope', '$location', 'Config', 'projectUtils','$q', 
-function($scope, $location, Config, projectUtils,$q){
-	
+app.controller('projectCtrl', ['$scope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher',
+function($scope, $location, Config, projectUtils,$q, AppWatcher){
+	//AppWatcher.run();
 	var prev_index;
 	$scope.projectNo=new Array();
 	$scope.processing=false;

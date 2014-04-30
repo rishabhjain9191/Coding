@@ -29,5 +29,57 @@ $._extXMP={
                     var myNewContainer = myDocument.metadataPreferences.createContainerItem("http://ns.adobe.com/xap/1.0/", "projectID");
             }
 		myDocument.metadataPreferences.setProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]",value);
+	},
+	
+	getDetails:function(){
+		return 	'{"projectID":"'+this.getProjectID()+'",'+
+				'"instanceID":"'+this.getInstanceID()+'",'+
+				'"originalID":"'+this.getOriginalID()+'",'+
+				'"docName":"'+app.activeDocument.name+'",'+
+				'"docPath":"'+this.getFilePath()+'"}';
+	},
+	
+	
+	getFilePath:function(){
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.filePath;
+		}
+		catch(e){
+			value='';
+		}
+		return value;
+	},
+	getProjectID:function(){
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
+		}
+		catch(e){
+			value='';
+		}
+		return value;
+	},
+	getInstanceID:function(){
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "InstanceID");
+			value=value.substr(8);//Removing "xmp.iid:"
+		}
+		catch(e){
+			value='';
+		}
+		return value;
+	},
+	getOriginalID:function(){
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "OriginalDocumentID");
+			value=value.substr(8); //Removing "xmp.did:"
+		}
+		catch(e){
+			value='';
+		}
+		return value;
 	}
 };

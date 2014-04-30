@@ -200,8 +200,8 @@ function(Constants, Config, $http, $q){
 	return utils;
 }]);
 
-services.factory('projectUtils',['Constants', 'Config', '$http', '$q',
-function(Constants, Config, $http, $q){
+services.factory('projectUtils',['Constants', 'Config', '$http', '$q','AppWatcher',
+function(Constants, Config, $http, $q, AppWatcher){
 	var utils={};
 	utils.selectedProjectId=0;
 	utils.selectedProjectIndex=-1;
@@ -278,7 +278,144 @@ function(Constants, Config, $http, $q){
 
 }]);
 
+////////----------App Watcher Begins------------------///////////
+/***************************************************************
+****************************************************************
+***************************************************************/
+services.factory('AppWatcher',['Logger', function(Logger){
+	console.log('App Watcher Started');
+	
+	  //Define Event Listeners
+	//new CSInterface.addEventListerner('documentAfterActivate', onDocumentAfterActivate);
+	new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
+	/* new CSInterface.addEventListerner('documentAfterSave', onDocumentAfterSave);
+	new CSInterface.addEventListerner('applicationActivate', onApplicationActivate);
+	new CSInterface.addEventListerner('applicationBeforeQuit', onApplicationBeforeQuit);
+	 */
+	function onDocumentAfterDeactivate(event){
+		console.log(event);
+		//alert(event.type);
+		Logger.log(event);
+	};
+	
+	/*
+	onDocumentAfterDeactivate=function(event){
+		/*.........................*\/
+		Logger.log(eventDetail);
+	};
+	onDocumentAfterSave=function(event){
+		/*.........................*\/
+		Logger.log(eventDetail);
+	};
+	onApplicationActivate=function(event){
+		/*.........................*\/
+		Logger.log(eventDetail);
+	};
+	onApplicationBeforeQuit=function(event){
+		/*.........................*\/
+		Logger.log(eventDetail);
+	};  */
+	
 
+}]);
+
+services.factory('Logger', ['DBHelper', 'AppModel',function(DBHelper, AppModel){
+	/* Get the Data from App Model*/
+	/* Collate items to log like form JSON*/
+	/* Call DB function to log*/
+	var utils={};
+	console.log("In Logger...");
+	utils.log=function(event){
+	console.log("Updating App Model...");
+	new CSInterface().evalScript('$._extXMP.getDetails()', function(data){
+		console.log(data);
+		AppModel.updateModel(JSON.parse(data));
+		youCanLog();
+	});
+	
+	
+	youCanLog=function(){
+		console.log(AppModel);
+		console.log(event);
+		console.log("Logger Tasks...");
+	};
+	};
+	return utils;
+}]);
+
+services.factory('AppModel',  [function(){
+	var utils={};
+		 utils.defaultDocumentID = ""; //Used No where      
+		 utils.userID = "";
+		 utils.systemID = "";
+		 utils.projectID=0;
+		 utils.instanceID = "";
+		 utils.originalID = "";
+		 utils.documentName = "";
+		 utils.documentPath = "";
+		 utils.eventStartTime = new Date();
+		 utils.eventEndTime = new Date(); //*** End time 5 minutes after start (in milliseconds)
+		 //utils.jsonEventInfo = "";
+		 utils.hostName="";
+		 utils.hostVers="";
+		 utils.previewFileName = "";
+		 utils.previewFile = null;
+
+	
+	/* Call JSX functions to get the required parameters for the document*/
+	utils.updateModel=function(data){
+		this.hostName=getHostName();
+		this.hostVers=new CSInterface().hostEnvironment.appVersion;
+		this.projectID=data.projectID;
+		this.instanceID=data.instanceID;
+		this.originalID=data.originalID;
+		this.documentName=data.docName;
+		this.documentPath=data.docPath;
+		
+	};
+	/* Return required parameters (getters)*/
+	getModel=function(){
+		this.setModel();
+		return {}
+	};
+	getHostName=function(){
+		var appName=new CSInterface().hostEnvironment.appName;
+		switch(appName){
+			case "IDSN":return 'indesign';
+			case "PHXS":return 'photoshop';
+			case "ILST":return 'illustrator';
+			default:return '';
+		}
+	};
+	getProjectID=function(){
+		new CSInterface().evalScript('$._extXMP.getProjectID()', function(data){console.log(data);return data;});
+	};
+	getInstanceID=function(){
+		new CSInterface().evalScript('$._extXMP.getInstanceID()', function(data){console.log(data);return data});
+	};
+	getOriginalID=function(){
+		new CSInterface().evalScript('$._extXMP.getOriginalID()', function(data){console.log(data);return data});
+	};
+	getDocumentName=function(){
+		new CSInterface().evalScript('app.activeDocument.name', function(data){console.log(data);return data});
+	};
+	getDocumentPath=function(){
+		new CSInterface().evalScript('app.activeDocument.filePath', function(data){console.log(data);return data});
+	};
+	/*Setters*/
+	return utils;
+	
+}]);
+services.factory('DBHelper',[function(){
+	/*
+	C
+	R
+	U
+	D
+	*/
+}]);
+
+////////----------App Watcher Ends------------------///////////
 function loadJSX() {
     var csInterface = new CSInterface();
     var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/";
