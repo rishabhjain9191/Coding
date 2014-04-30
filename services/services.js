@@ -204,8 +204,8 @@ services.factory('projectUtils',['Constants', 'Config', '$http', '$q',
 function(Constants, Config, $http, $q){
 	var utils={};
 	utils.selectedProjectId=0;
-	utils.selectedProjectIndex=0;
-	utils.currentProjectId=0;
+	utils.selectedProjectIndex=-1;
+	utils.currentProjectId=-1;
 	utils.selectStyle={'color':'red'};
 	utils.deselectStyle={'color':'black'};
 	
@@ -220,6 +220,7 @@ function(Constants, Config, $http, $q){
 	};
 	utils.setSelectedProjectIndex=function(val){
 		this.selectedProjectIndex=val;
+		console.log("Selected project index stored");
 	};
 	
 	utils.getSelectedProjectIndex=function(){

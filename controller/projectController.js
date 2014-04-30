@@ -3,7 +3,8 @@ function($scope, $location, Config, projectUtils,$q){
 	
 	var prev_index;
 	$scope.projectNo=new Array();
-	for(i=0;i<20;i++)$scope.projectNo.push(new projectNo());
+	$scope.processing=false;
+	for(i=0;i<40;i++)$scope.projectNo.push(new projectNo());
 	console.log($scope.projectNo);
 	var refreshProjects=function(){
 	alert("Refreshing Projects");
@@ -15,8 +16,8 @@ function($scope, $location, Config, projectUtils,$q){
 		new CSInterface().evalScript('$._extXMP.removeXMP()',function(){
 			projectUtils.setCurrentProjectId(0);
 			//Change Style on Project Deselect
-			$scope.projectNo[projectUtils.getSelectedProjectIndex()].style=projectUtils.deselectedStyle();
-			$scope.projectNo[projectUtils.getSelectedProjectIndex()].message="";
+			//$scope.projectNo[projectUtils.getSelectedProjectIndex()].style=projectUtils.deselectedStyle();
+			//$scope.projectNo[projectUtils.getSelectedProjectIndex()].message="";
 		});
 		
 	};
@@ -28,12 +29,24 @@ function($scope, $location, Config, projectUtils,$q){
 			projectUtils.setCurrentProjectId(projectUtils.getSelectedProjectId());
 		});
 		//Change Style on Project Select
-		$scope.projectNo[prev_index].style=projectUtils.deselectedStyle();
-		$scope.projectNo[prev_index].message="";
-		$scope.projectNo[projectUtils.getSelectedProjectIndex()].style=projectUtils.selectedStyle();
-		$scope.projectNo[projectUtils.getSelectedProjectIndex()].message="In Progress";
+		console.log("Changing Style");
+		if(prev_index>=0){
+			$scope.projectNo[prev_index].style=projectUtils.deselectedStyle();
+			$scope.projectNo[prev_index].message="";
+		}
+		/* var abc=projectUtils.getSelectedProjectIndex();
+		console.log(abc);
+		$scope.projectNo[abc].style=projectUtils.selectedStyle();
+		$scope.projectNo[abc].message="In Progress";
+		$scope.processing=false;
+		console.log("Style Changed");
+		//console.log($scope.$index+" message "+$scope.projectNo[projectUtils.getSelectedProjectIndex()].message);
+		console.log($scope); */
+		return ;
 		
 	};
+	  
+	
 	var matchProjectIds=function(){
 		console.log(projectUtils.getCurrentProjectId());
 		console.log(projectUtils.getSelectedProjectId());
@@ -62,10 +75,30 @@ function($scope, $location, Config, projectUtils,$q){
 	
 	
 	$scope.processProject=function(projectId, index){
+		$scope.processing=true;
 		prev_index=projectUtils.getSelectedProjectIndex();
-		console.log("previous index : "+index);
+		console.log(prev_index);
+		if(prev_index==-1){
+			$scope.projectNo[index].message="In progress";
+			$scope.projectNo[index].style=projectUtils.selectedStyle();
+			projectUtils.setSelectedProjectIndex(index);
+		}
+		else if(prev_index!=index){
+			$scope.projectNo[index].message="In progress";
+			$scope.projectNo[index].style=projectUtils.selectedStyle();
+			$scope.projectNo[prev_index].message="";
+			$scope.projectNo[prev_index].style=projectUtils.deselectedStyle();
+			projectUtils.setSelectedProjectIndex(index);
+		}
+		else{
+			$scope.projectNo[index].message="";
+			$scope.projectNo[index].style=projectUtils.deselectedStyle();
+			projectUtils.setSelectedProjectIndex(-1);
+		}
+		console.log("previous index : "+prev_index);
+		console.log("current index : "+index);
 		projectUtils.setSelectedProjectId(projectId);
-		projectUtils.setSelectedProjectIndex(index);
+		
 		var csInterface=new CSInterface();
 		csInterface.evalScript('$._ext.getCurrentDoc()', function(data){
 			if(data=='1'){
