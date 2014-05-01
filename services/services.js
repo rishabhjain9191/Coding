@@ -319,31 +319,58 @@ services.factory('AppWatcher',['Logger', function(Logger){
 
 }]);
 
-services.factory('Logger', ['DBHelper', 'AppModel',function(DBHelper, AppModel){
+services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function(Constants,Config ,DBHelper, AppModel){
 	/* Get the Data from App Model*/
 	/* Collate items to log like form JSON*/
 	/* Call DB function to log*/
 	var utils={};
 	console.log("In Logger...");
 	utils.log=function(event){
+	var eventType=event.type;
 	console.log("Updating App Model...");
 	new CSInterface().evalScript('$._extXMP.getDetails()', function(data){
 		console.log(data);
 		AppModel.updateModel(JSON.parse(data));
-		youCanLog();
+		createLoggingData();
 	});
-	
-	
-	youCanLog=function(){
-		console.log(AppModel);
-		console.log(event);
-		console.log("Logger Tasks...");
 	};
+	
+	var createLoggingData=function(eventType){
+		console.log("Creating Logging Data");
+		var addObj={};
+		addObj.ID="";
+		addObj.eventID=AppModel.documentID+':'+AppModel.eventStartTime.getTime().toString();
+		addObj.userID=AppModel.userID;
+		addObj.computerID="";
+		addObj.projectID=AppModel.projectID;
+		addObj.startTime=AppModel.eventStartTime;
+		addObj.endTime=AppModel.eventEndTime;
+		addObj.imageName="";
+		addObj.eventRecordedTime=new Date().toISOString().slice(0, 19).replace('T', ' ');
+		addObj.status=Constants.STATUS_NEW;
+		addObj.imageStatus=Constants.IMAGE_STATUS_NEW;
+		var obj={"event": {
+								"type": eventType,
+								"documentID": AppModel.documentID,
+								"instanceID": AppModel.instanceID,
+								"originalID": AppModel.originalID,
+								"documentName": AppModel.documentName,
+								"documentPath": AppModel.documentPath,
+								"hostName": AppModel.hostName,
+								"hostVers": AppModel.hostVers,
+								"extName": Constants.EXTENSION_NAME,
+								"extVers": Constants.EXTENSION_VERSION_NUMBER
+								}
+							};
+		addObj.jsonEventPackage=JSON.stringify(obj);
+		DBHelper.addItemToEventLogTable(addObj);
+		
 	};
+	
 	return utils;
 }]);
 
-services.factory('AppModel',  [function(){
+services.factory('AppModel',  ['Config', function(Config){
 	var utils={};
 		 utils.defaultDocumentID = ""; //Used No where      
 		 utils.userID = "";
@@ -360,6 +387,7 @@ services.factory('AppModel',  [function(){
 		 utils.hostVers="";
 		 utils.previewFileName = "";
 		 utils.previewFile = null;
+		 utils.documentID="";
 
 	
 	/* Call JSX functions to get the required parameters for the document*/
@@ -371,6 +399,8 @@ services.factory('AppModel',  [function(){
 		this.originalID=data.originalID;
 		this.documentName=data.docName;
 		this.documentPath=data.docPath;
+		this.documentID=data.docID;
+		this.userID=Config.data.userid;
 		
 	};
 	/* Return required parameters (getters)*/
@@ -406,13 +436,122 @@ services.factory('AppModel',  [function(){
 	return utils;
 	
 }]);
-services.factory('DBHelper',[function(){
-	/*
-	C
-	R
-	U
-	D
-	*/
+services.factory('DBHelper',['Constants',
+function(Constants){
+	var dbhelper={};
+	console.log("DBHelper Called");
+	var SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS EventLog ( ID INTEGER PRIMARY KEY AUTOINCREMENT, eventID TEXT, userID TEXT, computerID TEXT, projectID TEXT, startTime DATETIME, endTime DATETIME, imageName TEXT, eventRecordedTime DATETIME, jsonEventPackage TEXT , status TEXT, imageStatus TEXT)";
+	var SQL_ADD_EVENT = "INSERT INTO EventLog (eventID, userID, computerID, projectID, startTime, endTime, imageName, eventRecordedTime , jsonEventPackage , status, imageStatus) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	var SQL_DELETE_EVENT = "DELETE FROM EventLog WHERE status=?";
+	var SQL_SELECT_EVENT = "SELECT * FROM EventLog WHERE status=? LIMIT ?";
+	var SQL_UPDATE_EVENT_TO_TRANSFERRED = "UPDATE EventLog SET status=? WHERE eventID IN (?)";
+	var SQL_SELECT_NEW_EVENT_COUNT = "SELECT Count(*) as cnt FROM EventLog WHERE status=?";
+
+	/**
+	 * inti() - for creating EventLog DB Table.
+	 */		
+	var initDB = function(){
+		console.log("initDB called");
+		var db = WebSQL(Constants.DATABASE_FILE_NAME);
+		db.query(SQL_CREATE_TABLE
+		).fail(function (tx, err) {
+			console.log(err.message);
+		}).done(function (result) {
+			//console.log(result);
+		});
+	};
+	initDB();
+	/**
+	 * addItemToEventLogTable - insert record in DB Table. 
+	 * @param eventLog stores the values that will be inserted into DB table.
+	 */		
+	dbhelper.addItemToEventLogTable = function(eventLog){
+		var db = WebSQL(Constants.DATABASE_FILE_NAME);
+		db.query(
+			SQL_ADD_EVENT,
+			[
+				eventLog.eventID,
+				eventLog.userID,
+				eventLog.computerID,
+				eventLog.projectID,
+				eventLog.startTime,
+				eventLog.endTime,
+				eventLog.imageName,
+				eventLog.eventRecordedTime,
+				eventLog.jsonEventPackage,
+				Constants.STATUS_NEW,
+				Constants.IMAGE_STATUS_NEW
+			]
+		).fail(function (tx, err) {
+			console.log(err.message);
+		}).done(function (result) {
+			//console.log(result);
+		});
+	};
+
+	/**
+	 * getEventLogData - fetch eventlog record from DB Table.
+	 * @param noOfRows used to set how many records will be fetch from DB table. 
+	 */		
+	dbhelper.getEventLogData = function(noOfRows){
+		var db = WebSQL(Constants.DATABASE_FILE_NAME);
+		db.query(SQL_SELECT_EVENT,[Constants.STATUS_NEW, noOfRows]
+		).fail(function (tx, err) {
+			console.log(err.message);
+		}).done(function (result) {
+			console.log(result);	// array
+		});
+	};
+
+	/**
+	 * setEventLogStatus -  Update eventlog record in DB Table once files saved
+	 * @param eventLogIds used to get event log id's whose status is NOT NEW.
+	 */		
+	dbhelper.setEventLogStatus = function(eventLogIds){
+		var db = WebSQL(Constants.DATABASE_FILE_NAME);
+		db.query(SQL_UPDATE_EVENT_TO_TRANSFERRED,[Constants.STATUS_TRANSFERRED, eventLogIds]
+		).fail(function (tx, err) {
+			console.log(err.message);
+		}).done(function (result) {
+			//console.log(result);
+		});
+	};
+
+	/**
+	 * deleteEventLogData - delete eventlog record in DB Table.
+	 */		
+	dbhelper.deleteEventLogData = function(){
+
+		/*
+		SQL.text="DELETE FROM EventLog WHERE status='" + Constants.STATUS_TRANSFERRED + "' AND date(eventRecordedTime) < date('"+ toSqlDate(eventDeletedDate) + "')";
+		*/
+
+		var db = WebSQL(Constants.DATABASE_FILE_NAME);
+		db.query(SQL_DELETE_EVENT,[Constants.STATUS_TRANSFERRED]
+		).fail(function (tx, err) {
+			console.log(err.message);
+		}).done(function (result) {
+			//console.log(result);
+		});
+	};
+
+
+	/**
+	 * getNewStatusCount - return no. of records whose status is new in EventLog table.
+	 * @param eventLogIds used to get event log id's whose status is NOT NEW.
+	 */		
+	dbhelper.getNewStatusCount = function(){
+		var db = WebSQL(Constants.DATABASE_FILE_NAME);
+		db.query(SQL_SELECT_NEW_EVENT_COUNT,[Constants.STATUS_NEW]
+		).fail(function (tx, err) {
+			console.log(err.message);
+		}).done(function (result) {
+			//console.log(result[0].cnt);
+		});
+	};
+
+	return dbhelper;
+	
 }]);
 
 ////////----------App Watcher Ends------------------///////////

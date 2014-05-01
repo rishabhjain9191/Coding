@@ -36,7 +36,8 @@ $._extXMP={
 				'"instanceID":"'+this.getInstanceID()+'",'+
 				'"originalID":"'+this.getOriginalID()+'",'+
 				'"docName":"'+app.activeDocument.name+'",'+
-				'"docPath":"'+this.getFilePath()+'"}';
+				'"docPath":"'+this.getFilePath()+'",'+
+				'"docID":"'+this.getDocumentID()+'"}';
 	},
 	
 	
@@ -76,6 +77,17 @@ $._extXMP={
 		try{
 			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "OriginalDocumentID");
 			value=value.substr(8); //Removing "xmp.did:"
+		}
+		catch(e){
+			value='';
+		}
+		return value;
+	},
+	getDocumentID:function(){
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.index;
+			
 		}
 		catch(e){
 			value='';

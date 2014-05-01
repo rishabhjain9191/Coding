@@ -29,6 +29,7 @@ function($scope, $location,$http,Config, Constants, loginUtils){
 	var data = new Object();
 	data.username="rishabh.jain9191@gmail.com";
 	data.password="0a27b76628db3a7e47d627e71d3d4cc2";
+	data.userid=7230;
 	data.keepMeLoggedIn="true"; 
 	data = JSON.stringify(data);
 	//console.log($location);
