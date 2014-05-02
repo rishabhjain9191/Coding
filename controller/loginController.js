@@ -26,4 +26,16 @@ function($scope, $location, $http,Config, Constants, loginUtils){
 		
 	};
 	
+	$scope.signup=function(){
+		console.log("Opening SignUp in Browser");
+		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_SIGNUP);
+	};
+	
+	$scope.forgetLogin=function(){
+		console.log("Opening Forget Login in Browser");
+		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_FORGOT_LOGIN);
+	};
+	
+	
+	
 }]);

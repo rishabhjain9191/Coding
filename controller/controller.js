@@ -30,7 +30,7 @@ function($scope, $location,$http,Config, Constants, loginUtils){
 	data.username="rishabh.jain9191@gmail.com";
 	data.password="0a27b76628db3a7e47d627e71d3d4cc2";
 	data.userid=7230;
-	data.keepMeLoggedIn="true"; 
+	data.keepMeLoggedIn="false"; 
 	data = JSON.stringify(data);
 	//console.log($location);
 	//new CSInterface().evalScript('$._extXML.readConfig()', function(data){
