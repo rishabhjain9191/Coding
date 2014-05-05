@@ -176,8 +176,9 @@ function(Constants, Config, $http, $q){
 	var utils={};
 	utils.loginResult='aa';
 	utils.login=function(username, password){
+		
 		var deferred=$q.defer();
-		if(username=='undefined'){username=Config.userName;}
+		if(username=='undefined'){username=Config.username;}
 		if(password=='undefined'){password=Config.password;}
 		$http({
 			method:'get',

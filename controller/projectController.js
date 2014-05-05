@@ -8,7 +8,7 @@ function($scope, $location, Config, projectUtils,$q, AppWatcher){
 	console.log($scope.projectNo);
 	var refreshProjects=function(){
 	alert("Refreshing Projects");
-	projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
+	projectUtils.getProjects(Config.username, Config.password, Config.userid)
 	.then(function(data){$scope.projects=data;}, function(data){});};
 	var deselectProject=function(){
 		//Remove XMP data of Project;

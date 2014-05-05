@@ -23,43 +23,41 @@ app.config(['$routeProvider', function($routeProvider){
 
 app.controller('viewCtrl',['$scope', '$location','$http', 'Config', 'Constants', 'loginUtils',
 function($scope, $location,$http,Config, Constants, loginUtils){
-
+	
 	//Config.init()
 	//.then(function(data){
 	var data = new Object();
-	data.username="rishabh.jain9191@gmail.com";
-	data.password="0a27b76628db3a7e47d627e71d3d4cc2";
-	data.userid=7230;
-	data.keepMeLoggedIn="true"; 
 	data = JSON.stringify(data);
-	//console.log($location);
-	//new CSInterface().evalScript('$._extXML.readConfig()', function(data){
+	new CSInterface().evalScript('$._extXML.readConfig()', function(data){
 		if(data != "false"){
+			console.log(JSON.parse(data));
 			Config.data=JSON.parse(data);
-			Config.userName=Config.data.username;
+			Config.username=Config.data.username;
 			Config.password=Config.data.password;
 			Config.keepMeLoggedIn=Config.data.keepMeLoggedIn;
-			console.log(Config.keepMeLoggedIn);
+			Config.userid=Config.data.userid;
+			
 			
 			if(Config.keepMeLoggedIn=="false"){	
 				console.log("keep me log in false");
 				//console.log($location);
-				$location.path('login');
+				$scope.$apply(function() {
+					$location.path('login');
+				});
 				//location.href="views/login.html";
 			}
 			else if(Config.keepMeLoggedIn=="true"){
 				console.log("keep me log in true");
-				loginUtils.login(Config.userName, Config.password)
+				loginUtils.login(Config.username, Config.password)
 				.then(function(data){
 					console.log(data);
 					if(data.Msg=="Error: Authentication failed"){
-						console.log($location.path());
 						$location.path('login');
 					}
 					else{
 						//User Authenticated
-						Config.data=data[0];
-						Config.keepMeLoggedIn=$scope.keepLoggedIn;
+						//Config.data=data[0];
+						//Config.keepMeLoggedIn=$scope.keepLoggedIn;
 						$location.path('projects');
 					}
 				},function(error){
@@ -69,9 +67,11 @@ function($scope, $location,$http,Config, Constants, loginUtils){
 		}
 		else{
 			console.log("Going to login screen");
-			$location.path('login');
+			$scope.$apply(function() {
+			  $location.path('login');
+			});
 		}
-	//});
+	});
 	//}, function(){});
 }]);
 
