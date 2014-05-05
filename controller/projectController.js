@@ -2,12 +2,11 @@ app.controller('projectCtrl', ['$scope','$rootScope', '$location', 'Config', 'pr
 function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	//AppWatcher.run();
 	var prev_index;
-	$rootScope.projectNo=new Array();
-	$scope.processing=false;
-	for(i=0;i<40;i++)$scope.projectNo.push(new projectNo());
-	console.log($scope.projectNo);
+	
+	//console.log($scope.projectNo);
 	var refreshProjects=function(){
 	alert("Refreshing Projects");
+	console.log($rootScope.projectNo);
 	projectUtils.getProjects(Config.username, Config.password, Config.userid)
 	.then(function(data){$scope.projects=data;}, function(data){});};
 	var deselectProject=function(){

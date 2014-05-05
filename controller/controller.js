@@ -21,9 +21,14 @@ app.config(['$routeProvider', function($routeProvider){
 }]);
 
 
-app.controller('viewCtrl',['$scope', '$location','$http', 'Config', 'Constants', 'loginUtils',
-function($scope, $location,$http,Config, Constants, loginUtils){
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils',
+function($rootScope, $scope, $location,$http,Config, Constants, loginUtils){
 	
+	// Initialize $rootScope;
+	$rootScope.projectNo=new Array();
+	$scope.processing=false;
+	
+	for(i=0;i<40;i++)$scope.projectNo.push(new projectNo());
 	//Config.init()
 	//.then(function(data){
 	var data = new Object();
