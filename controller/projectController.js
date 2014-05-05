@@ -8,7 +8,11 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	alert("Refreshing Projects");
 	console.log($rootScope.projectNo);
 	projectUtils.getProjects(Config.username, Config.password, Config.userid)
-	.then(function(data){$scope.projects=data;}, function(data){});};
+	.then(function(data){
+		$scope.projects=data;
+		console.log("Root Scope after getProjects\n"+$rootScope.projectNo);
+		projectUtils.selectProject();
+	}, function(data){});};
 	var deselectProject=function(){
 		//Remove XMP data of Project;
 		console.log("Deselecting Project");
@@ -134,7 +138,3 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 }]);
 
 
-function projectNo(){
-	this.style={'color':'black'};
-	this.message="";
-};

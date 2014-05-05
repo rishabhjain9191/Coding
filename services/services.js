@@ -201,8 +201,8 @@ function(Constants, Config, $http, $q){
 	return utils;
 }]);
 
-services.factory('projectUtils',['Constants', 'Config', '$http', '$q','AppWatcher',
-function(Constants, Config, $http, $q, AppWatcher){
+services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q',
+function($rootScope, Constants, Config, $http, $q){
 	var utils={};
 	utils.selectedProjectId=0;
 	utils.selectedProjectIndex=-1;
@@ -244,7 +244,15 @@ function(Constants, Config, $http, $q, AppWatcher){
 		$http({method:'get',
 		url:url
 		})
-		.success(function(data){deferred.resolve(data);})
+		.success(function(data){
+			utils.projectIndexes={};
+			for(var i=0;i<data.length;i++){
+				var pid=data[i].pid;
+				utils.projectIndexes[pid]=i;
+			}
+			console.log(utils.projectIndexes);
+			deferred.resolve(data);
+		})
 		.error(function(data){deferred.reject(data);})
 		return deferred.promise;
 	};
@@ -272,6 +280,40 @@ function(Constants, Config, $http, $q, AppWatcher){
 		.error(function(data){deferred.reject(data);})
 		return deferred.promise;
 	};
+	utils.selectProject=function(){
+		//Check the current document's XMP
+		new CSInterface().evalScript('$._extXMP.getProjectDetails()', function(data){
+			if(data==""){
+				//The opened document has no associated project, Clear selected Project
+				if(utils.getSelectedProjectIndex()!=-1){
+					$rootScope.$apply(function(){
+						$rootScope.projectNo[utils.getSelectedProjectIndex()].style=utils.deselectedStyle();
+						$rootScope.projectNo[utils.getSelectedProjectIndex()].message="";
+					});
+				}
+				utils.setSelectedProjectIndex(-1);
+				utils.setCurrentProjectId(0);
+			}
+			else{
+			
+				console.log(utils.getSelectedProjectIndex());
+				//When the doc. has an associated project, select the project(change style and message)
+				$rootScope.$apply(function() {
+					$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].style=utils.selectedStyle();
+					$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].message="In Progress";
+					if(utils.getSelectedProjectIndex()!=-1){
+						$rootScope.projectNo[utils.getSelectedProjectIndex()].style=utils.deselectedStyle();
+						$rootScope.projectNo[utils.getSelectedProjectIndex()].message="";
+					}
+					utils.setSelectedProjectIndex(utils.projectIndexes[parseInt(data)]);
+					utils.setCurrentProjectId(parseInt(data));
+				});
+				
+			}
+			console.log($rootScope.projectNo);
+		});
+		
+	};
 	
 	
 	
@@ -283,39 +325,45 @@ function(Constants, Config, $http, $q, AppWatcher){
 /***************************************************************
 ****************************************************************
 ***************************************************************/
-services.factory('AppWatcher',['Logger', function(Logger ){
+services.factory('AppWatcher',['Logger', 'projectUtils', function(Logger, projectUtils ){
 	console.log('App Watcher Started');
 	
 	  //Define Event Listeners
-	//new CSInterface.addEventListerner('documentAfterActivate', onDocumentAfterActivate);
-	new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
-	/* new CSInterface.addEventListerner('documentAfterSave', onDocumentAfterSave);
-	new CSInterface.addEventListerner('applicationActivate', onApplicationActivate);
-	new CSInterface.addEventListerner('applicationBeforeQuit', onApplicationBeforeQuit);
-	 */
+	new CSInterface().addEventListener('documentAfterActivate', onDocumentAfterActivate);
+	//new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
+	new CSInterface().addEventListener('documentAfterSave', onDocumentAfterSave);
+	//new CSInterface().addEventListener('applicationActivate', onApplicationActivate);
+	new CSInterface().addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
+	 
 	function onDocumentAfterDeactivate(event){
 		console.log(event);
+		projectUtils.selectProject();
 		//alert(event.type);
 		Logger.log(event);
 	};
 	
-	/*
-	onDocumentAfterDeactivate=function(event){
-		/*.........................*\/
-		Logger.log(eventDetail);
+	
+	function onDocumentAfterActivate(event){
+		console.log(event);
+		projectUtils.selectProject();
+		//alert(event.type);
+		Logger.log(event);
+		
 	};
-	onDocumentAfterSave=function(event){
-		/*.........................*\/
-		Logger.log(eventDetail);
+	function onDocumentAfterSave(event){
+		/*.........................*/
+		Logger.log(event);
 	};
-	onApplicationActivate=function(event){
-		/*.........................*\/
-		Logger.log(eventDetail);
+	function onApplicationActivate(event){
+		console.log(event);
+		projectUtils.selectProject();
+		//alert(event.type);
+		Logger.log(event);
 	};
-	onApplicationBeforeQuit=function(event){
-		/*.........................*\/
-		Logger.log(eventDetail);
-	};  */
+	function onApplicationBeforeQuit(event){
+		/*.........................*/
+		Logger.log(event);
+	};  
 	
 
 }]);

@@ -28,7 +28,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils){
 	$rootScope.projectNo=new Array();
 	$scope.processing=false;
 	
-	for(i=0;i<40;i++)$scope.projectNo.push(new projectNo());
+	for(i=0;i<40;i++)$scope.projectNo.push(new projectNo(i));
 	//Config.init()
 	//.then(function(data){
 	var data = new Object();
@@ -80,7 +80,11 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils){
 	//}, function(){});
 }]);
 
-
+function projectNo(i){
+	this.index=i;
+	this.style={'color':'black'};
+	this.message="";
+};
 
 
 
