@@ -282,7 +282,7 @@ function(Constants, Config, $http, $q, AppWatcher){
 /***************************************************************
 ****************************************************************
 ***************************************************************/
-services.factory('AppWatcher',['Logger', function(Logger){
+services.factory('AppWatcher',['Logger', function(Logger ){
 	console.log('App Watcher Started');
 	
 	  //Define Event Listeners

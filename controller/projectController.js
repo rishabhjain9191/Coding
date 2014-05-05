@@ -1,8 +1,8 @@
-app.controller('projectCtrl', ['$scope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher',
-function($scope, $location, Config, projectUtils,$q, AppWatcher){
+app.controller('projectCtrl', ['$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher',
+function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	//AppWatcher.run();
 	var prev_index;
-	$scope.projectNo=new Array();
+	$rootScope.projectNo=new Array();
 	$scope.processing=false;
 	for(i=0;i<40;i++)$scope.projectNo.push(new projectNo());
 	console.log($scope.projectNo);
@@ -31,8 +31,8 @@ function($scope, $location, Config, projectUtils,$q, AppWatcher){
 		//Change Style on Project Select
 		console.log("Changing Style");
 		if(prev_index>=0){
-			$scope.projectNo[prev_index].style=projectUtils.deselectedStyle();
-			$scope.projectNo[prev_index].message="";
+			$rootScope.projectNo[prev_index].style=projectUtils.deselectedStyle();
+			$rootScope.projectNo[prev_index].message="";
 		}
 		/* var abc=projectUtils.getSelectedProjectIndex();
 		console.log(abc);
@@ -79,20 +79,20 @@ function($scope, $location, Config, projectUtils,$q, AppWatcher){
 		prev_index=projectUtils.getSelectedProjectIndex();
 		console.log(prev_index);
 		if(prev_index==-1){
-			$scope.projectNo[index].message="In progress";
-			$scope.projectNo[index].style=projectUtils.selectedStyle();
+			$rootScope.projectNo[index].message="In progress";
+			$rootScope.projectNo[index].style=projectUtils.selectedStyle();
 			projectUtils.setSelectedProjectIndex(index);
 		}
 		else if(prev_index!=index){
-			$scope.projectNo[index].message="In progress";
-			$scope.projectNo[index].style=projectUtils.selectedStyle();
-			$scope.projectNo[prev_index].message="";
-			$scope.projectNo[prev_index].style=projectUtils.deselectedStyle();
+			$rootScope.projectNo[index].message="In progress";
+			$rootScope.projectNo[index].style=projectUtils.selectedStyle();
+			$rootScope.projectNo[prev_index].message="";
+			$rootScope.projectNo[prev_index].style=projectUtils.deselectedStyle();
 			projectUtils.setSelectedProjectIndex(index);
 		}
 		else{
-			$scope.projectNo[index].message="";
-			$scope.projectNo[index].style=projectUtils.deselectedStyle();
+			$rootScope.projectNo[index].message="";
+			$rootScope.projectNo[index].style=projectUtils.deselectedStyle();
 			projectUtils.setSelectedProjectIndex(-1);
 		}
 		console.log("previous index : "+prev_index);
