@@ -16,7 +16,8 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	var deselectProject=function(){
 		//Remove XMP data of Project;
 		console.log("Deselecting Project");
-		new CSInterface().evalScript('$._extXMP.removeXMP()',function(){
+		var appName = new CSInterface().hostEnvironment.appName;
+		new CSInterface().evalScript('$._ext_'+appName+'_XMP.removeXMP()',function(){
 			projectUtils.setCurrentProjectId(0);
 			//Change Style on Project Deselect
 			//$scope.projectNo[projectUtils.getSelectedProjectIndex()].style=projectUtils.deselectedStyle();
@@ -27,7 +28,8 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	var selectProject=function(){
 		//Modify XMP data of the project.
 		console.log("Selecting Project");
-		new CSInterface().evalScript('$._extXMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
+		var appName = new CSInterface().hostEnvironment.appName;
+		new CSInterface().evalScript('$._ext_'+appName+'_XMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
 			console.log("XMP Inserted");
 			projectUtils.setCurrentProjectId(projectUtils.getSelectedProjectId());
 		});
@@ -64,7 +66,8 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	};
 	var checkDocXMP=function(){
 		//Get the Project Id from XMP of the Document, if doesn't exists return 0.
-		new CSInterface().evalScript('$._extXMP.getProjectDetails()', function(data){
+		var appName = new CSInterface().hostEnvironment.appName;
+		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getProjectDetails()', function(data){
 			console.log("data="+data);
 			if(data==""){
 				projectUtils.setCurrentProjectId(0);

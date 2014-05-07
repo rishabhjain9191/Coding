@@ -1,0 +1,85 @@
+$._extCWFile={
+
+	writeXMLFile : function(file, xml) {
+		file.encoding = "UTF8";
+		file.open("w", "TEXT", "????");
+		file.write("\uFEFF");
+		file.lineFeed = "unix";
+		file.write(xml.toXMLString());
+		$.writeln(file);
+		file.close();
+	},
+	
+	checkIfFileExistsRecursively : function(folder) {
+		var cwFile = new File(folder+"/.creativeworxproject");
+		if(cwFile.exists){
+			return cwFile;
+		}
+		else{
+			if(folder.parent != null){
+				return this.checkIfFileExistsRecursively(folder.parent);
+			}
+			else{
+				return false;
+			}
+		}
+	},
+	
+	getTagValue : function(file, tag) {
+		var cwFile = new File(file);
+		cwFile.open("r");
+		var xmlStr = cwFile.read();
+		var myRootXmlObj = new XML (xmlStr);
+		return myRootXmlObj.child("autotag").child(tag);
+	},
+	
+	checkIfFileExists : function(folder) {
+		var cwFile = new File(folder+"/.creativeworxproject");
+		if(cwFile.exists){
+			return cwFile;
+		}
+		else{
+			return false;
+		}
+	},
+	
+	writeFile : function(file, pid, uid) {
+		var myRootXmlObj = new XML ("<config></config>");
+		var myRootXmlObj1 = new XML ("<autotag></autotag>");
+		cwFile = new File(file);
+		myRootXmlObj1.appendChild(new XML ("<userid>"+uid+"</userid>"));
+		myRootXmlObj1.appendChild(new XML ("<projectuid>"+pid+"</projectuid>"));
+		myRootXmlObj.appendChild(myRootXmlObj1);
+		this.writeXMLFile(cwFile, myRootXmlObj);
+		return "file written successfully";
+	},
+		
+		
+	updateOrCreateFile : function(pid, uid) {
+		myFile = app.documents[0].fullName;
+		parentFolder = myFile.parent;
+		var file = this.checkIfFileExists(parentFolder);
+		var file = new File(parentFolder+"/.creativeworxproject");
+		this.writeFile(file, pid, uid);
+	},
+	
+	getProjectID : function() {
+		myFile = app.documents[0].fullName;
+		parentFolder = myFile.parent;
+		var file = this.checkIfFileExistsRecursively(parentFolder);
+		if(file){
+			var tagValue = this.getTagValue(file, "projectuid");
+			if(tagValue!=""){
+				return tagValue;
+			}else{
+				return "";
+			}
+		}else{
+			return "";
+		}
+	},
+	
+};
+
+//alert($._extCWFile.getProjectID());
+//$._extCWFile.updateOrCreateFile("1", "777");

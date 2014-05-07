@@ -282,7 +282,10 @@ function($rootScope, Constants, Config, $http, $q){
 	};
 	utils.selectProject=function(){
 		//Check the current document's XMP
-		new CSInterface().evalScript('$._extXMP.getProjectDetails()', function(data){
+		
+		var appName = new CSInterface().hostEnvironment.appName;
+		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getProjectDetails()', function(data){
+			alert(data);
 			if(data==""){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
@@ -377,7 +380,8 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	utils.log=function(event){
 	var eventType=event.type;
 	console.log("Updating App Model...");
-	new CSInterface().evalScript('$._extXMP.getDetails()', function(data){
+	var appName = new CSInterface().hostEnvironment.appName;
+	new CSInterface().evalScript('$._ext_'+appName+'_XMP.getDetails()', function(data){
 		console.log(data);
 		AppModel.updateModel(JSON.parse(data));
 		createLoggingData();
@@ -467,13 +471,16 @@ services.factory('AppModel',  ['Config', function(Config){
 		}
 	};
 	getProjectID=function(){
-		new CSInterface().evalScript('$._extXMP.getProjectID()', function(data){console.log(data);return data;});
+		var appName = new CSInterface().hostEnvironment.appName;
+		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getProjectID()', function(data){console.log(data);return data;});
 	};
 	getInstanceID=function(){
-		new CSInterface().evalScript('$._extXMP.getInstanceID()', function(data){console.log(data);return data});
+		var appName = new CSInterface().hostEnvironment.appName;
+		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getInstanceID()', function(data){console.log(data);return data});
 	};
 	getOriginalID=function(){
-		new CSInterface().evalScript('$._extXMP.getOriginalID()', function(data){console.log(data);return data});
+		var appName = new CSInterface().hostEnvironment.appName;
+		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getOriginalID()', function(data){console.log(data);return data});
 	};
 	getDocumentName=function(){
 		new CSInterface().evalScript('app.activeDocument.name', function(data){console.log(data);return data});
