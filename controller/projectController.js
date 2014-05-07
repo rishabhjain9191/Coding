@@ -1,5 +1,5 @@
-app.controller('projectCtrl', ['$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher',
-function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
+app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher',
+function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	//AppWatcher.run();
 	var prev_index;
 	
@@ -20,8 +20,7 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	var deselectProject=function(){
 		//Remove XMP data of Project;
 		console.log("Deselecting Project");
-		var appName = new CSInterface().hostEnvironment.appName;
-		new CSInterface().evalScript('$._ext_'+appName+'_XMP.removeXMP()',function(){
+		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.removeXMP()',function(){
 			projectUtils.setCurrentProjectId(0);
 			var event=new CSEvent("projectSelected", "APPLICATION");
 			event.type="projectSelected";
@@ -36,8 +35,7 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	var selectProject=function(){
 		//Modify XMP data of the project.
 		console.log("Selecting Project");
-		var appName = new CSInterface().hostEnvironment.appName;
-		new CSInterface().evalScript('$._ext_'+appName+'_XMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
+		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
 			console.log("XMP Inserted");
 			projectUtils.setCurrentProjectId(projectUtils.getSelectedProjectId());
 			var event=new CSEvent("projectSelected", "APPLICATION");
@@ -78,8 +76,7 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	};
 	var checkDocXMP=function(){
 		//Get the Project Id from XMP of the Document, if doesn't exists return 0.
-		var appName = new CSInterface().hostEnvironment.appName;
-		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getProjectDetails()', function(data){
+		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
 			console.log("data="+data);
 			if(data==""){
 				projectUtils.setCurrentProjectId(0);
@@ -132,6 +129,7 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 		//alert("done")
 	};
 	
+	
 	$scope.checkSelected=function(projectId){
 		console.log("Style changed");
 		if(projectId==projectUtils.getCurrentProjectId()){
@@ -140,14 +138,30 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 		else{
 			return {'font-weight':'normal'};
 		} 
-	}
+	};
 	
 	$scope.create=function(){
 		$location.path('createNew');
-	}
+	};
+	
 	$scope.edit=function(){
 		$location.path('editProject');
-	}
+	};
+	
+	$scope.asgnPrjFldr=function(){
+		//1. Check the Current Document is saved or not
+		//If no project is selected, alert-No Project Selected
+		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
+			alert("No Project Selected !");
+		}
+		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
+		else{
+			new CSInterface().evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
+				alert(data);
+			});
+		}
+		
+	};
 	
 	
 }]);

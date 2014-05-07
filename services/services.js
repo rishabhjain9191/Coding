@@ -113,6 +113,8 @@ services.factory('Constants',function(){
 		constants.URL_ZIP_DOWNLOAD = 	  "/downloads/timetracker/TimeTracker.zip";
 		constants.URL_VERSION = 		  "/downloads/timetracker/TimeTrackerUpdate.xml";
 		
+		constants.APP_NAME=new CSInterface().hostEnvironment.appName;
+		
 	return constants;
 });
 
@@ -283,9 +285,8 @@ function($rootScope, Constants, Config, $http, $q){
 	utils.selectProject=function(){
 		//Check the current document's XMP
 		
-		var appName = new CSInterface().hostEnvironment.appName;
-		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getProjectDetails()', function(data){
-			alert(data);
+		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
+			//alert(data);
 			if(data==""){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
@@ -295,15 +296,18 @@ function($rootScope, Constants, Config, $http, $q){
 					});
 				}
 				utils.setSelectedProjectIndex(-1);
-				utils.setCurrentProjectId(0);
+				utils.setCurrentProjectId(-1);
 			}
 			else{
 			
 				console.log(utils.getSelectedProjectIndex());
 				//When the doc. has an associated project, select the project(change style and message)
 				$rootScope.$apply(function() {
+					console.log("Data from XMP<"+data+">");
+					if(data!=""/* ||data!="EvalScript error." */){
 					$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].style=utils.selectedStyle();
 					$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].message="In Progress";
+					}
 					if(utils.getSelectedProjectIndex()!=-1){
 						$rootScope.projectNo[utils.getSelectedProjectIndex()].style=utils.deselectedStyle();
 						$rootScope.projectNo[utils.getSelectedProjectIndex()].message="";
@@ -328,12 +332,12 @@ function($rootScope, Constants, Config, $http, $q){
 /***************************************************************
 ****************************************************************
 ***************************************************************/
-services.factory('AppWatcher',['Logger', 'projectUtils', function(Logger, projectUtils ){
+services.factory('AppWatcher',['Constants','Logger', 'projectUtils', function(Constants, Logger, projectUtils ){
 	console.log('App Watcher Started');
 	
 	  //Define Event Listeners
 	new CSInterface().addEventListener('documentAfterActivate', onDocumentAfterActivate);
-	//new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
+	new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
 	new CSInterface().addEventListener('documentAfterSave', onDocumentAfterSave);
 	//new CSInterface().addEventListener('applicationActivate', onApplicationActivate);
 	new CSInterface().addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
@@ -341,10 +345,15 @@ services.factory('AppWatcher',['Logger', 'projectUtils', function(Logger, projec
 	new CSInterface().addEventListener('onCreationComplete', onCreationComplete);
 	 
 	function onDocumentAfterDeactivate(event){
-		console.log(event);
-		projectUtils.selectProject();
+		alert(event.type);
+		new CSInterface().evalScript('app.documents.length', function(data){
+			if(data==0){
+				projectUtils.selectProject();
+			}
+		});
+		//projectUtils.selectProject();
 		//alert(event.type);
-		Logger.log(event);
+		//Logger.log(event);
 	};
 	
 	function onProjectSelected(event){
@@ -361,9 +370,31 @@ services.factory('AppWatcher',['Logger', 'projectUtils', function(Logger, projec
 		
 	};
 	function onDocumentAfterSave(event){
-		/*.........................*/
-		
-		Logger.log(event);
+		//Check whether any project id is associated with this document or not
+		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
+		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworx file recursively, and get project Id, else get 0.
+		new CSInterface().evalScript('$._extCWFile.getProjectID()', function(pid){
+			console.log("project id from .creativeworx file"+pid);
+			if(pid!=""){//Assign that project id to the current document
+				new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+pid+'\')',function(data){
+					console.log("XMP Inserted");
+					projectUtils.setCurrentProjectId(pid);
+					projectUtils.selectProject();
+					var event=new CSEvent("projectSelected", "APPLICATION");
+					event.type="projectSelected";
+					event.data="<projectSelected />";
+					new CSInterface().dispatchEvent(event);
+					var abc={};
+					abc.type="documentAfterSave";
+					Logger.log(abc);
+				});
+			}
+		});
+			
+		}
+		if(projectUtils.getCurrentProjectId()!=0){
+			Logger.log(event);
+		}
 	};
 	function onApplicationActivate(event){
 		console.log(event);
@@ -388,8 +419,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	utils.log=function(event){
 	var eventType=event.type;
 	console.log("Updating App Model...");
-	var appName = new CSInterface().hostEnvironment.appName;
-	new CSInterface().evalScript('$._ext_'+appName+'_XMP.getDetails()', function(data){
+	new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
 		console.log(data);
 		AppModel.updateModel(JSON.parse(data));
 		createLoggingData(eventType);
@@ -431,7 +461,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	return utils;
 }]);
 
-services.factory('AppModel',  ['Config', function(Config){
+services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants){
 	var utils={};
 		 utils.defaultDocumentID = ""; //Used No where      
 		 utils.userID = "";
@@ -470,8 +500,7 @@ services.factory('AppModel',  ['Config', function(Config){
 		return {}
 	};
 	getHostName=function(){
-		var appName=new CSInterface().hostEnvironment.appName;
-		switch(appName){
+		switch(Constants.APP_NAME){
 			case "IDSN":return 'indesign';
 			case "PHXS":return 'photoshop';
 			case "ILST":return 'illustrator';
@@ -479,16 +508,13 @@ services.factory('AppModel',  ['Config', function(Config){
 		}
 	};
 	getProjectID=function(){
-		var appName = new CSInterface().hostEnvironment.appName;
-		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getProjectID()', function(data){console.log(data);return data;});
+		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectID()', function(data){console.log(data);return data;});
 	};
 	getInstanceID=function(){
-		var appName = new CSInterface().hostEnvironment.appName;
-		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getInstanceID()', function(data){console.log(data);return data});
+		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getInstanceID()', function(data){console.log(data);return data});
 	};
 	getOriginalID=function(){
-		var appName = new CSInterface().hostEnvironment.appName;
-		new CSInterface().evalScript('$._ext_'+appName+'_XMP.getOriginalID()', function(data){console.log(data);return data});
+		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getOriginalID()', function(data){console.log(data);return data});
 	};
 	getDocumentName=function(){
 		new CSInterface().evalScript('app.activeDocument.name', function(data){console.log(data);return data});

@@ -56,11 +56,17 @@ $._extCWFile={
 		
 		
 	updateOrCreateFile : function(pid, uid) {
-		myFile = app.documents[0].fullName;
-		parentFolder = myFile.parent;
-		var file = this.checkIfFileExists(parentFolder);
-		var file = new File(parentFolder+"/.creativeworxproject");
-		this.writeFile(file, pid, uid);
+		try{
+			myFile = app.documents[0].fullName;
+			parentFolder = myFile.parent;
+			var file = this.checkIfFileExists(parentFolder);
+			var file = new File(parentFolder+"/.creativeworxproject");
+			this.writeFile(file, pid, uid);
+			return "true";
+		}
+		catch(e){
+			return "false";
+		}
 	},
 	
 	getProjectID : function() {
@@ -70,7 +76,7 @@ $._extCWFile={
 		if(file){
 			var tagValue = this.getTagValue(file, "projectuid");
 			if(tagValue!=""){
-				return tagValue;
+				return tagValue+'';
 			}else{
 				return "";
 			}
@@ -81,5 +87,3 @@ $._extCWFile={
 	
 };
 
-//alert($._extCWFile.getProjectID());
-//$._extCWFile.updateOrCreateFile("1", "777");
