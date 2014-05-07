@@ -7,7 +7,7 @@ $._ext_IDSN_XMP={
 		if (myDocument) {
 		try {
 			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
-			
+			if(value==null)return "";
 		} catch(e) {
 			console.log("in catch of getXMPDataId error: ", e);
 		}

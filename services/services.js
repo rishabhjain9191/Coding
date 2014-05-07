@@ -337,6 +337,8 @@ services.factory('AppWatcher',['Logger', 'projectUtils', function(Logger, projec
 	new CSInterface().addEventListener('documentAfterSave', onDocumentAfterSave);
 	//new CSInterface().addEventListener('applicationActivate', onApplicationActivate);
 	new CSInterface().addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
+	new CSInterface().addEventListener('projectSelected', onProjectSelected);
+	new CSInterface().addEventListener('onCreationComplete', onCreationComplete);
 	 
 	function onDocumentAfterDeactivate(event){
 		console.log(event);
@@ -345,7 +347,12 @@ services.factory('AppWatcher',['Logger', 'projectUtils', function(Logger, projec
 		Logger.log(event);
 	};
 	
-	
+	function onProjectSelected(event){
+		Logger.log(event);
+	};
+	function onCreationComplete(event){
+		Logger.log(event);
+	};
 	function onDocumentAfterActivate(event){
 		console.log(event);
 		projectUtils.selectProject();
@@ -355,6 +362,7 @@ services.factory('AppWatcher',['Logger', 'projectUtils', function(Logger, projec
 	};
 	function onDocumentAfterSave(event){
 		/*.........................*/
+		
 		Logger.log(event);
 	};
 	function onApplicationActivate(event){
@@ -384,7 +392,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	new CSInterface().evalScript('$._ext_'+appName+'_XMP.getDetails()', function(data){
 		console.log(data);
 		AppModel.updateModel(JSON.parse(data));
-		createLoggingData();
+		createLoggingData(eventType);
 	});
 	};
 	

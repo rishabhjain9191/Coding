@@ -9,6 +9,10 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	console.log($rootScope.projectNo);
 	projectUtils.getProjects(Config.username, Config.password, Config.userid)
 	.then(function(data){
+			var event=new CSEvent("onCreationComplete", "APPLICATION");
+			event.type="onCreationComplete";
+			event.data="<onCreationComplete />";
+			new CSInterface().dispatchEvent(event);
 		$scope.projects=data;
 		console.log("Root Scope after getProjects\n"+$rootScope.projectNo);
 		projectUtils.selectProject();
@@ -19,6 +23,10 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 		var appName = new CSInterface().hostEnvironment.appName;
 		new CSInterface().evalScript('$._ext_'+appName+'_XMP.removeXMP()',function(){
 			projectUtils.setCurrentProjectId(0);
+			var event=new CSEvent("projectSelected", "APPLICATION");
+			event.type="projectSelected";
+			event.data="<projectSelected />";
+			new CSInterface().dispatchEvent(event);
 			//Change Style on Project Deselect
 			//$scope.projectNo[projectUtils.getSelectedProjectIndex()].style=projectUtils.deselectedStyle();
 			//$scope.projectNo[projectUtils.getSelectedProjectIndex()].message="";
@@ -32,6 +40,10 @@ function($scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 		new CSInterface().evalScript('$._ext_'+appName+'_XMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
 			console.log("XMP Inserted");
 			projectUtils.setCurrentProjectId(projectUtils.getSelectedProjectId());
+			var event=new CSEvent("projectSelected", "APPLICATION");
+			event.type="projectSelected";
+			event.data="<projectSelected />";
+			new CSInterface().dispatchEvent(event);
 		});
 		//Change Style on Project Select
 		console.log("Changing Style");
