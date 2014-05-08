@@ -11,10 +11,10 @@ function($scope, $location, $http,Config, Constants, loginUtils){
 		
 		loginUtils.login($scope.user.email, hashedPassword)
 		.then(function(data){
-			if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Faliure";}
+			if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
 			else{//User Authenticated
 				Config.data=data[0];
-				Config.keepMeLoggedIn=$scope.keepLoggedIn;
+				Config.keepMeLoggedIn=$scope.checked;
 				Config.userid=Config.data.userid;
 				Config.firstname=Config.data.firstname;
 				new CSInterface().evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
@@ -37,7 +37,4 @@ function($scope, $location, $http,Config, Constants, loginUtils){
 		console.log("Opening Forget Login in Browser");
 		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_FORGOT_LOGIN);
 	};
-	
-	
-	
 }]);

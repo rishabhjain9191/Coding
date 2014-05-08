@@ -2,9 +2,7 @@
 <html ng-app="TimeTracker">
 <head>
 <link href="assets/CSS/styles.css" rel="stylesheet" type="text/css">
-<!--<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">-->
 
-<!--<script src="bootstrap/js/bootstrap.min.js"></script>-->
 <script src="js/utils.js"></script>
 <script src="lib/CSInterface-4.0.0.js"></script> 
 
@@ -18,6 +16,7 @@
 <script>loadJSX()</script>
 <script src="controller/controller.js"></script>
 <script src="controller/loginController.js"></script>
+<script src="controller/aboutController.js"></script>
 <script src="controller/projectController.js"></script>
 <script src="controller/newProjectController.js"></script>
 <script src="controller/editProjectController.js"></script>
@@ -25,6 +24,8 @@
 </head>
 <body ng-controller='viewCtrl'>
 <div ng-view></div>
+<div id="footer">POWERED BY CREATIVEWORX</div>
 </body>
+
 </html>
 

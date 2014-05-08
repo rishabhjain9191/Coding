@@ -4,25 +4,25 @@
 			<span>Welcome back, {{firstname}}</span>
 		</div>
 		<div style="float: right; ">
-			<img src="./assets/images/launch_icon.png">
+			<img class="pointer" ng-click="webpage()" src="./assets/images/launch_icon.png">
 		</div>
 	</div>
 	
 	<div style="height: 30px;">
-		<span class="link" ng-click="create()">Create</span>
-		<span class="link" ng-click="edit()">Edit</span>
-		<span class="link" ng-click="asgnPrjFldr()">Assign</span>
+		<span class="link" ng-click="create()">Crt</span>
+		<span class="link" ng-click="edit()">Edt</span>
+		<span class="link" ng-click="asgnPrjFldr()">Asgn</span>
+		<span class="link" ng-click="feedback()">Contact</span>
+		<span class="link" ng-click="about()">Abt</span>
+		<span class="link" ng-click="logout()">Lgt</span>
+		
 	</div>
 	{{res}}
 	<ul class='projects'>
-		 <li ng-repeat='project in projects'>
-			<div ng-click='processProject(project.pid, $index)' ng-style='projectNo[$index].style'>
-			{{project.name}}
-			{{projectNo[$index].message}}	
+		 <li ng-repeat='project in projects' ng-click='processProjectClick(project.pid, $index)' ng-style='projectColor[$index]'  ng-class='projectNo[$index].style'>
+			<div>{{project.name}}<span class="progress">{{projectNo[$index].message}}<span>
 			</div>
 		</li> 
-		
 		{{message}}
 	</ul>
 </div>
-<div id="footer">POWERED BY CREATIVEWORX</div>

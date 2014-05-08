@@ -2,12 +2,12 @@ var app=angular.module('TimeTracker',['TTServices']);
 
 app.config(['$routeProvider', function($routeProvider){
 	$routeProvider.when('/login',{
-		controller:'loginCtrl',
-		templateUrl:'./views/login.html'
+			controller:'loginCtrl',
+			templateUrl:'./views/login.html'
 		})
 		.when('/projects',{
-		controller:'projectCtrl',
-		templateUrl:'./views/projects.html'
+			controller:'projectCtrl',
+			templateUrl:'./views/projects.html'
 		})
 		.when('/createNew',{
 			controller:'createNewProject',
@@ -16,6 +16,10 @@ app.config(['$routeProvider', function($routeProvider){
 		.when('/editProject',{
 			controller:'editProjectController',
 			templateUrl:'./views/editProject.html'
+		})
+		.when('/about',{
+			controller:'aboutCtrl',
+			templateUrl:'./views/about.html'
 		})
 		.otherwise({redirectTo:'/',template:'<html>Loading...</html>'});
 }]);
@@ -28,7 +32,10 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils){
 	$rootScope.projectNo=new Array();
 	$scope.processing=false;
 	
-	for(i=0;i<40;i++)$scope.projectNo.push(new projectNo(i));
+	$rootScope.projectColor=new Array();
+	for(i=0;i<40;i++){
+		$rootScope.projectNo.push(new projectNo(i));
+	}
 	//Config.init()
 	//.then(function(data){
 	var data = new Object();

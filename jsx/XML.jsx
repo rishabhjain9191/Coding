@@ -9,7 +9,7 @@ $._extXML={
 	
 	readConfig:function(){
 		if(!this.isExists()){
-			alert("hello");
+			//alert("hello");
 			return "false";
 		}
 		var tags=["username","password","keepMeLoggedIn","userid","firstname"];

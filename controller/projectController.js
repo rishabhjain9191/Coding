@@ -91,7 +91,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 
 	$scope.processProjectClick=function(projectId, index){
 			new CSInterface().evalScript('$._extXMP.checkDocLength()',function(data){
-			(parseInt(data))?processProject(projectId,index):alert("Please Open a document");
+			(parseInt(data))?processProject(projectId,index):alert("You need an open document before assigning the Project.");
 		});
 	};
 	
@@ -102,7 +102,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		if(prev_index==-1){
 			$rootScope.$apply(function(){
 			$rootScope.projectNo[index].message="In progress";
-			$rootScope.projectNo[index].style=projectUtils.selectedStyle();
+			$rootScope.projectNo[index].style="selected";//projectUtils.selectedStyle();
 			});
 			projectUtils.setSelectedProjectIndex(index);
 			
@@ -110,9 +110,9 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		else if(prev_index!=index){
 			$rootScope.$apply(function(){
 			$rootScope.projectNo[index].message="In progress";
-			$rootScope.projectNo[index].style=projectUtils.selectedStyle();
+			$rootScope.projectNo[index].style="selected";//projectUtils.selectedStyle();
 			$rootScope.projectNo[prev_index].message="";
-			$rootScope.projectNo[prev_index].style=projectUtils.deselectedStyle();
+			$rootScope.projectNo[prev_index].style="deselected";//projectUtils.deselectedStyle();
 			});
 			projectUtils.setSelectedProjectIndex(index);
 			
@@ -120,7 +120,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		else{
 			$rootScope.$apply(function(){
 			$rootScope.projectNo[index].message="";
-			$rootScope.projectNo[index].style=projectUtils.deselectedStyle();
+			$rootScope.projectNo[index].style="deselected";//projectUtils.deselectedStyle();
 			});
 			projectUtils.setSelectedProjectIndex(-1);
 		}
@@ -157,6 +157,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		$location.path('editProject');
 	};
 	
+	
 	$scope.asgnPrjFldr=function(){
 		//1. Check the Current Document is saved or not
 		//If no project is selected, alert-No Project Selected
@@ -166,13 +167,21 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
 		else{
 			new CSInterface().evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
-				alert(data);
+				//alert(data);
+				console.log(data);
 			});
 		}
 		
 	};
 	
+	$scope.webpage=function(){
+		new CSInterface().openURLInDefaultBrowser(Constants.URL_SERVICE);
+	};
+	$scope.feedback=function(){
+		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_BETA_FEEDBACK);
+	};
+	$scope.about=function(){
+		$location.path('about');
+	};
 	
 }]);
-
-

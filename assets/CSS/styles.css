@@ -20,13 +20,17 @@ body{
 	padding: 0;
 }
 
-button{
+button,select,input{
 	font-family: "Verdana";
 	font-size:9px;
 }
 
 select{
 	width: 100%;
+}
+
+.pointer{
+	cursor: pointer;
 }
 /***/
 
@@ -111,6 +115,8 @@ li{
 	border-width: 1px;
 	border-bottom-color: #555;
 	color: gray;
+	cursor: pointer;
+	/*text-transform: uppercase;*/
 }
 
 /********/
@@ -131,8 +137,35 @@ li{
 	width: 96%;
 	padding: 2px;
 }
+
+.progress{
+	position: absolute;
+	right: 3%;
+	
+}
+
 /******/
 
+.selected{
+	border: 1px solid red;
+	background: rgba(255, 0, 0, 0.14);
+}
+.deselected{
+	
+}
+
+/*******/
+.appTitle{
+	font-size: 13.5px;
+	padding-bottom: 26px;
+}
+#about{
+	text-align: center;
+	padding: 24px;
+	color: #555;
+
+}
+/*******/
 #footer{
 	position: fixed;
 	bottom: 0px;

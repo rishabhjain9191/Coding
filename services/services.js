@@ -209,15 +209,7 @@ function($rootScope, Constants, Config, $http, $q){
 	utils.selectedProjectId=0;
 	utils.selectedProjectIndex=-1;
 	utils.currentProjectId=-1;
-	utils.selectStyle={'color':'red'};
-	utils.deselectStyle={'color':'gray'};
 	
-	utils.selectedStyle=function(){
-		return this.selectStyle;
-	};
-	utils.deselectedStyle=function(){
-		return this.deselectStyle;
-	};
 	utils.setCurrentProjectId=function(val){
 		this.currentProjectId=val;
 	};
@@ -251,6 +243,8 @@ function($rootScope, Constants, Config, $http, $q){
 			for(var i=0;i<data.length;i++){
 				var pid=data[i].pid;
 				utils.projectIndexes[pid]=i;
+				$rootScope.projectColor[i]={};
+				$rootScope.projectColor[i].color=data[i].colorcode;
 			}
 			console.log(utils.projectIndexes);
 			deferred.resolve(data);
@@ -284,14 +278,13 @@ function($rootScope, Constants, Config, $http, $q){
 	};
 	utils.selectProject=function(){
 		//Check the current document's XMP
-		
 		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
 			//alert(data);
 			if(data==""){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
 					$rootScope.$apply(function(){
-						$rootScope.projectNo[utils.getSelectedProjectIndex()].style=utils.deselectedStyle();
+						$rootScope.projectNo[utils.getSelectedProjectIndex()].style="deselected";//utils.deselectedStyle();
 						$rootScope.projectNo[utils.getSelectedProjectIndex()].message="";
 					});
 				}
@@ -299,17 +292,18 @@ function($rootScope, Constants, Config, $http, $q){
 				utils.setCurrentProjectId(-1);
 			}
 			else{
-			
+					
+
 				console.log(utils.getSelectedProjectIndex());
 				//When the doc. has an associated project, select the project(change style and message)
 				$rootScope.$apply(function() {
 					console.log("Data from XMP<"+data+">");
 					if(data!=""/* ||data!="EvalScript error." */){
-					$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].style=utils.selectedStyle();
-					$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].message="In Progress";
+						$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].style="selected";//utils.selectedStyle();
+						$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].message="In Progress";
 					}
 					if(utils.getSelectedProjectIndex()!=-1){
-						$rootScope.projectNo[utils.getSelectedProjectIndex()].style=utils.deselectedStyle();
+						$rootScope.projectNo[utils.getSelectedProjectIndex()].style="deselected";//utils.deselectedStyle();
 						$rootScope.projectNo[utils.getSelectedProjectIndex()].message="";
 					}
 					utils.setSelectedProjectIndex(utils.projectIndexes[parseInt(data)]);
@@ -332,8 +326,19 @@ function($rootScope, Constants, Config, $http, $q){
 /***************************************************************
 ****************************************************************
 ***************************************************************/
-services.factory('AppWatcher',['Constants','Logger', 'projectUtils', function(Constants, Logger, projectUtils ){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', function($location, $rootScope, Constants, Logger, projectUtils ){
 	console.log('App Watcher Started');
+	
+	$rootScope.logout=function(){
+		new CSInterface().removeEventListener('documentAfterActivate',onDocumentAfterActivate);
+		new CSInterface().removeEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
+		new CSInterface().removeEventListener('documentAfterSave', onDocumentAfterSave);
+		new CSInterface().removeEventListener('applicationActivate',onApplicationActivate);
+		new CSInterface().removeEventListener('applicationBeforeQuit',onApplicationBeforeQuit);
+		
+		$location.path('login');
+		
+	};
 	
 	  //Define Event Listeners
 	new CSInterface().addEventListener('documentAfterActivate', onDocumentAfterActivate);
@@ -345,7 +350,8 @@ services.factory('AppWatcher',['Constants','Logger', 'projectUtils', function(Co
 	new CSInterface().addEventListener('onCreationComplete', onCreationComplete);
 	 
 	function onDocumentAfterDeactivate(event){
-		alert(event.type);
+		//alert(event.type);
+		console.log(event.type);
 		new CSInterface().evalScript('$._extXMP.checkDocLength()', function(data){
 			alert(data);
 			if(parseInt(data)==0){
