@@ -12,7 +12,7 @@ $._extXML={
 			alert("hello");
 			return "false";
 		}
-		var tags=["username","password","keepMeLoggedIn","userid"];
+		var tags=["username","password","keepMeLoggedIn","userid","firstname"];
 		var obj = new Object();
 		var str="{";
 		for(var i=0;i<tags.length;i++){

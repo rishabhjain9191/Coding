@@ -2,7 +2,7 @@ app.controller('loginCtrl',['$scope', '$location','$http', 'Config','Constants',
 function($scope, $location, $http,Config, Constants, loginUtils){
 	$scope.keepLoggedIn='false';	
 	$scope.message="";
-	alert("Loggin in User");
+	//alert("Loggin in User");
 	$scope.login=function(){
 		var hashedPassword=MD5($scope.user.password);
 		
@@ -16,6 +16,7 @@ function($scope, $location, $http,Config, Constants, loginUtils){
 				Config.data=data[0];
 				Config.keepMeLoggedIn=$scope.keepLoggedIn;
 				Config.userid=Config.data.userid;
+				Config.firstname=Config.data.firstname;
 				new CSInterface().evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 					//console.log(data);
 				});

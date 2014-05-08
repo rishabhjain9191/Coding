@@ -210,7 +210,7 @@ function($rootScope, Constants, Config, $http, $q){
 	utils.selectedProjectIndex=-1;
 	utils.currentProjectId=-1;
 	utils.selectStyle={'color':'red'};
-	utils.deselectStyle={'color':'black'};
+	utils.deselectStyle={'color':'gray'};
 	
 	utils.selectedStyle=function(){
 		return this.selectStyle;
@@ -371,6 +371,7 @@ services.factory('AppWatcher',['Constants','Logger', 'projectUtils', function(Co
 	};
 	function onDocumentAfterSave(event){
 		//Check whether any project id is associated with this document or not
+		alert(event.type);
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
 		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworx file recursively, and get project Id, else get 0.
 		new CSInterface().evalScript('$._extCWFile.getProjectID()', function(pid){

@@ -13,5 +13,8 @@ app.controller('createNewProject',['$scope','$location','projectUtils',function(
 			}, function(data){$scope.message=data.Msg});
 			
 		}
+	},
+	$scope.cancel=function(){
+		$location.path('projects');
 	}
 }]);

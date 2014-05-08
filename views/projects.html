@@ -1,16 +1,28 @@
-Project Page
-<button ng-click="create()">Create New Project</button>
-<button ng-click="edit()">Edit a Project</button>
-<button ng-click="asgnPrjFldr()">Assign Project to Folder</button>
-
-{{res}}
-<ul class='projects'>
-	 <li ng-repeat='project in projects'>
-		<div ng-click='processProject(project.pid, $index)' ng-style='projectNo[$index].style'>
-		{{project.name}}
-		{{projectNo[$index].message}}	
+<div id="contents">
+	<div class="pheader">
+		<div style="float: left; ">
+			<span>Welcome back, {{firstname}}</span>
 		</div>
-	</li> 
+		<div style="float: right; ">
+			<img src="./assets/images/launch_icon.png">
+		</div>
+	</div>
 	
-	{{message}}
-</ul>
+	<div style="height: 30px;">
+		<span class="link" ng-click="create()">Create</span>
+		<span class="link" ng-click="edit()">Edit</span>
+		<span class="link" ng-click="asgnPrjFldr()">Assign</span>
+	</div>
+	{{res}}
+	<ul class='projects'>
+		 <li ng-repeat='project in projects'>
+			<div ng-click='processProject(project.pid, $index)' ng-style='projectNo[$index].style'>
+			{{project.name}}
+			{{projectNo[$index].message}}	
+			</div>
+		</li> 
+		
+		{{message}}
+	</ul>
+</div>
+<div id="footer">POWERED BY CREATIVEWORX</div>

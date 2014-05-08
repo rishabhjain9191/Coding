@@ -4,18 +4,18 @@ $._ext_IDSN_XMP={
 	*/
 	getProjectDetails : function(){
 		try {
-		var myDocument=app.activeDocument;
-		
-		if (myDocument) {
-		
-			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
-			if(value==null)return "";
-		} 
-	}
-	catch(e) {
+			var myDocument=app.activeDocument;
+			
+			if (myDocument) {
+			
+				value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
+				if(value==null)return "";
+			} 
+		}
+		catch(e) {
 			value="";
 		}
-	return value+'';
+		return value+'';
 	},
 	
 	removeXMP:function(){
@@ -55,14 +55,19 @@ $._ext_IDSN_XMP={
 		return value;
 	},
 	getProjectID:function(){
-		var myDocument=app.activeDocument;
-		try{
-			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
+		try {
+			var myDocument=app.activeDocument;
+			
+			if (myDocument) {
+			
+				value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
+				if(value==null)return "";
+			} 
 		}
-		catch(e){
-			value='';
+		catch(e) {
+			value="";
 		}
-		return value;
+		return value+'';
 	},
 	getInstanceID:function(){
 		var myDocument=app.activeDocument;

@@ -1,10 +1,34 @@
-Create New Project
-<input placeholder='New Project Name' ng-model="project.name" />
-<input placeholder='Job Id' ng-model="project.jobId" />
-<input placeholder='Budget Hours' ng-model="project.budgetHrs" />
-<input type="color" ng-model='colorChosen'>
-{{message}}
-<button ng-click="create()">Create New Project</button>
+<div>
+	<div class="pheader">
+		<span><b>Create New Project</b></span>
+		<hr>
+	</div>
+	<div class="project">
+		<div class="group">
+			<label for="projectName">Project name:</label><br/>
+			<input class="ptext" id="projectName" ng-model="project.name" />
+		</div >
+		<div class="group">
+			<label for="jobId">Job ID:</label><br/>
+			<input class="ptext" id="jobId" ng-model="project.jobId" />
+		</div>
+		<div class="group">
+			<div style="float: left; width: 45px;">
+				<span>Color:</span>
+				<input style="width: 25px;" type="color" ng-model='colorChosen' />
+			</div>
+			<div style="float: left; width: 160px;">
+				<span>Budget (in hours):</span>
+				<input style="float: left; width: 166px;" ng-model="project.budgetHrs" />
+			</div>
+		</div>
+		<br/>
+		{{message}}
+		<div class="stretch middle">
+			<button ng-click="cancel()">Cancel</button>
+			<button ng-click="create()">Save</button>
+		</div>
+	</div>
+</div>
 
-
-
+<div id="footer">POWERED BY CREATIVEWORX</div>

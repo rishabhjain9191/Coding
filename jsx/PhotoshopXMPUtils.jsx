@@ -3,17 +3,25 @@ $._ext_PHXS_XMP={
 		Gets Current Document's XMP data for project id.
 	*/
 	getProjectDetails : function(){
-		var xmp = new XMPMeta( activeDocument.xmpMetadata.rawData);  
-		var myNamespace = "http://ns.adobe.com/xap/1.0/";  
-		var val = xmp.getProperty(myNamespace, "projectID");
-		if(val != null)
-			return val;
-		else
+		try{
+			var activeDocument=app.activeDocument;
+			if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
+			var xmp = new XMPMeta( activeDocument.xmpMetadata.rawData);  
+			var myNamespace = "http://ns.adobe.com/xap/1.0/";  
+			var val = xmp.getProperty(myNamespace, "projectID");
+			if(val != null)
+				return val;
+			else
+				return "";
+		}
+		catch(e){
 			return "";
+		}
 	},
 	
 	removeXMP:function(){
-		//alert("Removing XMP");
+		var activeDocument=app.activeDocument;
+		if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
 		var xmp = new XMPMeta( activeDocument.xmpMetadata.rawData);  
 		var myNamespace = "http://ns.adobe.com/xap/1.0/";  
 		var myPrefix = "xmp:";  
@@ -23,12 +31,14 @@ $._ext_PHXS_XMP={
 	},
 	
 	insertXMP:function(value){
+		var activeDocument=app.activeDocument;
+		if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
 		var xmp = new XMPMeta( activeDocument.xmpMetadata.rawData);  
 		var myNamespace = "http://ns.adobe.com/xap/1.0/";  
 		var myPrefix = "xmp:";  
 		XMPMeta.registerNamespace(myNamespace, myPrefix);  
 		xmp.setProperty(myNamespace, "projectID", value); 
-		app.activeDocument.xmpMetadata.rawData = xmp.serialize();  
+		activeDocument.xmpMetadata.rawData = xmp.serialize();  
 	},
 	
 	getDetails:function(){
@@ -52,20 +62,40 @@ $._ext_PHXS_XMP={
 		return value;
 	},
 	getProjectID:function(){
-		var xmp = new XMPMeta( activeDocument.xmpMetadata.rawData);  
-		var myNamespace = "http://ns.adobe.com/xap/1.0/";  
-		var value = xmp.getProperty(myNamespace, "projectID");
-		return value;
+		try{
+			var activeDocument=app.activeDocument;
+			if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
+			var xmp = new XMPMeta( activeDocument.xmpMetadata.rawData);  
+			var myNamespace = "http://ns.adobe.com/xap/1.0/";  
+			var val = xmp.getProperty(myNamespace, "projectID");
+			if(val != null)
+				return val;
+			else
+				return "";
+		}
+		catch(e){
+			return "";
+		}
 	},
 	getInstanceID:function(){
-		var document = app.activeDocument;
-		var value = document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
-		return value;
+		try{
+			var document = app.activeDocument;
+			var value = document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
+			return value;
+		}
+		catch(e){
+			return "";
+		}
 	},
 	getOriginalID:function(){
-		var document = app.activeDocument;
-		var value = document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
-		return value;
+		try{
+			var document = app.activeDocument;
+			var value = document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
+			return value;
+		}
+		catch(e){
+			return "";
+		}
 	},
 	getDocumentID:function(){
 		var myDocument=app.activeDocument;

@@ -40,8 +40,8 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils){
 			Config.username=Config.data.username;
 			Config.password=Config.data.password;
 			Config.keepMeLoggedIn=Config.data.keepMeLoggedIn;
+			Config.firstname=Config.data.firstname;
 			Config.userid=Config.data.userid;
-			
 			
 			if(Config.keepMeLoggedIn=="false"){	
 				console.log("keep me log in false");
@@ -82,7 +82,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils){
 
 function projectNo(i){
 	this.index=i;
-	this.style={'color':'black'};
+	this.style={'color':'gray'};
 	this.message="";
 };
 

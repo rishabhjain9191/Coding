@@ -1,5 +1,6 @@
 app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher',
 function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
+	$scope.firstname = Config.firstname;
 	//AppWatcher.run();
 	var prev_index;
 	
@@ -90,43 +91,49 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	
 	
 	$scope.processProject=function(projectId, index){
-		$scope.processing=true;
-		prev_index=projectUtils.getSelectedProjectIndex();
-		console.log(prev_index);
-		if(prev_index==-1){
-			$rootScope.projectNo[index].message="In progress";
-			$rootScope.projectNo[index].style=projectUtils.selectedStyle();
-			projectUtils.setSelectedProjectIndex(index);
-		}
-		else if(prev_index!=index){
-			$rootScope.projectNo[index].message="In progress";
-			$rootScope.projectNo[index].style=projectUtils.selectedStyle();
-			$rootScope.projectNo[prev_index].message="";
-			$rootScope.projectNo[prev_index].style=projectUtils.deselectedStyle();
-			projectUtils.setSelectedProjectIndex(index);
-		}
-		else{
-			$rootScope.projectNo[index].message="";
-			$rootScope.projectNo[index].style=projectUtils.deselectedStyle();
-			projectUtils.setSelectedProjectIndex(-1);
-		}
-		console.log("previous index : "+prev_index);
-		console.log("current index : "+index);
-		projectUtils.setSelectedProjectId(projectId);
-		
-		var csInterface=new CSInterface();
-		csInterface.evalScript('$._ext.getCurrentDoc()', function(data){
-			if(data=='1'){
-				//alert("welcome to TT!");
-				checkDocXMP();
-				//alert(res);
+		/*new CSInterface().evalScript('app.documents.length', function(data){
+			if(data!=0){*/
+				$scope.processing=true;
+				prev_index=projectUtils.getSelectedProjectIndex();
+				console.log(prev_index);
+				if(prev_index==-1){
+					$rootScope.projectNo[index].message="In progress";
+					$rootScope.projectNo[index].style=projectUtils.selectedStyle();
+					projectUtils.setSelectedProjectIndex(index);
+				}
+				else if(prev_index!=index){
+					$rootScope.projectNo[index].message="In progress";
+					$rootScope.projectNo[index].style=projectUtils.selectedStyle();
+					$rootScope.projectNo[prev_index].message="";
+					$rootScope.projectNo[prev_index].style=projectUtils.deselectedStyle();
+					projectUtils.setSelectedProjectIndex(index);
+				}
+				else{
+					$rootScope.projectNo[index].message="";
+					$rootScope.projectNo[index].style=projectUtils.deselectedStyle();
+					projectUtils.setSelectedProjectIndex(-1);
+				}
+				console.log("previous index : "+prev_index);
+				console.log("current index : "+index);
+				projectUtils.setSelectedProjectId(projectId);
+				
+				var csInterface=new CSInterface();
+				csInterface.evalScript('$._ext.getCurrentDoc()', function(data){
+					if(data=='1'){
+						//alert("welcome to TT!");
+						checkDocXMP();
+						//alert(res);
+					}
+					else{
+						console.log("No document open");
+						//alert("Please Open a document to continus further");
+					}
+				});
+				//alert("done")
+			/*}else{
+				alert("Please open a document first!");
 			}
-			else{
-				console.log("No document open");
-				//alert("Please Open a document to continus further");
-			}
-		});
-		//alert("done")
+		});*/
 	};
 	
 	
