@@ -93,5 +93,9 @@ $._extXMP={
 			value='';
 		}
 		return value;
+	},
+	checkDocLength:function(){
+		var len=app.documents.length;
+		return len+'';
 	}
 };

@@ -6,7 +6,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	
 	//console.log($scope.projectNo);
 	var refreshProjects=function(){
-	alert("Refreshing Projects");
+	console.log("Refreshing Projects");
 	console.log($rootScope.projectNo);
 	projectUtils.getProjects(Config.username, Config.password, Config.userid)
 	.then(function(data){
@@ -88,52 +88,54 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	} 
 	refreshProjects();
 	
+
+	$scope.processProjectClick=function(projectId, index){
+			new CSInterface().evalScript('$._extXMP.checkDocLength()',function(data){
+			(parseInt(data))?processProject(projectId,index):alert("Please Open a document");
+		});
+	};
 	
-	
-	$scope.processProject=function(projectId, index){
-		/*new CSInterface().evalScript('app.documents.length', function(data){
-			if(data!=0){*/
-				$scope.processing=true;
-				prev_index=projectUtils.getSelectedProjectIndex();
-				console.log(prev_index);
-				if(prev_index==-1){
-					$rootScope.projectNo[index].message="In progress";
-					$rootScope.projectNo[index].style=projectUtils.selectedStyle();
-					projectUtils.setSelectedProjectIndex(index);
-				}
-				else if(prev_index!=index){
-					$rootScope.projectNo[index].message="In progress";
-					$rootScope.projectNo[index].style=projectUtils.selectedStyle();
-					$rootScope.projectNo[prev_index].message="";
-					$rootScope.projectNo[prev_index].style=projectUtils.deselectedStyle();
-					projectUtils.setSelectedProjectIndex(index);
-				}
-				else{
-					$rootScope.projectNo[index].message="";
-					$rootScope.projectNo[index].style=projectUtils.deselectedStyle();
-					projectUtils.setSelectedProjectIndex(-1);
-				}
-				console.log("previous index : "+prev_index);
-				console.log("current index : "+index);
-				projectUtils.setSelectedProjectId(projectId);
-				
-				var csInterface=new CSInterface();
-				csInterface.evalScript('$._ext.getCurrentDoc()', function(data){
-					if(data=='1'){
-						//alert("welcome to TT!");
-						checkDocXMP();
-						//alert(res);
-					}
-					else{
-						console.log("No document open");
-						//alert("Please Open a document to continus further");
-					}
-				});
-				//alert("done")
-			/*}else{
-				alert("Please open a document first!");
+	var processProject=function(projectId, index){
+		$scope.processing=true;
+		prev_index=projectUtils.getSelectedProjectIndex();
+		console.log(prev_index);
+		if(prev_index==-1){
+			$rootScope.$apply(function(){
+			$rootScope.projectNo[index].message="In progress";
+			$rootScope.projectNo[index].style=projectUtils.selectedStyle();
+			});
+			projectUtils.setSelectedProjectIndex(index);
+			
+		}
+		else if(prev_index!=index){
+			$rootScope.$apply(function(){
+			$rootScope.projectNo[index].message="In progress";
+			$rootScope.projectNo[index].style=projectUtils.selectedStyle();
+			$rootScope.projectNo[prev_index].message="";
+			$rootScope.projectNo[prev_index].style=projectUtils.deselectedStyle();
+			});
+			projectUtils.setSelectedProjectIndex(index);
+			
+		}
+		else{
+			$rootScope.$apply(function(){
+			$rootScope.projectNo[index].message="";
+			$rootScope.projectNo[index].style=projectUtils.deselectedStyle();
+			});
+			projectUtils.setSelectedProjectIndex(-1);
+		}
+		console.log("previous index : "+prev_index);
+		console.log("current index : "+index);
+		projectUtils.setSelectedProjectId(projectId);
+		
+		var csInterface=new CSInterface();
+		csInterface.evalScript('$._ext.getCurrentDoc()', function(data){
+			if(data=='1'){
+				//alert("welcome to TT!");
+				checkDocXMP();
+				//alert(res);
 			}
-		});*/
+		});
 	};
 	
 	
