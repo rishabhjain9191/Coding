@@ -346,8 +346,9 @@ services.factory('AppWatcher',['Constants','Logger', 'projectUtils', function(Co
 	 
 	function onDocumentAfterDeactivate(event){
 		alert(event.type);
-		new CSInterface().evalScript('app.documents.length', function(data){
-			if(data==0){
+		new CSInterface().evalScript('$._extXMP.checkDocLength()', function(data){
+			alert(data);
+			if(parseInt(data)==0){
 				projectUtils.selectProject();
 			}
 		});
@@ -420,7 +421,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	var eventType=event.type;
 	console.log("Updating App Model...");
 	new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
-		console.log(data);
+		//console.log(data);
 		AppModel.updateModel(JSON.parse(data));
 		createLoggingData(eventType);
 	});

@@ -2,7 +2,7 @@ app.controller('loginCtrl',['$scope', '$location','$http', 'Config','Constants',
 function($scope, $location, $http,Config, Constants, loginUtils){
 	$scope.keepLoggedIn='false';	
 	$scope.message="";
-	alert("Loggin in User");
+	console.log("Logging in User");
 	$scope.login=function(){
 		var hashedPassword=MD5($scope.user.password);
 		

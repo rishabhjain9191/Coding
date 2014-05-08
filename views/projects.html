@@ -6,7 +6,7 @@ Project Page
 {{res}}
 <ul class='projects'>
 	 <li ng-repeat='project in projects'>
-		<div ng-click='processProject(project.pid, $index)' ng-style='projectNo[$index].style'>
+		<div ng-click='processProjectClick(project.pid, $index)' ng-style='projectNo[$index].style'>
 		{{project.name}}
 		{{projectNo[$index].message}}	
 		</div>
