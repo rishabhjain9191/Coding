@@ -1,7 +1,7 @@
 app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher',
 function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
 	$scope.firstname = Config.firstname;
-	//AppWatcher.run();
+	AppWatcher.addEventListeners();
 	var prev_index;
 	
 	//console.log($scope.projectNo);
@@ -172,6 +172,11 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			});
 		}
 		
+	};
+	
+	$rootScope.logout=function(){
+		AppWatcher.removeEventListeners();
+		$location.path("login");
 	};
 	
 	$scope.webpage=function(){

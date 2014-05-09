@@ -329,18 +329,21 @@ function($rootScope, Constants, Config, $http, $q){
 services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', function($location, $rootScope, Constants, Logger, projectUtils ){
 	console.log('App Watcher Started');
 	
-	$rootScope.logout=function(){
+	var utils={};
+	utils.removeEventListeners=function(){
 		new CSInterface().removeEventListener('documentAfterActivate',onDocumentAfterActivate);
 		new CSInterface().removeEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
 		new CSInterface().removeEventListener('documentAfterSave', onDocumentAfterSave);
 		new CSInterface().removeEventListener('applicationActivate',onApplicationActivate);
 		new CSInterface().removeEventListener('applicationBeforeQuit',onApplicationBeforeQuit);
 		
-		$location.path('login');
+		
 		
 	};
 	
-	  //Define Event Listeners
+	
+	utils.addEventListeners=function(){
+	//Define Event Listeners
 	new CSInterface().addEventListener('documentAfterActivate', onDocumentAfterActivate);
 	new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
 	new CSInterface().addEventListener('documentAfterSave', onDocumentAfterSave);
@@ -348,12 +351,13 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	new CSInterface().addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
 	new CSInterface().addEventListener('projectSelected', onProjectSelected);
 	new CSInterface().addEventListener('onCreationComplete', onCreationComplete);
+	};
 	 
 	function onDocumentAfterDeactivate(event){
 		//alert(event.type);
 		console.log(event.type);
 		new CSInterface().evalScript('$._extXMP.checkDocLength()', function(data){
-			alert(data);
+			//alert(data);
 			if(parseInt(data)==0){
 				projectUtils.selectProject();
 			}
@@ -415,6 +419,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		Logger.log(event);
 	};  
 	
+	return utils;
 
 }]);
 
