@@ -111,10 +111,12 @@ ul{
 
 li{
 	padding: 5px;
-	border-bottom-style: solid;
+	/*border-bottom-style: solid;
 	border-width: 1px;
 	border-bottom-color: #555;
 	color: gray;
+	*/
+	border: 1px solid #555;
 	cursor: pointer;
 	/*text-transform: uppercase;*/
 }
@@ -145,7 +147,7 @@ li{
 }
 
 /******/
-
+/*
 .selected{
 	border: 1px solid red;
 	background: rgba(255, 0, 0, 0.14);
@@ -153,7 +155,7 @@ li{
 .deselected{
 	
 }
-
+*/
 /*******/
 .appTitle{
 	font-size: 13.5px;

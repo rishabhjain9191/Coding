@@ -6,18 +6,18 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	
 	//console.log($scope.projectNo);
 	var refreshProjects=function(){
-	console.log("Refreshing Projects");
-	console.log($rootScope.projectNo);
-	projectUtils.getProjects(Config.username, Config.password, Config.userid)
-	.then(function(data){
-			var event=new CSEvent("onCreationComplete", "APPLICATION");
-			event.type="onCreationComplete";
-			event.data="<onCreationComplete />";
-			new CSInterface().dispatchEvent(event);
-		$scope.projects=data;
-		console.log("Root Scope after getProjects\n"+$rootScope.projectNo);
-		projectUtils.selectProject();
-	}, function(data){});};
+		console.log("Refreshing Projects");
+		projectUtils.getProjects(Config.username, Config.password, Config.userid)
+		.then(function(data){
+				var event=new CSEvent("onCreationComplete", "APPLICATION");
+				event.type="onCreationComplete";
+				event.data="<onCreationComplete />";
+				new CSInterface().dispatchEvent(event);
+			$scope.projects=data;
+			
+			projectUtils.selectProject();
+		}, function(data){});
+	};
 	var deselectProject=function(){
 		//Remove XMP data of Project;
 		console.log("Deselecting Project");
@@ -28,8 +28,6 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			event.data="<projectSelected />";
 			new CSInterface().dispatchEvent(event);
 			//Change Style on Project Deselect
-			//$scope.projectNo[projectUtils.getSelectedProjectIndex()].style=projectUtils.deselectedStyle();
-			//$scope.projectNo[projectUtils.getSelectedProjectIndex()].message="";
 		});
 		
 	};
@@ -47,17 +45,9 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		//Change Style on Project Select
 		console.log("Changing Style");
 		if(prev_index>=0){
-			$rootScope.projectNo[prev_index].style=projectUtils.deselectedStyle();
-			$rootScope.projectNo[prev_index].message="";
+			projectUtils.changeStyleToDeselected(prev_index);
 		}
-		/* var abc=projectUtils.getSelectedProjectIndex();
-		console.log(abc);
-		$scope.projectNo[abc].style=projectUtils.selectedStyle();
-		$scope.projectNo[abc].message="In Progress";
-		$scope.processing=false;
-		console.log("Style Changed");
-		//console.log($scope.$index+" message "+$scope.projectNo[projectUtils.getSelectedProjectIndex()].message);
-		console.log($scope); */
+		
 		return ;
 		
 	};
@@ -101,26 +91,22 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		console.log(prev_index);
 		if(prev_index==-1){
 			$rootScope.$apply(function(){
-			$rootScope.projectNo[index].message="In progress";
-			$rootScope.projectNo[index].style="selected";//projectUtils.selectedStyle();
+				projectUtils.changeStyleToSelected(index);
 			});
 			projectUtils.setSelectedProjectIndex(index);
 			
 		}
 		else if(prev_index!=index){
 			$rootScope.$apply(function(){
-			$rootScope.projectNo[index].message="In progress";
-			$rootScope.projectNo[index].style="selected";//projectUtils.selectedStyle();
-			$rootScope.projectNo[prev_index].message="";
-			$rootScope.projectNo[prev_index].style="deselected";//projectUtils.deselectedStyle();
+				projectUtils.changeStyleToSelected(index);
+				projectUtils.changeStyleToDeselected(prev_index);
 			});
 			projectUtils.setSelectedProjectIndex(index);
 			
 		}
 		else{
 			$rootScope.$apply(function(){
-			$rootScope.projectNo[index].message="";
-			$rootScope.projectNo[index].style="deselected";//projectUtils.deselectedStyle();
+				projectUtils.changeStyleToDeselected(index);
 			});
 			projectUtils.setSelectedProjectIndex(-1);
 		}

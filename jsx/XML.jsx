@@ -1,6 +1,10 @@
 $._extXML={
 	isExists : function() {
-        var configFile = new File(pathToConfigFile);
+		var configFile = new File(pathToConfigFile);
+		var configFolder=configFile.parent;
+		if(!configFolder.exists){
+			alert(configFolder.create());
+		}
         if(configFile.exists)
             return true;
         else

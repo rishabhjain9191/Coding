@@ -78,24 +78,26 @@ $._ext_PHXS_XMP={
 		}
 	},
 	getInstanceID:function(){
+		var value="";
+		var document = app.activeDocument;
 		try{
-			var document = app.activeDocument;
-			var value = document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
-			return value;
+			value = document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
 		}
 		catch(e){
-			return "";
+			value = document.name;
 		}
+		return value;
 	},
 	getOriginalID:function(){
+		var value="";
+		var document = app.activeDocument;
 		try{
-			var document = app.activeDocument;
-			var value = document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
-			return value;
+			value = document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
 		}
 		catch(e){
-			return "";
+			value = document.name;
 		}
+		return value;
 	},
 	getDocumentID:function(){
 		var myDocument=app.activeDocument;

@@ -1,4 +1,5 @@
 // constants
+
 var pathToConfigFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxConfig.xml";
 var XMLHeader = '<\?xml version=\"1.0\" encoding=\"UTF-8\"?>';
 

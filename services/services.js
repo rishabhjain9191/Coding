@@ -206,9 +206,19 @@ function(Constants, Config, $http, $q){
 services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q',
 function($rootScope, Constants, Config, $http, $q){
 	var utils={};
-	utils.selectedProjectId=0;
-	utils.selectedProjectIndex=-1;
-	utils.currentProjectId=-1;
+	utils.selectedProjectId=0;			//Project Clicked(Selected) Id
+	utils.selectedProjectIndex=-1;		//Project Clicked(Selected) Index
+	utils.currentProjectId=-1;			//Previously Selected(current) project
+	
+	utils.changeStyleToSelected=function(index){
+		console.log($rootScope.projectProperties);
+		$rootScope.projectProperties[index].style.border="1px solid "+$rootScope.projectProperties[index].style.color;
+		$rootScope.projectProperties[index].message="In Progress";
+	};
+	utils.changeStyleToDeselected=function(index){
+		$rootScope.projectProperties[index].style.border="1px solid #555";
+		$rootScope.projectProperties[index].message="";
+	};
 	
 	utils.setCurrentProjectId=function(val){
 		this.currentProjectId=val;
@@ -243,8 +253,8 @@ function($rootScope, Constants, Config, $http, $q){
 			for(var i=0;i<data.length;i++){
 				var pid=data[i].pid;
 				utils.projectIndexes[pid]=i;
-				$rootScope.projectColor[i]={};
-				$rootScope.projectColor[i].color=data[i].colorcode;
+				$rootScope.projectProperties[i].style={};
+				$rootScope.projectProperties[i].style.color=data[i].colorcode;
 			}
 			console.log(utils.projectIndexes);
 			deferred.resolve(data);
@@ -284,34 +294,30 @@ function($rootScope, Constants, Config, $http, $q){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
 					$rootScope.$apply(function(){
-						$rootScope.projectNo[utils.getSelectedProjectIndex()].style="deselected";//utils.deselectedStyle();
-						$rootScope.projectNo[utils.getSelectedProjectIndex()].message="";
+						utils.changeStyleToDeselected(utils.getSelectedProjectIndex());
 					});
 				}
 				utils.setSelectedProjectIndex(-1);
 				utils.setCurrentProjectId(-1);
 			}
 			else{
-					
-
 				console.log(utils.getSelectedProjectIndex());
 				//When the doc. has an associated project, select the project(change style and message)
 				$rootScope.$apply(function() {
 					console.log("Data from XMP<"+data+">");
-					if(data!=""/* ||data!="EvalScript error." */){
-						$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].style="selected";//utils.selectedStyle();
-						$rootScope.projectNo[utils.projectIndexes[parseInt(data)]].message="In Progress";
-					}
 					if(utils.getSelectedProjectIndex()!=-1){
-						$rootScope.projectNo[utils.getSelectedProjectIndex()].style="deselected";//utils.deselectedStyle();
-						$rootScope.projectNo[utils.getSelectedProjectIndex()].message="";
+						utils.changeStyleToDeselected(utils.getSelectedProjectIndex());
+						
+					}
+					if(data!=""/* ||data!="EvalScript error." */){
+						utils.changeStyleToSelected(utils.projectIndexes[parseInt(data)]);
 					}
 					utils.setSelectedProjectIndex(utils.projectIndexes[parseInt(data)]);
 					utils.setCurrentProjectId(parseInt(data));
 				});
 				
 			}
-			console.log($rootScope.projectNo);
+
 		});
 		
 	};

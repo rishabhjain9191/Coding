@@ -29,12 +29,12 @@ app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config'
 function($rootScope, $scope, $location,$http,Config, Constants, loginUtils){
 	
 	// Initialize $rootScope;
-	$rootScope.projectNo=new Array();
+	$rootScope.projectProperties=new Array();
 	$scope.processing=false;
 	
-	$rootScope.projectColor=new Array();
+	
 	for(i=0;i<40;i++){
-		$rootScope.projectNo.push(new projectNo(i));
+		$rootScope.projectProperties.push(new projectNo(i));
 	}
 	//Config.init()
 	//.then(function(data){
@@ -89,7 +89,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils){
 
 function projectNo(i){
 	this.index=i;
-	this.style={'color':'gray'};
+	this.style={};
 	this.message="";
 };
 
