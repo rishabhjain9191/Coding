@@ -22,14 +22,15 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 	},
 	
 	$scope.selectColor=function(){
-		var script = 'var color = $.colorPicker (); if(color == -1){"-1";} var color16 = color.toString(16); color16;';
+		var script = 'var color = $.colorPicker ("#888888"); if(color == -1){"-1";} var color16 = color.toString(16); color16;';
 
 		new CSInterface().evalScript(script, function(data){
 			$rootScope.$apply(function(){
 				if(data!=-1){
-					var colorSelected = "#"+data;
+					var colorSelected = "";
+					if(data.length == 1) colorSelected = "#"+data+data+data;
+					else colorSelected = "#"+data;
 					$scope.colorBox.background=colorSelected;
-					$scope.colorChosen=colorSelected;
 					console.log("Color selected: "+colorSelected);
 				}
 			});

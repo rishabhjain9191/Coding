@@ -146,6 +146,14 @@ li{
 	
 }
 
+.colorbox{
+	width: 17px;
+	cursor: pointer;
+	margin-left: 9px;
+	height: 16px;
+	border: 1px solid gray;
+}
+
 /******/
 /*
 .selected{

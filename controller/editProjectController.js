@@ -1,11 +1,12 @@
 app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location', function($scope, $rootScope, projectUtils, Config, $location){
-	 
+	 $scope.colorBox={};
 	 projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
 	.then(function(data){$scope.projects=data;
-		$scope.project=$scope.projects[2];
+		$scope.project=$scope.projects[0];
 		$scope.name=$scope.project.name;
-		$scope.colorBox={};
+		console.log($scope.name);
 		$scope.colorBox.background=$scope.project.colorcode;
+		console.log($scope.colorBox.background);
 	}, function(data){});
 	
 	var newName, newJobId, newColorCode, newBudget;
@@ -15,7 +16,6 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 		($scope.project.jobid!=='undefined')?(newJobId=$scope.project.jobid):(newjobId="");
 		($scope.project.colorcode!=='undefined')?(newColorCode=$scope.project.colorcode):(newColorCode="");
 		($scope.project.budget!=='undefined')?(newBudget=$scope.project.budget):(newBudget="");
-		console.log($scope.project.projectid+ "  :: "+newName+ "  :: "+newJobId+ "  :: "+  newBudget+ "  :: "+newColorCode);
 		projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode)
 		.then(function(data){
 			console.log(data.Msg);
@@ -29,6 +29,11 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 		$location.path('projects');
 	},
 	
+	$scope.changeProject=function(p){
+		$scope.name = p.name;
+		$scope.colorBox.background=p.colorcode;
+	},
+	
 	$scope.selectColor=function(){
 		var projColor= "";
 		if(	$scope.project.colorcode!='')
@@ -37,9 +42,11 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 		new CSInterface().evalScript(script, function(data){
 			$rootScope.$apply(function(){
 				if(data!=-1){
-					var colorSelected = "#"+data;
+					var colorSelected = "";
+					if(data.length == 1) colorSelected = "#"+data+data+data;
+					else colorSelected = "#"+data;
 					$scope.project.colorcode=colorSelected;
-					$scope.colorBox.background=$scope.project.colorCode;
+					$scope.colorBox.background=$scope.project.colorcode;
 					console.log("Color selected: "+colorSelected);
 				}
 			});
