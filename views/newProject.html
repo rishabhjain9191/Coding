@@ -15,8 +15,8 @@
 		<div class="group">
 			<div style="float: left; width: 45px;">
 				<span>Color:</span>
-				<input style="width: 25px;" type="color" ng-model='colorChosen' />
-				<!--<input colorpicker type="text" />-->
+				<input style="width: 17px;" ng-click="selectColor()" type="text" ng-model='colorChosen' ng-style="colorBox" />
+				<!--<input colorpicker="rgb" type="text" />-->
 			</div>
 			<div style="float: left; width: 160px;">
 				<span>Budget (in hours):</span>

@@ -89,7 +89,6 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 				}else{
 					$rootScope.$apply(function(){
 						$scope.alert_message="You need an open document before assigning the Project.";
-						console.log($scope.modalShown);
 						$scope.modalShown=true;
 					});
 				}
@@ -160,7 +159,6 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		//If no project is selected, alert-No Project Selected
 		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
 			$scope.alert_message = "No Project Selected !";
-			console.log($scope.modalShown);
 			$scope.modalShown=true;
 		}
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.

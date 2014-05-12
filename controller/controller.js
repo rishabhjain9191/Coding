@@ -1,4 +1,4 @@
-var app=angular.module('TimeTracker',['TTServices'/*,'colorpicker.module'*/]);
+var app=angular.module('TimeTracker',['TTServices'/*,'colorpicker.module','ui.bootstrap'*/]);
 
 app.config(['$routeProvider', function($routeProvider){
 	$routeProvider.when('/login',{
