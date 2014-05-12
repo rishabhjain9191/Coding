@@ -1,5 +1,8 @@
 app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher',
 function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
+	
+	$scope.modalShown = false;
+	
 	$scope.firstname = Config.firstname;
 	AppWatcher.addEventListeners();
 	var prev_index;
@@ -81,7 +84,15 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 
 	$scope.processProjectClick=function(projectId, index){
 			new CSInterface().evalScript('$._extXMP.checkDocLength()',function(data){
-			(parseInt(data))?processProject(projectId,index):alert("You need an open document before assigning the Project.");
+				if(parseInt(data)){
+					processProject(projectId,index)
+				}else{
+					$rootScope.$apply(function(){
+						$scope.alert_message="You need an open document before assigning the Project.";
+						console.log($scope.modalShown);
+						$scope.modalShown=true;
+					});
+				}
 		});
 	};
 	
@@ -148,7 +159,9 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		//1. Check the Current Document is saved or not
 		//If no project is selected, alert-No Project Selected
 		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
-			alert("No Project Selected !");
+			$scope.alert_message = "No Project Selected !";
+			console.log($scope.modalShown);
+			$scope.modalShown=true;
 		}
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
 		else{

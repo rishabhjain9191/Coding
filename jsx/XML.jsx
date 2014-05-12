@@ -13,7 +13,6 @@ $._extXML={
 	
 	readConfig:function(){
 		if(!this.isExists()){
-			//alert("hello");
 			return "false";
 		}
 		var tags=["username","password","keepMeLoggedIn","userid","firstname"];
@@ -24,8 +23,6 @@ $._extXML={
 			str=str+"\""+tags[i]+"\""+":"+"\"" +(obj[tags[i]])+"\""+",";
 		}
 		str=str.substring(0,str.length-1)+"}";
-		//alert(str);
-		//alert(JSON.stringify(obj));
 		return str;
 	},
 	
@@ -61,7 +58,6 @@ $._extXML={
 			return "file written successfully";
 		}
 		else{
-			//alert(config.username);
 			/*this.setTagValue('password', config.password);
 				this.setTagValue('keepMeLoggedIn', config.keepMeLoggedIn);
 				*/

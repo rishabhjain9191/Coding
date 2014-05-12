@@ -5,7 +5,6 @@ $._ext_IDSN={
         var appName;	    
 	    appName = "Hello InDesign";	    
         alert(appName);
-		//alert(param);
         /************************************************************************/
         
         return appName;

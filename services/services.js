@@ -188,10 +188,6 @@ function(Constants, Config, $http, $q){
 			.success(function(data,status){
 			
 				deferred.resolve(data);
-				/* alert("data : "+data);
-				if(data.Msg=="Error: Authentication failed"){this.loginResult=true;}
-				else{utils.loginResult=true;} */
-				
 			})
 			.error(function(data,status){
 					deferred.reject(data);
@@ -213,10 +209,14 @@ function($rootScope, Constants, Config, $http, $q){
 	utils.changeStyleToSelected=function(index){
 		console.log($rootScope.projectProperties);
 		$rootScope.projectProperties[index].style.border="1px solid "+$rootScope.projectProperties[index].style.color;
+		var rgba = hexToRgb($rootScope.projectProperties[index].style.color);
+		$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075)";
 		$rootScope.projectProperties[index].message="In Progress";
 	};
+	
 	utils.changeStyleToDeselected=function(index){
 		$rootScope.projectProperties[index].style.border="1px solid #555";
+		$rootScope.projectProperties[index].style.background="";
 		$rootScope.projectProperties[index].message="";
 	};
 	
@@ -360,17 +360,12 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	};
 	 
 	function onDocumentAfterDeactivate(event){
-		//alert(event.type);
 		console.log(event.type);
 		new CSInterface().evalScript('$._extXMP.checkDocLength()', function(data){
-			//alert(data);
 			if(parseInt(data)==0){
 				projectUtils.selectProject();
 			}
 		});
-		//projectUtils.selectProject();
-		//alert(event.type);
-		//Logger.log(event);
 	};
 	
 	function onProjectSelected(event){
@@ -382,13 +377,12 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	function onDocumentAfterActivate(event){
 		console.log(event);
 		projectUtils.selectProject();
-		//alert(event.type);
 		Logger.log(event);
 		
 	};
 	function onDocumentAfterSave(event){
+		console.log(event);
 		//Check whether any project id is associated with this document or not
-		alert(event.type);
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
 		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworx file recursively, and get project Id, else get 0.
 		new CSInterface().evalScript('$._extCWFile.getProjectID()', function(pid){
@@ -417,7 +411,6 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	function onApplicationActivate(event){
 		console.log(event);
 		projectUtils.selectProject();
-		//alert(event.type);
 		Logger.log(event);
 	};
 	function onApplicationBeforeQuit(event){
@@ -663,16 +656,14 @@ function(Constants){
 	
 }]);
 
+
 ////////----------App Watcher Ends------------------///////////
 function loadJSX() {
     var csInterface = new CSInterface();
     var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/";
     csInterface.evalScript('$._ext.evalFiles("' + extensionRoot + '")');
-	}
+}
 	
 function evalScript(script, callback) {
-    new CSInterface().evalScript(script, callback);
-	}
-	
-	
-	
+	new CSInterface().evalScript(script, callback);
+}
