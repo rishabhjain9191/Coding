@@ -286,6 +286,7 @@ function($rootScope, Constants, Config, $http, $q){
 		.error(function(data){deferred.reject(data);})
 		return deferred.promise;
 	};
+	
 	utils.selectProject=function(){
 		//Check the current document's XMP
 		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){

@@ -35,22 +35,21 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 	},
 	
 	$scope.selectColor=function(){
-		var projColor= "";
-		if(	$scope.project.colorcode!='')
+		var projColor= "0x888888";
+		if($scope.project.colorcode!="" && $scope.project.colorcode)
 			projColor=($scope.project.colorcode).replace("#","0x");
-		var script = 'var color = $.colorPicker ("'+projColor+'"); if(color == -1){"-1";} var color16 = color.toString(16); color16;';
+		var script='var color = $.colorPicker ("'+projColor+'"); if(color == -1){"-1";} var color16 = color.toString(16); color16;';
 		new CSInterface().evalScript(script, function(data){
 			$rootScope.$apply(function(){
 				if(data!=-1){
 					var colorSelected = "";
-					if(data.length == 1) colorSelected = "#"+data+data+data;
-					else colorSelected = "#"+data;
+					colorSelected=("000000" + data).substr(-6,6);
+					colorSelected="#"+colorSelected;
 					$scope.project.colorcode=colorSelected;
-					$scope.colorBox.background=$scope.project.colorcode;
-					console.log("Color selected: "+colorSelected);
+					$scope.colorBox.background=colorSelected;
+					//console.log("Color selected: "+colorSelected);
 				}
 			});
 		});
-	}
-	
+	}	
 }]);
