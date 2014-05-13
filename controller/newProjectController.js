@@ -1,20 +1,27 @@
-app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils',function($scope, $rootScope, $location,projectUtils){
+app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader',function($scope, $rootScope, $location,projectUtils,preloader){
 
+	preloader.hideLoading();
 	$scope.project={};
 	$scope.colorBox={};
-		
+	
 	$scope.create=function(){
+		preloader.showLoading();
 		with($scope.project){
 			var name=name;
 			var jobId=jobId;
 			var budgetHrs=budgetHrs;
-			var color=colorcode;
+			var color;
+			if($scope.project.colorcode)
+				color=colorcode;
+			else
+				color="";
 			projectUtils.addProject(name, jobId, budgetHrs, color)
 			.then(function(data){
+				preloader.hideLoading();
 				$scope.message=data.Msg;
 				console.log(data.Msg);
 				$location.path('projects');
-			}, function(data){$scope.message=data.Msg});
+			}, function(data){preloader.hideLoading();$scope.message=data.Msg});
 			
 		}
 	},

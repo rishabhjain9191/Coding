@@ -5,8 +5,8 @@
 	<div class="message" ng-show='message'>{{message}}</div>
 	<form name='loginUser' id="loginForm">
 		<div>	
-			<input class="text stretch" type='text' placeholder='User Name' ng-model='user.email' required/>
-			<input class="stretch text" type='password' placeholder='Password' ng-model='user.password' required/>
+			<input class="text stretch" type='text' placeholder='User Name' ng-model='user.email' />
+			<input class="stretch text" type='password' placeholder='Password' ng-model='user.password' />
 		</div>	
 		<div class="stretch attr">
 			<div style="float: left; ">
@@ -26,4 +26,7 @@
 			<span style="margin: auto;" class="link" ng-click='signup()'>Sign up now!</span>
 		</div>
 	</form>
+	<modal-dialog show='modalShown' width='100%' height='15%'>
+	  <p>{{alert_message}}<p>
+	</modal-dialog>
 </div>

@@ -21,19 +21,21 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'aboutCtrl',
 			templateUrl:'./views/about.html'
 		})
-		.otherwise({redirectTo:'/',template:'<html>Loading...</html>'});
+		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
 }]);
 
 
-app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils',
-function($rootScope, $scope, $location,$http,Config, Constants, loginUtils){
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils', 'preloader',
+function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader){
 	
 	// Initialize $rootScope;
+	$rootScope.loading=false;
+	$rootScope.opaqueStyle={};
 	$rootScope.projectProperties=new Array();
 	$scope.processing=false;
 	
 	
-	for(i=0;i<40;i++){
+	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
 	}
 	//Config.init()

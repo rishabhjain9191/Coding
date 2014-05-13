@@ -172,7 +172,20 @@ services.factory('Config', ['Constants','$q',function(Constants, $q){
 	}]);
 	
 
-	
+services.factory('preloader',['$rootScope',
+function($rootScope){
+	var utils={};
+	utils.showLoading=function(username, password){
+		$rootScope.loading=true;
+		$rootScope.opaqueStyle.opacity="0.2";
+	};
+	utils.hideLoading=function(username, password){
+		$rootScope.loading=false;
+		$rootScope.opaqueStyle.opacity="1.0";
+	};
+	return utils;
+}]);
+
 services.factory('loginUtils',['Constants', 'Config','$http','$q',
 function(Constants, Config, $http, $q){
 	var utils={};
@@ -246,7 +259,7 @@ function($rootScope, Constants, Config, $http, $q){
 		var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS+'?username='+username+'&password='+password+'&userid='+userid;
 		console.log(url);
 		$http({method:'get',
-		url:url
+			url:url
 		})
 		.success(function(data){
 			utils.projectIndexes={};

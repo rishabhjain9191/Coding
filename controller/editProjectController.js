@@ -1,4 +1,6 @@
-app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location', function($scope, $rootScope, projectUtils, Config, $location){
+app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', function($scope, $rootScope, projectUtils, Config, $location,preloader){
+	 preloader.hideLoading();
+	
 	 $scope.colorBox={};
 	 projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
 	.then(function(data){$scope.projects=data;
@@ -11,6 +13,7 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 	
 	var newName, newJobId, newColorCode, newBudget;
 	$scope.save=function(){
+		preloader.showLoading();
 		var projectId=$scope.project.projectid;
 		($scope.project.name!=='undefined')?(newName=$scope.name):(newName="");
 		($scope.project.jobid!=='undefined')?(newJobId=$scope.project.jobid):(newjobId="");
@@ -18,9 +21,11 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 		($scope.project.budget!=='undefined')?(newBudget=$scope.project.budget):(newBudget="");
 		projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode)
 		.then(function(data){
+			preloader.hideLoading();
 			console.log(data.Msg);
 			$location.path('projects');
 		}, function(data){
+			preloader.hideLoading();
 			$scope.message=data.Msg;
 		});
 	},

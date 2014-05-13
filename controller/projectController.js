@@ -1,8 +1,8 @@
-app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher',
-function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher){
+app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader',
+function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher, preloader){
 	
+	preloader.showLoading();
 	$scope.modalShown = false;
-	
 	$scope.firstname = Config.firstname;
 	AppWatcher.addEventListeners();
 	var prev_index;
@@ -12,13 +12,13 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		console.log("Refreshing Projects");
 		projectUtils.getProjects(Config.username, Config.password, Config.userid)
 		.then(function(data){
-				var event=new CSEvent("onCreationComplete", "APPLICATION");
-				event.type="onCreationComplete";
-				event.data="<onCreationComplete />";
-				new CSInterface().dispatchEvent(event);
+			var event=new CSEvent("onCreationComplete", "APPLICATION");
+			event.type="onCreationComplete";
+			event.data="<onCreationComplete />";
+			new CSInterface().dispatchEvent(event);
 			$scope.projects=data;
-			
 			projectUtils.selectProject();
+			preloader.hideLoading();
 		}, function(data){});
 	};
 	var deselectProject=function(){
