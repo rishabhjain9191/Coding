@@ -10,7 +10,7 @@
 	src:url("./assets/Fonts/DroidSans-Bold.ttf");
 	font-family: cwFontDroidSansBold;
 }
-/*	*/
+/**** Elements ****/
 
 body{
     font-family: "Verdana";
@@ -32,6 +32,7 @@ select{
 .pointer{
 	cursor: pointer;
 }
+
 /***/
 
 #content{
@@ -87,7 +88,7 @@ input[type="checkbox"]{
 }
 
 
-/*******/
+/**** Projects ****/
 
 .pheader{
 	height: 30px;
@@ -129,11 +130,36 @@ li{
 	padding-left: 12px;
 }
 
+.meta {
+    background: rgb(228, 228, 199);
+	z-index: 9999;
+	padding: 4px;
+	float: left;
+	-webkit-border-radius: 10px;
+	border-radius: 3px;
+	font-size: 10px;
+	position: relative;
+	color: black;
+	top: 30px;
+	right: 30%;
+}
+
+.project1{
+    /*display: inline;*/
+}
+
+.project:hover+.meta {
+    display: inline;
+}
+
+
 .pad{
 	height: 28px;
 	background-color: rgb(73, 73, 73);
 }
-/********/
+
+
+/**** Edit/Create Project ****/
 
 .project{
 	padding: 10px;
@@ -171,17 +197,6 @@ li{
 	width: 103%;
 }
 
-/******/
-/*
-.selected{
-	border: 1px solid red;
-	background: rgba(255, 0, 0, 0.14);
-}
-.deselected{
-	
-}
-*/
-/*******/
 .appTitle{
 	font-size: 13.5px;
 	padding-bottom: 26px;
@@ -192,7 +207,10 @@ li{
 	color: #555;
 
 }
-/*******/
+
+
+/**** Footer ****/
+
 #footer{
 	position: fixed;
 	bottom: 0px;
@@ -207,9 +225,8 @@ li{
 }
 
 
-/*******************/
-/** Modal Dialog  **/
-/*******************/
+/**** Modal Dialog  ****/
+
 
 .ng-modal-overlay {
   /* A dark translucent div that covers the whole screen */
@@ -257,9 +274,8 @@ li{
 }
 
 
-/*********************/
-/** Loading Spinner **/
-/*********************/
+
+/**** Loading Spinner ****/
 
 @-webkit-keyframes loading-spinner {
   0% {
@@ -300,4 +316,3 @@ li{
 }
 
 /*********/
-

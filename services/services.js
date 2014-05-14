@@ -266,18 +266,22 @@ function($rootScope, Constants, Config, $http, $q){
 		})*/
 		
 		var params= $.param({username: username, password: password, userid: userid });
+		console.log(Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS);
+		console.log(params);
 		$http({
 			method:'POST',
 			url:Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS,
 			data: params,
 			headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 		.success(function(data){
+			console.log(data);
 			utils.projectIndexes={};
 			for(var i=0;i<data.length;i++){
 				var pid=data[i].pid;
 				utils.projectIndexes[pid]=i;
 				$rootScope.projectProperties[i].style={};
 				$rootScope.projectProperties[i].style.color=data[i].colorcode;
+				data.showMeta=false;
 			}
 			console.log(utils.projectIndexes);
 			deferred.resolve(data);

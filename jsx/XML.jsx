@@ -68,6 +68,10 @@ $._extXML={
 					this.setTagValue('password', config[c]);
 				if(c == "keepMeLoggedIn")
 					this.setTagValue('keepMeLoggedIn', config[c]);
+				if(c == "firstname")
+					this.setTagValue('firstname', config[c]);
+				if(c == "userid")
+					this.setTagValue('userid', config[c]);
 			}		
 			return "file updated successfully";
 			

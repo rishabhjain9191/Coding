@@ -18,9 +18,12 @@
 		<span class="link" ng-click="logout()">Lgt</span>
 	</div>
 	<ul class='projects'>
-		 <li  ng-repeat='project in projects' ng-click='processProjectClick(project.pid, $index)' ng-style='projectProperties[$index].style'  >
-			<div><div class="pName">{{project.name}}</div><span class="progress">{{projectProperties[$index].message}}<span>
+		 <li  ng-repeat='project in projects' ng-mouseenter="hover(project)" ng-mouseleave="hover(project)" ng-click='processProjectClick(project.pid, $index)' ng-style='projectProperties[$index].style'  >
+			<div class="project1">
+				<div class="pName">{{project.name}}</div>
+				<span class="progress">{{projectProperties[$index].message}}<span>
 			</div>
+			<div class="meta" ng-show="project.showMeta">Job ID: {{project.jobid}}</div>
 		</li>
 	</ul>
 	<div class="pad"></div>

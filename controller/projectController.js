@@ -16,7 +16,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			event.type="onCreationComplete";
 			event.data="<onCreationComplete />";
 			new CSInterface().dispatchEvent(event);
-			$scope.projects=data;
+			$scope.projects=data;	// all the project details are saved in $scope.projects
 			projectUtils.selectProject();
 			preloader.hideLoading();
 		}, function(data){});
@@ -185,5 +185,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	$scope.about=function(){
 		$location.path('about');
 	};
-	
+	$scope.hover = function(project) {
+		return project.showMeta = !project.showMeta;
+    };
 }]);
