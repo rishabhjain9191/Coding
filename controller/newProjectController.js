@@ -1,28 +1,35 @@
 app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader',function($scope, $rootScope, $location,projectUtils,preloader){
-
+	//$scope.alert_message="Project name cannot be left blank!";
+	//$scope.modalShown = false;
 	preloader.hideLoading();
 	$scope.project={};
 	$scope.colorBox={};
 	
 	$scope.create=function(){
-		preloader.showLoading();
-		with($scope.project){
-			var name=name;
-			var jobId=jobId;
-			var budgetHrs=budgetHrs;
-			var color;
-			if($scope.project.colorcode)
-				color=colorcode;
-			else
-				color="";
-			projectUtils.addProject(name, jobId, budgetHrs, color)
-			.then(function(data){
-				preloader.hideLoading();
-				$scope.message=data.Msg;
-				console.log(data.Msg);
-				$location.path('projects');
-			}, function(data){preloader.hideLoading();$scope.message=data.Msg});
-			
+		if($scope.project.name && $scope.project.name.length>=3){
+			preloader.showLoading();
+			var jobId,budgetHrs,color;
+			with($scope.project){
+				var name=name;
+				($scope.project.jobId)?(jobId=jobId):(jobId="");
+				($scope.project.budgetHrs)?(budgetHrs=budgetHrs):(budgetHrs="");
+				($scope.project.colorcode)?(color=colorcode):(color="");
+				projectUtils.addProject(name, jobId, budgetHrs, color)
+				.then(function(data){
+					preloader.hideLoading();
+					$scope.message=data.Msg;
+					console.log(data.Msg);
+					if(data.IsSuccess)
+						$location.path('projects');
+					else
+						$scope.message=data.Msg;
+				}, function(data){preloader.hideLoading();$scope.message=data.Msg});
+				
+			}
+		}
+		else{
+			//$scope.modalShown = true;
+			$scope.message="Project name requires 3 characters."
 		}
 	},
 	$scope.cancel=function(){

@@ -46,6 +46,7 @@ select{
 
 #logo{
 	width: 100%;
+	padding: 15px 0 6px 0;
 }
 
 .stretch{
@@ -78,6 +79,7 @@ select{
 	color: red;
 	text-align: center;
 	height: 20px;
+	font-size: 9.5px;
 }
 
 input[type="checkbox"]{
@@ -101,6 +103,14 @@ input[type="checkbox"]{
 	color: #666;
 }
 
+.pName{
+	text-transform: uppercase;
+	width: 65%;
+	overflow: hidden;
+	float: left;
+	height: 11px;
+	text-overflow: ellipsis;
+}
 
 ul{
 	list-style-type: none;
@@ -111,16 +121,18 @@ ul{
 
 li{
 	padding: 5px;
-	/*border-bottom-style: solid;
-	border-width: 1px;
-	border-bottom-color: #555;
-	color: gray;
-	*/
 	border: 1px solid #555;
 	cursor: pointer;
-	/*text-transform: uppercase;*/
+	font-size: 10.5px;
+	height: 11px;
+	font-family: arial;
+	padding-left: 12px;
 }
 
+.pad{
+	height: 28px;
+	background-color: rgb(73, 73, 73);
+}
 /********/
 
 .project{
@@ -152,6 +164,11 @@ li{
 	margin-left: 9px;
 	height: 16px;
 	border: 1px solid gray;
+}
+
+.budget{
+	float: left;
+	width: 103%;
 }
 
 /******/
@@ -281,3 +298,6 @@ li{
   width: 32px;
   height: 32px;
 }
+
+/*********/
+

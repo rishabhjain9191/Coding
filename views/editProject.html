@@ -22,14 +22,17 @@
 			</div>
 			<div style="float: left; width: 160px;">
 				<span>Budget (in hours):</span>
-				<input style="float: left; width: 166px;" ng-model="project.budget" />
+				<input class="budget" ng-model="project.budget" />
 			</div>
 		</div>
-		<br/>
-		{{message}}
 		<div class="stretch middle">
 			<button ng-click="cancel()">Cancel</button>
 			<button ng-click="save()">Save</button>
 		</div>
+		<br/>
+		<div class="message" ng-show='message'>{{message}}</div>
 	</div>
+	<!--<modal-dialog show='modalShown'>
+	  <p>{{alert_message}}<p>
+	</modal-dialog>-->
 </div>

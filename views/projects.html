@@ -9,21 +9,21 @@
 		</div>
 	</div>
 	
-	<div style="height: 30px;">
-		<span class="link" ng-click="create()">Crt</span>
-		<span class="link" ng-click="edit()">Edt</span>
-		<span class="link" ng-click="asgnPrjFldr()">Asgn</span>
+	<div style="height: 15px; font-size: 9px;">
+		<span class="link" ng-click="create()">Create</span>
+		<span class="link" ng-click="edit()">Edit</span>
+		<span class="link" ng-click="asgnPrjFldr()">Assign</span>
 		<span class="link" ng-click="feedback()">Contact</span>
 		<span class="link" ng-click="about()">Abt</span>
 		<span class="link" ng-click="logout()">Lgt</span>
 	</div>
 	<ul class='projects'>
-		 <li ng-repeat='project in projects' ng-click='processProjectClick(project.pid, $index)' ng-style='projectProperties[$index].style'  >
-			<div>{{project.name}}<span class="progress">{{projectProperties[$index].message}}<span>
+		 <li  ng-repeat='project in projects' ng-click='processProjectClick(project.pid, $index)' ng-style='projectProperties[$index].style'  >
+			<div><div class="pName">{{project.name}}</div><span class="progress">{{projectProperties[$index].message}}<span>
 			</div>
 		</li>
 	</ul>
-	
+	<div class="pad"></div>
 	
 	<modal-dialog show='modalShown'>
 	  <p>{{alert_message}}<p>

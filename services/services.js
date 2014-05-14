@@ -195,9 +195,12 @@ function(Constants, Config, $http, $q){
 		var deferred=$q.defer();
 		if(username=='undefined'){username=Config.username;}
 		if(password=='undefined'){password=Config.password;}
+		var params= $.param({username: username, password: password, clientversion: Constants.EXTENSION_VERSION_NUMBER });
 		$http({
-			method:'get',
-			url:Constants.URL_SERVICE+Constants.LOGIN_ADDRESS+'?username='+username+'&password='+password+'&clientversion=1.1.7'})
+			method:'POST',
+			url:Constants.URL_SERVICE+Constants.LOGIN_ADDRESS,
+			data: params,
+			headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 			.success(function(data,status){
 			
 				deferred.resolve(data);
@@ -256,11 +259,18 @@ function($rootScope, Constants, Config, $http, $q){
 	};
 	utils.getProjects=function(username, password, userid){
 		var deferred=$q.defer();
-		var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS+'?username='+username+'&password='+password+'&userid='+userid;
+		/*var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS+'?username='+username+'&password='+password+'&userid='+userid;
 		console.log(url);
 		$http({method:'get',
 			url:url
-		})
+		})*/
+		
+		var params= $.param({username: username, password: password, userid: userid });
+		$http({
+			method:'POST',
+			url:Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS,
+			data: params,
+			headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 		.success(function(data){
 			utils.projectIndexes={};
 			for(var i=0;i<data.length;i++){
@@ -278,11 +288,17 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.addProject=function(projectName, jobId, budgetHrs, color){
 		var deferred=$q.defer();
-		var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
+		/*var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
 		console.log(url);
 		$http({method:'get',
 		url:url
-		})
+		})*/
+		var params= $.param({userid: Config.data.userid, name: projectName, jobid: jobId, budget: budgetHrs, color: color });
+		$http({
+			method:'POST',
+			url:Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,
+			data: params,
+			headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 		.success(function(data){deferred.resolve(data);})
 		.error(function(data){deferred.reject(data);})
 		return deferred.promise;
@@ -290,13 +306,20 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color){
 		var deferred=$q.defer();
-		var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?projectid='+projectId+'&userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
+		
+		/*var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?projectid='+projectId+'&userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
 		console.log(url);
-		$http({method:'get',
-		url:url
-		})
+			$http({method:'POST',
+			url:url
+		})*/
+		var params= $.param({projectid: projectId, userid: Config.data.userid, name: projectName, jobid: jobId, budget: budgetHrs, color: color });
+		$http({
+			method:'POST',
+			url:Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,
+			data: params,
+			headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 		.success(function(data){deferred.resolve(data);})
-		.error(function(data){deferred.reject(data);})
+		.error(function(data){alert(data);deferred.reject(data);})
 		return deferred.promise;
 	};
 	
