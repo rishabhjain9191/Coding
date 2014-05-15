@@ -55,7 +55,7 @@ services.factory('Constants',function(){
 		constants.TIMEINTERVAL     = 1000*60*4; // Default send data time interval of 4 minutes
 		constants.TIMEINTERVAL_MIN = 1000; // Minimum time inteval 1 second in milliseconds
 		constants.TIMEINTERVAL_MAX = 1000*60*60; // Maximum time interval1 hour in milliseconds
-		constants.BATCH_SIZE = 50; // Default number of events to send to server 
+		constants.BATCH_SIZE = 5; // Default number of events to send to server 
 		constants.BATCH_SIZE_MIN = 1; // Minimum number of events to send, send at least 1
 		constants.BATCH_SIZE_MAX = 1000; // Maxiumn number of events to send, 1000
 		
@@ -290,7 +290,7 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color){
 		var deferred=$q.defer();
-		var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?projectid='+projectId+'&userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
+		var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?projectid='+projectId+'&userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&colorindex='+20;
 		console.log(url);
 		$http({method:'get',
 		url:url
@@ -367,7 +367,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	new CSInterface().addEventListener('documentAfterActivate', onDocumentAfterActivate);
 	new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
 	new CSInterface().addEventListener('documentAfterSave', onDocumentAfterSave);
-	//new CSInterface().addEventListener('applicationActivate', onApplicationActivate);
+	new CSInterface().addEventListener('applicationActivate', onApplicationActivate);
 	new CSInterface().addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
 	new CSInterface().addEventListener('projectSelected', onProjectSelected);
 	new CSInterface().addEventListener('onCreationComplete', onCreationComplete);
@@ -424,7 +424,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	};
 	function onApplicationActivate(event){
 		console.log(event);
-		projectUtils.selectProject();
+		//projectUtils.selectProject();
 		Logger.log(event);
 	};
 	function onApplicationBeforeQuit(event){
@@ -455,7 +455,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	var createLoggingData=function(eventType){
 		console.log("Creating Logging Data");
 		var addObj={};
-		addObj.ID="";
+		//addObj.ID="";
 		addObj.eventID=AppModel.documentID+':'+AppModel.eventStartTime.getTime().toString();
 		addObj.userID=AppModel.userID;
 		addObj.computerID="";
@@ -464,8 +464,8 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 		addObj.endTime=AppModel.eventEndTime;
 		addObj.imageName="";
 		addObj.eventRecordedTime=new Date().toISOString().slice(0, 19).replace('T', ' ');
-		addObj.status=Constants.STATUS_NEW;
-		addObj.imageStatus=Constants.IMAGE_STATUS_NEW;
+		//addObj.status=Constants.STATUS_NEW;
+		//addObj.imageStatus=Constants.IMAGE_STATUS_NEW;
 		var obj={"event": {
 								"type": eventType,
 								"documentID": AppModel.documentID,
@@ -479,7 +479,8 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 								"extVers": Constants.EXTENSION_VERSION_NUMBER
 								}
 							};
-		addObj.jsonEventPackage=JSON.stringify(obj);
+		addObj.jsonEventPackage=obj/* .replace(/"/g, '\\"') */;
+		console.log(addObj);
 		DBHelper.addItemToEventLogTable(addObj);
 		
 	};
@@ -552,120 +553,109 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 	return utils;
 	
 }]);
-services.factory('DBHelper',['Constants',
-function(Constants){
-	var dbhelper={};
-	console.log("DBHelper Called");
-	var SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS EventLog ( ID INTEGER PRIMARY KEY AUTOINCREMENT, eventID TEXT, userID TEXT, computerID TEXT, projectID TEXT, startTime DATETIME, endTime DATETIME, imageName TEXT, eventRecordedTime DATETIME, jsonEventPackage TEXT , status TEXT, imageStatus TEXT)";
-	var SQL_ADD_EVENT = "INSERT INTO EventLog (eventID, userID, computerID, projectID, startTime, endTime, imageName, eventRecordedTime , jsonEventPackage , status, imageStatus) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	var SQL_DELETE_EVENT = "DELETE FROM EventLog WHERE status=?";
-	var SQL_SELECT_EVENT = "SELECT * FROM EventLog WHERE status=? LIMIT ?";
-	var SQL_UPDATE_EVENT_TO_TRANSFERRED = "UPDATE EventLog SET status=? WHERE eventID IN (?)";
-	var SQL_SELECT_NEW_EVENT_COUNT = "SELECT Count(*) as cnt FROM EventLog WHERE status=?";
-
-	/**
-	 * inti() - for creating EventLog DB Table.
-	 */		
-	var initDB = function(){
-		console.log("initDB called");
-		var db = WebSQL(Constants.DATABASE_FILE_NAME);
-		db.query(SQL_CREATE_TABLE
-		).fail(function (tx, err) {
-			console.log(err.message);
-		}).done(function (result) {
-			//console.log(result);
+services.factory('DBHelper',['$http','$interval','Constants','Config',
+function($http,$interval,Constants,Config){
+	
+	//Open/Create the Log file(for unsent records)
+	new CSInterface().evalScript('$._extFile.openFile()');
+	
+	
+	var sendLoggedRecords=function(){
+		
+		console.log("INTERVAL: Trying to send records");
+		new CSInterface().evalScript('$._extFile.readAndSend()',function(data){
+			processAndSend(data);
 		});
 	};
-	initDB();
-	/**
-	 * addItemToEventLogTable - insert record in DB Table. 
-	 * @param eventLog stores the values that will be inserted into DB table.
-	 */		
-	dbhelper.addItemToEventLogTable = function(eventLog){
-		var db = WebSQL(Constants.DATABASE_FILE_NAME);
-		db.query(
-			SQL_ADD_EVENT,
-			[
-				eventLog.eventID,
-				eventLog.userID,
-				eventLog.computerID,
-				eventLog.projectID,
-				eventLog.startTime,
-				eventLog.endTime,
-				eventLog.imageName,
-				eventLog.eventRecordedTime,
-				eventLog.jsonEventPackage,
-				Constants.STATUS_NEW,
-				Constants.IMAGE_STATUS_NEW
-			]
-		).fail(function (tx, err) {
-			console.log(err.message);
-		}).done(function (result) {
-			//console.log(result);
-		});
+	//Setup Interval to read the unsend record file and try to send them.
+	var promise_sendLoggedRecords= $interval(sendLoggedRecords,0.5*60*1000);
+	
+	
+	//Get the records, batch them if if size>batch size and then send them to server
+	var processAndSend=function(records){
+		//Check Record Size(if recordSize>batch size, break them into batches before sending)
+		console.log(records);
+		var Records=JSON.parse(records);
+		var rec=[];
+		console.log(Records);
+		if(Records.length>1){
+		if(Records.length>Constants.BATCH_SIZE){
+			for(var i=0;i<Constants.BATCH_SIZE;i++){
+				rec.push(Records.splice(0,1));
+			}
+			send(JSON.stringify(rec));
+			rec=[];
+		}
+		send(JSON.stringify(Records));
+		}
 	};
-
-	/**
-	 * getEventLogData - fetch eventlog record from DB Table.
-	 * @param noOfRows used to set how many records will be fetch from DB table. 
-	 */		
-	dbhelper.getEventLogData = function(noOfRows){
-		var db = WebSQL(Constants.DATABASE_FILE_NAME);
-		db.query(SQL_SELECT_EVENT,[Constants.STATUS_NEW, noOfRows]
-		).fail(function (tx, err) {
-			console.log(err.message);
-		}).done(function (result) {
-			console.log(result);	// array
-		});
+	
+	//Send the batched records to server, If records can't be sent, log them.
+	var send=function(batchedRecords){
+		//Send Batched Records to Server
+		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
+		var details={};
+		details['data']=batchedRecords;
+		details['username']=Config.username;
+		details['password']=Config.password;
+		
+		$http.post(url,details)
+		.success(function(data){
+			console.log(data);
+			if(data=="Invalid event details."){
+				logit(batchedRecords);
+			}
+			else{
+				console.log("Data sent to server");
+			}
+		}
+		).error(function(data){
+			console.log("Error occured in sending...Logging...");
+			console.log(data);
+			logit(batchedRecords);
+		})
 	};
-
-	/**
-	 * setEventLogStatus -  Update eventlog record in DB Table once files saved
-	 * @param eventLogIds used to get event log id's whose status is NOT NEW.
-	 */		
-	dbhelper.setEventLogStatus = function(eventLogIds){
-		var db = WebSQL(Constants.DATABASE_FILE_NAME);
-		db.query(SQL_UPDATE_EVENT_TO_TRANSFERRED,[Constants.STATUS_TRANSFERRED, eventLogIds]
-		).fail(function (tx, err) {
-			console.log(err.message);
-		}).done(function (result) {
-			//console.log(result);
-		});
-	};
-
-	/**
-	 * deleteEventLogData - delete eventlog record in DB Table.
-	 */		
-	dbhelper.deleteEventLogData = function(){
-
-		/*
-		SQL.text="DELETE FROM EventLog WHERE status='" + Constants.STATUS_TRANSFERRED + "' AND date(eventRecordedTime) < date('"+ toSqlDate(eventDeletedDate) + "')";
-		*/
-
-		var db = WebSQL(Constants.DATABASE_FILE_NAME);
-		db.query(SQL_DELETE_EVENT,[Constants.STATUS_TRANSFERRED]
-		).fail(function (tx, err) {
-			console.log(err.message);
-		}).done(function (result) {
-			//console.log(result);
-		});
-	};
-
-
-	/**
-	 * getNewStatusCount - return no. of records whose status is new in EventLog table.
-	 * @param eventLogIds used to get event log id's whose status is NOT NEW.
-	 */		
-	dbhelper.getNewStatusCount = function(){
-		var db = WebSQL(Constants.DATABASE_FILE_NAME);
-		db.query(SQL_SELECT_NEW_EVENT_COUNT,[Constants.STATUS_NEW]
-		).fail(function (tx, err) {
-			console.log(err.message);
-		}).done(function (result) {
-			//console.log(result[0].cnt);
-		});
-	};
-
+	
+	//Log unsend events to file.
+	var logit=function(buffer){
+			console.log('Records for logging');
+			console.log(buffer);
+			var records=JSON.parse(buffer);
+			var record;
+			for(var i=0;i<records.length;i++){
+				//records[i].jsonEventPackage=JSON.stringify(records[i].jsonEventPackage)/* .replace(/"/g, '\\"') */;
+				
+				record=JSON.stringify(records[i]);
+				
+				console.log("Sending to file"+record);
+				new CSInterface().evalScript('$._extFile.writeObj(\''+record+'\')');
+			}
+		};
+	
+	
+	dbhelper={};
+	var buffer=[];
+	//Buffer them till the buffer size and then sends them.
+	dbhelper.addItemToEventLogTable=function(obj){
+		if(buffer.length<Constants.BATCH_SIZE){
+			console.log("Data Buffered");
+			console.log(buffer);
+			buffer.push(obj);
+		}
+		else{
+				//Send to server
+				console.log("Sending buffer");
+				console.log(buffer);
+				console.log(JSON.stringify(buffer));
+				send(JSON.stringify(buffer));
+				
+				//empty the buffer
+				buffer=[];
+			}
+			
+		};
+		
+			
 	return dbhelper;
 	
 }]);
