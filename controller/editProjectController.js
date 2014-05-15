@@ -1,4 +1,4 @@
-app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', function($scope, $rootScope, projectUtils, Config, $location,preloader){
+app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils){
 	 //$scope.alert_message="Project name cannot be left blank!";
 	 //$scope.modalShown = false;
 	 preloader.hideLoading();
@@ -16,6 +16,7 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 	var newName, newJobId, newColorCode, newBudget;
 	$scope.save=function(){
 		if($scope.name && $scope.name!=""){
+			debuggerUtils.updateLogs("Saving updated project information for: " + $scope.name + " " + $scope.project.projectid);
 			preloader.showLoading();
 			var projectId=$scope.project.projectid;
 			newName=$scope.name;
@@ -26,10 +27,14 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 			.then(function(data){
 				preloader.hideLoading();
 				console.log(data.Msg);
-				if(data.IsSuccess)
+				if(data.IsSuccess){
+					debuggerUtils.updateLogs("[EditProjectResult]: Successfully edited the project.");
 					$location.path('projects');
-				else
+				}
+				else{
+					debuggerUtils.updateLogs("[EditProjectResult]: data.result returned 'Error:'"+data.Msg);
 					$scope.message=data.Msg;
+				}
 			}, function(data){
 				preloader.hideLoading();
 				$scope.message=data.Msg;

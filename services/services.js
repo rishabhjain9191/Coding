@@ -68,7 +68,8 @@ services.factory('Constants',function(){
 		//*** APP_EVENT_POLL needs additional analysis, currently need only in Fl/Flash Pro
 		
 		
-		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+		//constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+		constants.URL_SERVICE = "http://ttdev.creativeworx.com";
 		
 		// Service calls : see cooresponding calls in the ServiceController.php - created by simply defining the function
 		constants.BATCHDATA_SEND_ADDRESS = "/service/log";                           // *
@@ -297,6 +298,7 @@ function($rootScope, Constants, Config, $http, $q){
 		$http({method:'get',
 		url:url
 		})*/
+		
 		var params= $.param({userid: Config.data.userid, name: projectName, jobid: jobId, budget: budgetHrs, color: color });
 		$http({
 			method:'POST',
@@ -310,12 +312,12 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color){
 		var deferred=$q.defer();
-		
 		/*var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?projectid='+projectId+'&userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
 		console.log(url);
 			$http({method:'POST',
 			url:url
 		})*/
+		
 		var params= $.param({projectid: projectId, userid: Config.data.userid, name: projectName, jobid: jobId, budget: budgetHrs, color: color });
 		$http({
 			method:'POST',
@@ -323,7 +325,7 @@ function($rootScope, Constants, Config, $http, $q){
 			data: params,
 			headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 		.success(function(data){deferred.resolve(data);})
-		.error(function(data){alert(data);deferred.reject(data);})
+		.error(function(data){debuggerUtils.updateLogs("[LoginResult]: Try/Catch Failed"/*todo*/);alert(data);deferred.reject(data);})
 		return deferred.promise;
 	};
 	
@@ -373,7 +375,7 @@ function($rootScope, Constants, Config, $http, $q){
 /***************************************************************
 ****************************************************************
 ***************************************************************/
-services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', function($location, $rootScope, Constants, Logger, projectUtils ){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils',function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils ){
 	console.log('App Watcher Started');
 	
 	var utils={};
@@ -383,9 +385,6 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		new CSInterface().removeEventListener('documentAfterSave', onDocumentAfterSave);
 		new CSInterface().removeEventListener('applicationActivate',onApplicationActivate);
 		new CSInterface().removeEventListener('applicationBeforeQuit',onApplicationBeforeQuit);
-		
-		
-		
 	};
 	
 	
@@ -579,6 +578,18 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 	return utils;
 	
 }]);
+
+services.factory('debuggerUtils',['Constants','$rootScope',
+function(Constants,$rootScope){
+	var utils={};
+	utils.updateLogs = function(statusText){
+		$rootScope.$apply(function(){
+			$rootScope.logs=statusText+"<br>"+$rootScope.logs;
+		});
+	};
+	return utils;
+}]);
+
 services.factory('DBHelper',['Constants',
 function(Constants){
 	var dbhelper={};

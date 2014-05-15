@@ -1,5 +1,5 @@
-app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader',
-function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher, preloader){
+app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader','debuggerUtils',
+function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher, preloader,debuggerUtils){
 	
 	preloader.showLoading();
 	$scope.modalShown = false;
@@ -10,6 +10,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	//console.log($scope.projectNo);
 	var refreshProjects=function(){
 		console.log("Refreshing Projects");
+		debuggerUtils.updateLogs("Project request attempt for [" +Config.username+ "]");
 		projectUtils.getProjects(Config.username, Config.password, Config.userid)
 		.then(function(data){
 			var event=new CSEvent("onCreationComplete", "APPLICATION");
@@ -19,6 +20,10 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			$scope.projects=data;	// all the project details are saved in $scope.projects
 			projectUtils.selectProject();
 			preloader.hideLoading();
+			debuggerUtils.updateLogs("[ProjectResult]: Successfully updated users objects.");
+			if(!data.length){
+				$scope.noProjectsMessage="You have no projects.";
+			}
 		}, function(data){});
 	};
 	var deselectProject=function(){

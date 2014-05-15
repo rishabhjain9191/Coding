@@ -15,7 +15,7 @@ $._extXML={
 		if(!this.isExists()){
 			return "false";
 		}
-		var tags=["username","password","keepMeLoggedIn","userid","firstname"];
+		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval","serviceAddress","checkOnlineTimeInterval","imageTimeInterval","batchSize","thresholdCount","username","password"];
 		var obj = new Object();
 		var str="{";
 		for(var i=0;i<tags.length;i++){

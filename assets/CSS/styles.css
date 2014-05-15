@@ -85,6 +85,7 @@ select{
 
 input[type="checkbox"]{
 	margin: 0;
+	width: 12px;
 }
 
 
@@ -154,8 +155,10 @@ li{
 
 
 .pad{
-	height: 28px;
+	height: 25px;
 	background-color: rgb(73, 73, 73);
+	padding: 7px 0 0 7px;
+	color: rgb(202, 202, 202);
 }
 
 
@@ -208,6 +211,43 @@ li{
 
 }
 
+/**** Events Log ****/
+
+.eventsLog{
+	position: absolute;
+	width: 99%;
+	top: 34px;
+	bottom: 60px;
+	background: white;
+	border: solid 1px rgb(184, 184, 184);
+	font-size: 10px;
+	color: rgb(38, 81, 116);
+	overflow-y: auto;
+}
+
+.loggingBtns{
+	margin: auto;
+	position: absolute;
+	bottom: 19px;
+	left: 0px;
+	padding-left: 8px;
+	font-size: 10px;
+	width: 95%;
+}
+
+.loggingBtns button{
+	margin: auto; 
+	position: absolute; 
+	right: 6px;
+}
+
+.checkboxes{
+	padding-top: 5px;
+}
+
+.checkboxes input{
+	margin-right: 5px;
+}
 
 /**** Footer ****/
 

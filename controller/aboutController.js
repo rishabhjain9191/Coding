@@ -13,4 +13,8 @@ function($scope, $location, Constants){
 	$scope.privacy=function(){
 		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_PRIVACY_POLICY);
 	};
+	
+	$scope.showLog=function(){
+		$location.path('log');
+	};
 }]);

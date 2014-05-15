@@ -1,4 +1,4 @@
-app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader',function($scope, $rootScope, $location,projectUtils,preloader){
+app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils',function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils){
 	//$scope.alert_message="Project name cannot be left blank!";
 	//$scope.modalShown = false;
 	preloader.hideLoading();
@@ -6,7 +6,8 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 	$scope.colorBox={};
 	
 	$scope.create=function(){
-		if($scope.project.name && $scope.project.name.length>=3){
+		if($scope.project.name && $scope.project.name.length>=3){	
+			debuggerUtils.updateLogs("Creating new project: " + $scope.project.name);
 			preloader.showLoading();
 			var jobId,budgetHrs,color;
 			with($scope.project){
@@ -19,10 +20,14 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 					preloader.hideLoading();
 					$scope.message=data.Msg;
 					console.log(data.Msg);
-					if(data.IsSuccess)
+					if(data.IsSuccess){
+						debuggerUtils.updateLogs("[CreateProjectResult]: Successfully created new project.");
 						$location.path('projects');
-					else
+					}
+					else{
+						debuggerUtils.updateLogs("[EditProjectResult]: data.result returned 'Error:'"+data.Msg);
 						$scope.message=data.Msg;
+					}
 				}, function(data){preloader.hideLoading();$scope.message=data.Msg});
 				
 			}
