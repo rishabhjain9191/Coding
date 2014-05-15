@@ -68,8 +68,8 @@ services.factory('Constants',function(){
 		//*** APP_EVENT_POLL needs additional analysis, currently need only in Fl/Flash Pro
 		
 		
-		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
-		//constants.URL_SERVICE = "http://ttdev.creativeworx.com";
+		//constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+		constants.URL_SERVICE = "http://ttdev.creativeworx.com";
 		
 		// Service calls : see cooresponding calls in the ServiceController.php - created by simply defining the function
 		constants.BATCHDATA_SEND_ADDRESS = "/service/log";                           // *
