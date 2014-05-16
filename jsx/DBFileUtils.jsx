@@ -1,12 +1,17 @@
-var pathToUnsendEvents = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxDB.json";
+var pathToUnsendEvents = "";
+if(Folder.fs=="Windows"){
+ pathToUnsendEvents = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxDB.json";
+}else if(Folder.fs=="Macintosh"){
+ pathToUnsendEvents = "~/Library/Application Support/CreativeWorx/CreativeWorxDB.json";
+}
+
+
 var file;
 $._extFile={
 	openFile:function(){
 		file=new File(pathToUnsendEvents);
 		file.open("e", "json", "????");
-		alert("file created");
-		//file.close();
-	},
+		},
 	
 	writeObj:function(str){
 		try{
@@ -26,11 +31,11 @@ $._extFile={
 			records.push(str);
 		}
 		//Delete the file and create a new one
-		/* file.close();
+		file.close();
 		file=new File(pathToUnsendEvents);
 		file.open("w", "json", "????");
 		file.close();
-		file.open("e", "json", "????"); */
+		file.open("e", "json", "????"); 
 		
 		//Send the records back to resend to server
 		var rec='[';

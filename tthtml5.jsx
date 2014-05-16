@@ -1,6 +1,11 @@
 // constants
 
-var pathToConfigFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxConfig.xml";
+var pathToConfigFile = "";
+if(Folder.fs=="Windows"){
+ pathToConfigFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxConfig.xml";
+}else if(Folder.fs=="Macintosh"){
+ pathToConfigFile = "~/Library/Application Support/CreativeWorx/CreativeWorxConfig.xml";
+}
 var XMLHeader = '<\?xml version=\"1.0\" encoding=\"UTF-8\"?>';
 
 

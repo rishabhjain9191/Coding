@@ -3,7 +3,7 @@ $._extXML={
 		var configFile = new File(pathToConfigFile);
 		var configFolder=configFile.parent;
 		if(!configFolder.exists){
-			alert(configFolder.create());
+			configFolder.create();
 		}
         if(configFile.exists)
             return true;
@@ -15,7 +15,7 @@ $._extXML={
 		if(!this.isExists()){
 			return "false";
 		}
-		var tags=["username","password","keepMeLoggedIn","userid","firstname"];
+		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval","serviceAddress","checkOnlineTimeInterval","imageTimeInterval","batchSize","thresholdCount","username","password"];
 		var obj = new Object();
 		var str="{";
 		for(var i=0;i<tags.length;i++){
@@ -68,6 +68,10 @@ $._extXML={
 					this.setTagValue('password', config[c]);
 				if(c == "keepMeLoggedIn")
 					this.setTagValue('keepMeLoggedIn', config[c]);
+				if(c == "firstname")
+					this.setTagValue('firstname', config[c]);
+				if(c == "userid")
+					this.setTagValue('userid', config[c]);
 			}		
 			return "file updated successfully";
 			

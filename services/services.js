@@ -69,6 +69,7 @@ services.factory('Constants',function(){
 		
 		
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+		//constants.URL_SERVICE = "http://ttdev.creativeworx.com";
 		
 		// Service calls : see cooresponding calls in the ServiceController.php - created by simply defining the function
 		constants.BATCHDATA_SEND_ADDRESS = "/service/log";                           // *
@@ -195,9 +196,13 @@ function(Constants, Config, $http, $q){
 		var deferred=$q.defer();
 		if(username=='undefined'){username=Config.username;}
 		if(password=='undefined'){password=Config.password;}
-		$http({
-			method:'get',
-			url:Constants.URL_SERVICE+Constants.LOGIN_ADDRESS+'?username='+username+'&password='+password+'&clientversion=1.1.7'})
+		var params=[];
+		params['username']=username;
+		params['password']=password;
+		params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
+		
+		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
+		$http.post(url,params)
 			.success(function(data,status){
 			
 				deferred.resolve(data);
@@ -256,18 +261,30 @@ function($rootScope, Constants, Config, $http, $q){
 	};
 	utils.getProjects=function(username, password, userid){
 		var deferred=$q.defer();
-		var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS+'?username='+username+'&password='+password+'&userid='+userid;
+		/*var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS+'?username='+username+'&password='+password+'&userid='+userid;
 		console.log(url);
 		$http({method:'get',
 			url:url
-		})
+		})*/
+		
+		
+		console.log(Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS);
+		
+		var params=[];
+		params['username']=username;
+		params['password']=password;
+		params['userid']=userid;
+		url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS;
+		$http.post(url,params)
 		.success(function(data){
+			console.log(data);
 			utils.projectIndexes={};
 			for(var i=0;i<data.length;i++){
 				var pid=data[i].pid;
 				utils.projectIndexes[pid]=i;
 				$rootScope.projectProperties[i].style={};
 				$rootScope.projectProperties[i].style.color=data[i].colorcode;
+				data.showMeta=false;
 			}
 			console.log(utils.projectIndexes);
 			deferred.resolve(data);
@@ -278,11 +295,21 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.addProject=function(projectName, jobId, budgetHrs, color){
 		var deferred=$q.defer();
-		var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
+		/*var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
 		console.log(url);
 		$http({method:'get',
 		url:url
-		})
+		})*/
+		
+		var params= $.param({userid: Config.data.userid, name: projectName, jobid: jobId, budget: budgetHrs, color: color });
+		var params=[];
+		params['userid']=Config.data.userid;
+		params['name']= projectName;
+		params['jobid']=jobId;
+		params['budget']=budgetHrs;
+		params['color']=color;
+		
+		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
 		.success(function(data){deferred.resolve(data);})
 		.error(function(data){deferred.reject(data);})
 		return deferred.promise;
@@ -290,13 +317,26 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color){
 		var deferred=$q.defer();
-		var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?projectid='+projectId+'&userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&colorindex='+20;
+
+		/*var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?projectid='+projectId+'&userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
+
 		console.log(url);
-		$http({method:'get',
-		url:url
-		})
+			$http({method:'POST',
+			url:url
+		})*/
+		
+		
+		var params=[];
+		params['projectid']=projectId;
+		params['userid']=Config.data.userid;
+		params['name']= projectName;
+		params['jobid']=jobId;
+		params['budget']=budgetHrs;
+		params['color']=color;
+		
+		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
 		.success(function(data){deferred.resolve(data);})
-		.error(function(data){deferred.reject(data);})
+		.error(function(data){debuggerUtils.updateLogs("[LoginResult]: Try/Catch Failed"/*todo*/);alert(data);deferred.reject(data);})
 		return deferred.promise;
 	};
 	
@@ -346,7 +386,7 @@ function($rootScope, Constants, Config, $http, $q){
 /***************************************************************
 ****************************************************************
 ***************************************************************/
-services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', function($location, $rootScope, Constants, Logger, projectUtils ){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils',function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils ){
 	console.log('App Watcher Started');
 	
 	var utils={};
@@ -356,9 +396,6 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		new CSInterface().removeEventListener('documentAfterSave', onDocumentAfterSave);
 		new CSInterface().removeEventListener('applicationActivate',onApplicationActivate);
 		new CSInterface().removeEventListener('applicationBeforeQuit',onApplicationBeforeQuit);
-		
-		
-		
 	};
 	
 	
@@ -390,6 +427,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	};
 	function onDocumentAfterActivate(event){
 		console.log(event);
+		debuggerUtils.updateLogs(event.type);
 		projectUtils.selectProject();
 		Logger.log(event);
 		
@@ -553,6 +591,18 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 	return utils;
 	
 }]);
+services.factory('debuggerUtils',['Constants','$rootScope',
+function(Constants,$rootScope){
+	var utils={};
+	$rootScope.logs="";
+	utils.updateLogs = function(statusText){
+		//$rootScope.$apply(function(){
+			$rootScope.logs=statusText+'<br />'+$rootScope.logs;
+		//});
+	};
+	return utils;
+}]);
+
 services.factory('DBHelper',['$http','$interval','Constants','Config',
 function($http,$interval,Constants,Config){
 	
@@ -562,7 +612,7 @@ function($http,$interval,Constants,Config){
 	
 	var sendLoggedRecords=function(){
 		
-		console.log("INTERVAL: Trying to send records");
+		debugUtils.updateLogs("[syncRecordsTimerHandler]: Record are being fetched from local file and sending to server");
 		new CSInterface().evalScript('$._extFile.readAndSend()',function(data){
 			processAndSend(data);
 		});
@@ -603,23 +653,23 @@ function($http,$interval,Constants,Config){
 		.success(function(data){
 			console.log(data);
 			if(data=="Invalid event details."){
+				debugUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
 				logit(batchedRecords);
 			}
 			else{
-				console.log("Data sent to server");
+				debugUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
 			}
 		}
 		).error(function(data){
-			console.log("Error occured in sending...Logging...");
-			console.log(data);
+			debugUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
+			
 			logit(batchedRecords);
 		})
 	};
 	
 	//Log unsend events to file.
 	var logit=function(buffer){
-			console.log('Records for logging');
-			console.log(buffer);
+			debugUtils.updateLogs("Logging unsent events to local file");
 			var records=JSON.parse(buffer);
 			var record;
 			for(var i=0;i<records.length;i++){

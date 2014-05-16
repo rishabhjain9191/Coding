@@ -10,7 +10,7 @@
 	src:url("./assets/Fonts/DroidSans-Bold.ttf");
 	font-family: cwFontDroidSansBold;
 }
-/*	*/
+/**** Elements ****/
 
 body{
     font-family: "Verdana";
@@ -32,6 +32,7 @@ select{
 .pointer{
 	cursor: pointer;
 }
+
 /***/
 
 #content{
@@ -46,6 +47,7 @@ select{
 
 #logo{
 	width: 100%;
+	padding: 15px 0 6px 0;
 }
 
 .stretch{
@@ -78,14 +80,16 @@ select{
 	color: red;
 	text-align: center;
 	height: 20px;
+	font-size: 9.5px;
 }
 
 input[type="checkbox"]{
 	margin: 0;
+	width: 12px;
 }
 
 
-/*******/
+/**** Projects ****/
 
 .pheader{
 	height: 30px;
@@ -101,6 +105,14 @@ input[type="checkbox"]{
 	color: #666;
 }
 
+.pName{
+	text-transform: uppercase;
+	width: 65%;
+	overflow: hidden;
+	float: left;
+	height: 11px;
+	text-overflow: ellipsis;
+}
 
 ul{
 	list-style-type: none;
@@ -111,17 +123,46 @@ ul{
 
 li{
 	padding: 5px;
-	/*border-bottom-style: solid;
-	border-width: 1px;
-	border-bottom-color: #555;
-	color: gray;
-	*/
 	border: 1px solid #555;
 	cursor: pointer;
-	/*text-transform: uppercase;*/
+	font-size: 10.5px;
+	height: 11px;
+	font-family: arial;
+	padding-left: 12px;
 }
 
-/********/
+.meta {
+    background: rgb(228, 228, 199);
+	z-index: 9999;
+	padding: 4px;
+	float: left;
+	-webkit-border-radius: 10px;
+	border-radius: 3px;
+	font-size: 10px;
+	position: relative;
+	color: black;
+	top: 30px;
+	right: 30%;
+}
+
+.project1{
+    /*display: inline;*/
+}
+
+.project:hover+.meta {
+    display: inline;
+}
+
+
+.pad{
+	height: 25px;
+	background-color: rgb(73, 73, 73);
+	padding: 7px 0 0 7px;
+	color: rgb(202, 202, 202);
+}
+
+
+/**** Edit/Create Project ****/
 
 .project{
 	padding: 10px;
@@ -154,17 +195,11 @@ li{
 	border: 1px solid gray;
 }
 
-/******/
-/*
-.selected{
-	border: 1px solid red;
-	background: rgba(255, 0, 0, 0.14);
+.budget{
+	float: left;
+	width: 103%;
 }
-.deselected{
-	
-}
-*/
-/*******/
+
 .appTitle{
 	font-size: 13.5px;
 	padding-bottom: 26px;
@@ -175,7 +210,47 @@ li{
 	color: #555;
 
 }
-/*******/
+
+/**** Events Log ****/
+
+.eventsLog{
+	position: absolute;
+	width: 99%;
+	top: 34px;
+	bottom: 60px;
+	background: white;
+	border: solid 1px rgb(184, 184, 184);
+	font-size: 10px;
+	color: rgb(38, 81, 116);
+	overflow-y: auto;
+}
+
+.loggingBtns{
+	margin: auto;
+	position: absolute;
+	bottom: 19px;
+	left: 0px;
+	padding-left: 8px;
+	font-size: 10px;
+	width: 95%;
+}
+
+.loggingBtns button{
+	margin: auto; 
+	position: absolute; 
+	right: 6px;
+}
+
+.checkboxes{
+	padding-top: 5px;
+}
+
+.checkboxes input{
+	margin-right: 5px;
+}
+
+/**** Footer ****/
+
 #footer{
 	position: fixed;
 	bottom: 0px;
@@ -190,9 +265,8 @@ li{
 }
 
 
-/*******************/
-/** Modal Dialog  **/
-/*******************/
+/**** Modal Dialog  ****/
+
 
 .ng-modal-overlay {
   /* A dark translucent div that covers the whole screen */
@@ -240,9 +314,8 @@ li{
 }
 
 
-/*********************/
-/** Loading Spinner **/
-/*********************/
+
+/**** Loading Spinner ****/
 
 @-webkit-keyframes loading-spinner {
   0% {
@@ -281,3 +354,5 @@ li{
   width: 32px;
   height: 32px;
 }
+
+/*********/

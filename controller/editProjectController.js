@@ -1,4 +1,6 @@
-app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', function($scope, $rootScope, projectUtils, Config, $location,preloader){
+app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils){
+	 //$scope.alert_message="Project name cannot be left blank!";
+	 //$scope.modalShown = false;
 	 preloader.hideLoading();
 	
 	 $scope.colorBox={};
@@ -13,21 +15,35 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 	
 	var newName, newJobId, newColorCode, newBudget;
 	$scope.save=function(){
-		preloader.showLoading();
-		var projectId=$scope.project.projectid;
-		($scope.project.name!=='undefined')?(newName=$scope.name):(newName="");
-		($scope.project.jobid!=='undefined')?(newJobId=$scope.project.jobid):(newjobId="");
-		($scope.project.colorcode!=='undefined')?(newColorCode=$scope.project.colorcode):(newColorCode="");
-		($scope.project.budget!=='undefined')?(newBudget=$scope.project.budget):(newBudget="");
-		projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode)
-		.then(function(data){
-			preloader.hideLoading();
-			console.log(data.Msg);
-			$location.path('projects');
-		}, function(data){
-			preloader.hideLoading();
-			$scope.message=data.Msg;
-		});
+		if($scope.name && $scope.name!=""){
+			debuggerUtils.updateLogs("Saving updated project information for: " + $scope.name + " " + $scope.project.projectid);
+			preloader.showLoading();
+			var projectId=$scope.project.projectid;
+			newName=$scope.name;
+			($scope.project.jobid)?(newJobId=$scope.project.jobid):(newjobId="");
+			($scope.project.colorcode)?(newColorCode=$scope.project.colorcode):(newColorCode="");
+			($scope.project.budget)?(newBudget=$scope.project.budget):(newBudget="");
+			projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode)
+			.then(function(data){
+				preloader.hideLoading();
+				console.log(data.Msg);
+				if(data.IsSuccess){
+					debuggerUtils.updateLogs("[EditProjectResult]: Successfully edited the project.");
+					$location.path('projects');
+				}
+				else{
+					debuggerUtils.updateLogs("[EditProjectResult]: data.result returned 'Error:'"+data.Msg);
+					$scope.message=data.Msg;
+				}
+			}, function(data){
+				preloader.hideLoading();
+				$scope.message=data.Msg;
+			});
+		}
+		else{
+			//$scope.modalShown = true;
+			$scope.message="Project name requires 3 characters."
+		}
 	},
 	
 	$scope.cancel=function(){

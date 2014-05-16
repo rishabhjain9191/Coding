@@ -1,3 +1,0 @@
-app.controller('createNewProject',[function(){
-	alert('Creating New Project !');
-}]);
