@@ -1,0 +1,358 @@
+/* Fonts */
+@font-face
+{
+	src:url("./assets/Fonts/DroidSans.ttf");
+	font-family: cwFontDroidSans;
+}
+
+@font-face
+{
+	src:url("./assets/Fonts/DroidSans-Bold.ttf");
+	font-family: cwFontDroidSansBold;
+}
+/**** Elements ****/
+
+body{
+    font-family: "Verdana";
+	font-size:11px;
+	background-color: #D6D6D6;
+	margin: 0;
+	padding: 0;
+}
+
+button,select,input{
+	font-family: "Verdana";
+	font-size:9px;
+}
+
+select{
+	width: 100%;
+}
+
+.pointer{
+	cursor: pointer;
+}
+
+/***/
+
+#content{
+	width: 96%;
+	padding: 4px;
+}
+
+#logo img{
+	display:block;
+    margin:auto;
+}
+
+#logo{
+	width: 100%;
+	padding: 15px 0 6px 0;
+}
+
+.stretch{
+	margin: 0 auto;
+	width: 100%;
+}
+
+.attr{
+	height: 35px;
+	padding-top: 5px;
+}
+
+.text{
+	font-family: "Verdana";
+	font-size:11px;
+	width: 98%;
+	padding: 2px;
+}
+
+.link{
+	cursor:pointer;
+	text-decoration:underline;
+}
+
+.middle{
+	text-align: center;
+}
+
+.message{
+	color: red;
+	text-align: center;
+	height: 20px;
+	font-size: 9.5px;
+}
+
+input[type="checkbox"]{
+	margin: 0;
+	width: 12px;
+}
+
+
+/**** Projects ****/
+
+.pheader{
+	height: 30px;
+	padding: 5px;
+	line-height: 3;
+	color: #666;
+}
+
+.pheader2{
+	height: 60px;
+	padding: 5px;
+	line-height: 3;
+	color: #666;
+}
+
+.pName{
+	text-transform: uppercase;
+	width: 65%;
+	overflow: hidden;
+	float: left;
+	height: 11px;
+	text-overflow: ellipsis;
+}
+
+ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	background-color: #333;
+}
+
+li{
+	padding: 5px;
+	border: 1px solid #555;
+	cursor: pointer;
+	font-size: 10.5px;
+	height: 11px;
+	font-family: arial;
+	padding-left: 12px;
+}
+
+.meta {
+    background: rgb(228, 228, 199);
+	z-index: 9999;
+	padding: 4px;
+	float: left;
+	-webkit-border-radius: 10px;
+	border-radius: 3px;
+	font-size: 10px;
+	position: relative;
+	color: black;
+	top: 30px;
+	right: 30%;
+}
+
+.project1{
+    /*display: inline;*/
+}
+
+.project:hover+.meta {
+    display: inline;
+}
+
+
+.pad{
+	height: 25px;
+	background-color: rgb(73, 73, 73);
+	padding: 7px 0 0 7px;
+	color: rgb(202, 202, 202);
+}
+
+
+/**** Edit/Create Project ****/
+
+.project{
+	padding: 10px;
+	padding-top: 20px;
+}
+
+.group{
+	padding-bottom: 7px;
+	height: 40px;
+}
+
+.ptext{
+	font-family: "Verdana";
+	font-size:11px;
+	width: 96%;
+	padding: 2px;
+}
+
+.progress{
+	position: absolute;
+	right: 3%;
+	
+}
+
+.colorbox{
+	width: 17px;
+	cursor: pointer;
+	margin-left: 9px;
+	height: 16px;
+	border: 1px solid gray;
+}
+
+.budget{
+	float: left;
+	width: 103%;
+}
+
+.appTitle{
+	font-size: 13.5px;
+	padding-bottom: 26px;
+}
+#about{
+	text-align: center;
+	padding: 24px;
+	color: #555;
+
+}
+
+/**** Events Log ****/
+
+.eventsLog{
+	position: absolute;
+	width: 99%;
+	top: 34px;
+	bottom: 60px;
+	background: white;
+	border: solid 1px rgb(184, 184, 184);
+	font-size: 10px;
+	color: rgb(38, 81, 116);
+	overflow-y: auto;
+}
+
+.loggingBtns{
+	margin: auto;
+	position: absolute;
+	bottom: 19px;
+	left: 0px;
+	padding-left: 8px;
+	font-size: 10px;
+	width: 95%;
+}
+
+.loggingBtns button{
+	margin: auto; 
+	position: absolute; 
+	right: 6px;
+}
+
+.checkboxes{
+	padding-top: 5px;
+}
+
+.checkboxes input{
+	margin-right: 5px;
+}
+
+/**** Footer ****/
+
+#footer{
+	position: fixed;
+	bottom: 0px;
+	color: #555;
+	width: 100%;
+	text-align: left;
+	margin: 0;
+	border-top: 1px;
+	padding: 2px 0 2px 2px;
+	background-color: #b6b6b6;
+	font-size: 10px;
+}
+
+
+/**** Modal Dialog  ****/
+
+
+.ng-modal-overlay {
+  /* A dark translucent div that covers the whole screen */
+  position:fixed;
+  z-index:9999;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color:#000000;
+  opacity: 0.8;
+}
+.ng-modal-dialog {
+  /* A centered div above the overlay with a box shadow. */
+  z-index:10000;
+  position: fixed;
+  width: 90%;
+  /* Center the dialog */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+
+  background-color: #fff;
+  box-shadow: 4px 4px 80px #000;
+  background-color: rgb(201, 201, 201);
+  font-family: arial;
+}
+.ng-modal-dialog-content {
+	padding: 5px;
+	text-align: center;
+	font-size: 10px;
+}
+.ng-modal-close {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	padding: 3px;
+	cursor: pointer;
+	font-size: 69%;
+	display: inline-block;
+	font-weight: bold;
+	font-family: verdana;
+}
+
+
+
+/**** Loading Spinner ****/
+
+@-webkit-keyframes loading-spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner{
+  -webkit-animation: loading-spinner 1250ms infinite linear;
+  -moz-animation: loading-spinner 1250ms infinite linear;
+  -ms-animation: loading-spinner 1250ms infinite linear;
+  -o-animation: loading-spinner 1250ms infinite linear;
+  animation: loading-spinner 1250ms infinite linear;
+  border: 8px solid rgb(43, 43, 43);
+  border-right-color: transparent;
+  border-radius: 16px;
+  box-sizing: border-box;
+  display: inline-block;
+  position: fixed;
+  left: 45%;
+  top: 45%;
+  overflow: hidden;
+  text-indent: -9999px;
+  width: 32px;
+  height: 32px;
+}
+
+/*********/
