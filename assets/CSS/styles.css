@@ -127,15 +127,12 @@ ul{
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-
-	background-color: #333;
 	position: absolute;
-	top: 54px;
-	bottom: 16px;
+	top: 0;
+	bottom: 0;
 	right: 0px;
 	left: 0px;
 	overflow-y: auto;
-
 	background-color: rgb(54, 54, 54);
 
 }
@@ -175,12 +172,12 @@ li{
 
 
 .pad{
-	height: 25px;
+	/*height: 25px;*/
 	background-color: rgb(82, 82, 82);
 	padding: 7px 0 0 7px;
 	color: rgb(202, 202, 202);
 	position: absolute;
-	top: 54px;
+	top: 0px;
 	right: 0px;
 	left: 0px;
 }

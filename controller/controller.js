@@ -83,6 +83,9 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	$rootScope.loading=false;
 	$rootScope.opaqueStyle={};
 	$rootScope.projectProperties=new Array();
+	for(i=0;i<100;i++){
+		$rootScope.projectProperties.push(new projectNo(i));
+		}	
 	$scope.processing=false;
 	
 	
@@ -188,6 +191,11 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	$rootScope.logout=function(){
 		$rootScope.showFlyout = false;
 		AppWatcher.removeEventListeners();
+		projectUtils.reset();
+		$rootScope.projectProperties=new Array();
+		for(i=0;i<100;i++){
+		$rootScope.projectProperties.push(new projectNo(i));
+		}	
 		$location.path("login");
 	};
 	

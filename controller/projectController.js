@@ -154,47 +154,6 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	};
 	
 
-	$scope.create=function(){
-		$location.path('createNew');
-	};
-	
-	$scope.edit=function(){
-		$location.path('editProject');
-	};
-	
-	
-	$scope.asgnPrjFldr=function(){
-		//1. Check the Current Document is saved or not
-		//If no project is selected, alert-No Project Selected
-		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
-			$scope.alert_message = "No Project Selected !";
-			$scope.modalShown=true;
-		}
-		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
-		else{
-			new CSInterface().evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
-				//alert(data);
-				console.log(data);
-			});
-		}
-		
-	};
-	
-	$rootScope.logout=function(){
-		AppWatcher.removeEventListeners();
-		projectUtils.reset();
-		$rootScope.projectProperties=new Array();
-		for(i=0;i<100;i++){
-		$rootScope.projectProperties.push(new projectNo(i));
-		}	
-		$location.path("login");
-	};
-	
-
-	$scope.webpage=function(){
-		new CSInterface().openURLInDefaultBrowser(Constants.URL_SERVICE);
-	};
-	
 	$scope.hover = function(project) {
 		return project.showMeta = !project.showMeta;
     };
