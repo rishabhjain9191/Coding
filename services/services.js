@@ -228,7 +228,8 @@ function($rootScope, Constants, Config, $http, $q){
 		console.log($rootScope.projectProperties);
 		$rootScope.projectProperties[index].style.border="1px solid "+$rootScope.projectProperties[index].style.color;
 		var rgba = hexToRgb($rootScope.projectProperties[index].style.color);
-		$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075)";
+		//$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075)";
+		$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075) url(assets/Images/project_item_handle_background.gif) no-repeat left";
 		$rootScope.projectProperties[index].message="In Progress";
 	};
 	
@@ -436,7 +437,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		console.log(event);
 		//Check whether any project id is associated with this document or not
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
-		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworx file recursively, and get project Id, else get 0.
+		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworxproject file recursively, and get project Id, else get 0.
 		new CSInterface().evalScript('$._extCWFile.getProjectID()', function(pid){
 			console.log("project id from .creativeworx file"+pid);
 			if(pid!=""){//Assign that project id to the current document

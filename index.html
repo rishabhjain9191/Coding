@@ -27,10 +27,27 @@
 
 </head>
 <body ng-controller='viewCtrl'>
+<div class="header" ng-click='toggleFlyout()'>
+	<div class="navContainer">
+		<div class="nav"></div>
+	</div>
+</div>
+<div class="flyout" ng-show='showFlyout'>
+	<div class="menu_item" ng-click="create()">Create a New Project</div>
+	<div class="menu_item" ng-click="edit()">Edit a Project</div>
+	<div class="menu_item" ng-click="asgnPrjFldr()">Assign Project to Folder</div>
+	<div class="separator"></div>
+	<div class="menu_item" ng-click="about()">About TimeTracker</div>
+	<div class="menu_item" ng-click="feedback()">Check for updates...</div>
+	<div class="menu_item" ng-click="feedback()">Feedback...</div>
+	<div class="separator"></div>
+	<div class="menu_item" ng-click="logout()">Logout</div>
+</div>
 <div class="loading-spinner" ng-show="loading" ></div>
 <div ng-view ng-style="opaqueStyle"></div>
-<div id="footer">POWERED BY CREATIVEWORX</div>
+<div class="footer">POWERED BY CREATIVEWORX</div>
+<modal-dialog show='modalShown'>
+  <p>{{alert_message}}<p>
+</modal-dialog>
 </body>
-
 </html>
-

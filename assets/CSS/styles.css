@@ -91,6 +91,15 @@ input[type="checkbox"]{
 
 /**** Projects ****/
 
+.projectsContainer{
+	background-color: rgb(82, 82, 82);
+	position: absolute;
+	bottom: 16px;
+	top: 52px;
+	left: 0;
+	right: 0;
+}
+
 .pheader{
 	height: 30px;
 	padding: 5px;
@@ -118,7 +127,7 @@ ul{
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	background-color: #333;
+	background-color: rgb(54, 54, 54);
 }
 
 li{
@@ -128,7 +137,8 @@ li{
 	font-size: 10.5px;
 	height: 11px;
 	font-family: arial;
-	padding-left: 12px;
+	padding-left: 16px;
+	background: url(../Images/project_item_handle_background.gif) no-repeat left;
 }
 
 .meta {
@@ -156,7 +166,7 @@ li{
 
 .pad{
 	height: 25px;
-	background-color: rgb(73, 73, 73);
+	background-color: rgb(82, 82, 82);
 	padding: 7px 0 0 7px;
 	color: rgb(202, 202, 202);
 }
@@ -223,6 +233,7 @@ li{
 	font-size: 10px;
 	color: rgb(38, 81, 116);
 	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .loggingBtns{
@@ -249,9 +260,75 @@ li{
 	margin-right: 5px;
 }
 
+
+/**** Header ****/
+
+.header{
+	color: #555;
+	width: 100%;
+	margin: 0;
+	text-align: right;
+	background-color: #b6b6b6;
+	cursor: pointer;
+	height: 14px;
+}
+
+.navContainer{
+	position: absolute;
+	right: 0;
+	padding: 2px;
+}
+
+.navContainer:hover{
+	/*border: solid 1px rgb(0, 0, 0);*/
+	background: rgb(148, 148, 148);
+}
+
+.nav{
+	height: 1px;
+	width: 11px;
+	border-top: 5px double rgb(112, 112, 112);
+	border-bottom: 2px solid rgb(112, 112, 112);
+	font-size: 0;
+	/*margin-top: 2.4px;*/
+	/*margin-right: 1px;*/
+}
+
+.nav:hover{
+	border-top: 5px double rgb(0, 0, 0);
+	border-bottom: 2px solid rgb(0, 0, 0);
+}
+
+.flyout{
+	position: fixed;
+	top:13px;
+	right:0px;
+	background-color: white;
+	/*padding: 5px 0 5px 0;*/
+	border: solid 1px rgb(207, 207, 207);
+	z-index: 999;
+	background: rgb(238, 238, 238);
+}
+
+.menu_item{
+	cursor: pointer;
+	padding: 4px 10px 4px 10px;
+	font-size: 10px;
+	font-family: arial;
+}
+
+.menu_item:hover{
+	background-color: rgba(61, 175, 240, 0.16);
+}
+
+.separator{
+	border-bottom: solid 1px rgb(228, 228, 228);
+	padding: 3px;
+}
+
 /**** Footer ****/
 
-#footer{
+.footer{
 	position: fixed;
 	bottom: 0px;
 	color: #555;
