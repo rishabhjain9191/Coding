@@ -119,6 +119,12 @@ ul{
 	margin: 0;
 	padding: 0;
 	background-color: #333;
+	position: absolute;
+	top: 54px;
+	bottom: 16px;
+	right: 0px;
+	left: 0px;
+	overflow-y: auto;
 }
 
 li{
@@ -159,6 +165,10 @@ li{
 	background-color: rgb(73, 73, 73);
 	padding: 7px 0 0 7px;
 	color: rgb(202, 202, 202);
+	position: absolute;
+	top: 54px;
+	right: 0px;
+	left: 0px;
 }
 
 

@@ -4,8 +4,10 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	preloader.showLoading();
 	$scope.modalShown = false;
 	$scope.firstname = Config.firstname;
+	$scope.showNoProjectsMessage = false;
+	$scope.noProjectsMessage="You have no projects.";
 	AppWatcher.addEventListeners();
-	var prev_index;
+	var prev_index=-1;
 	
 	//console.log($scope.projectNo);
 	var refreshProjects=function(){
@@ -13,6 +15,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		debuggerUtils.updateLogs("Project request attempt for [" +Config.username+ "]");
 		projectUtils.getProjects(Config.username, Config.password, Config.userid)
 		.then(function(data){
+			console.log("Refresh Projects  : "+data);
 			var event=new CSEvent("onCreationComplete", "APPLICATION");
 			event.type="onCreationComplete";
 			event.data="<onCreationComplete />";
@@ -22,9 +25,9 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			preloader.hideLoading();
 			debuggerUtils.updateLogs("[ProjectResult]: Successfully updated users objects.");
 			if(!data.length){
-				$scope.noProjectsMessage="You have no projects.";
+				$scope.showNoProjectsMessage = true;
 			}
-		}, function(data){});
+		}, function(data){console.log("Refresh Projects Failed : "+data);});
 	};
 	var deselectProject=function(){
 		//Remove XMP data of Project;
@@ -178,6 +181,11 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	
 	$rootScope.logout=function(){
 		AppWatcher.removeEventListeners();
+		projectUtils.reset();
+		$rootScope.projectProperties=new Array();
+		for(i=0;i<100;i++){
+		$rootScope.projectProperties.push(new projectNo(i));
+		}	
 		$location.path("login");
 	};
 	

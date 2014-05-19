@@ -116,6 +116,24 @@ services.factory('Constants',function(){
 		
 		constants.APP_NAME=new CSInterface().hostEnvironment.appName;
 		
+		constants.update=function(configData){
+			if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
+			if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
+			if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
+			if(configData.timeInterval) this.TIMEINTERVAL=configData.timeInterval;
+			if(configData.checkOnlineTimeInterval) this.CHECK_ONLINE_TIMEINTERVAL=configData.checkOnlineTimeInterval;
+			if(configData.imageTimeInterval) this.IMAGE_TIMEINTERVAL=configData.imageTimeInterval;
+			if(configData.batchSize) this.BATCH_SIZE=configData.batchSize;
+			if(configData.thresholdCount) this.THRESHOLD_COUNT=configData.thresholdCount;
+			if(configData.batchDataSendAddress) this.BATCHDATA_SEND_ADDRESS=configData.batchDataSendAddress;
+			if(configData.checkStatusAddress) this.CHECK_STATUS_ADDRESS=configData.checkStatusAddress;
+			if(configData.fileUploadAddress) this.FILE_UPLOAD_ADDRESS=configData.fileUploadAddress;
+			if(configData.logEnabled) this.LOG_ENABLE=configData.logEnabled;
+			//(configData.configversion)?this.URL_SERVICE=configData.configversion;
+			
+			
+		};
+		
 	return constants;
 });
 
@@ -219,17 +237,31 @@ function(Constants, Config, $http, $q){
 
 services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q',
 function($rootScope, Constants, Config, $http, $q){
+	
+	$rootScope.projectProperties=new Array();
+		for(i=0;i<100;i++){
+		$rootScope.projectProperties.push(new projectNo(i));
+		}
 	var utils={};
 	utils.selectedProjectId=0;			//Project Clicked(Selected) Id
 	utils.selectedProjectIndex=-1;		//Project Clicked(Selected) Index
 	utils.currentProjectId=-1;			//Previously Selected(current) project
 	
+	utils.reset=function(){
+		this.selectedProjectId=0;
+		this.selectedProjectIndex=-1;
+		this.currentProjectId=-1;	
+		console.log("Done Resetting ");
+	},
 	utils.changeStyleToSelected=function(index){
-		console.log($rootScope.projectProperties);
-		$rootScope.projectProperties[index].style.border="1px solid "+$rootScope.projectProperties[index].style.color;
-		var rgba = hexToRgb($rootScope.projectProperties[index].style.color);
-		$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075)";
-		$rootScope.projectProperties[index].message="In Progress";
+		//The project in XMP is not there in the user's project list
+		if($rootScope.projectProperties[index]){
+			console.log($rootScope.projectProperties);
+			$rootScope.projectProperties[index].style.border="1px solid "+$rootScope.projectProperties[index].style.color;
+			var rgba = hexToRgb($rootScope.projectProperties[index].style.color);
+			$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075)";
+			$rootScope.projectProperties[index].message="In Progress";
+		}
 	};
 	
 	utils.changeStyleToDeselected=function(index){
@@ -344,7 +376,7 @@ function($rootScope, Constants, Config, $http, $q){
 		//Check the current document's XMP
 		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
 			//alert(data);
-			if(data==""){
+			if(data==""||!utils.projectIndexes[parseInt(data)]){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
 					$rootScope.$apply(function(){
@@ -591,20 +623,8 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 	return utils;
 	
 }]);
-services.factory('debuggerUtils',['Constants','$rootScope',
-function(Constants,$rootScope){
-	var utils={};
-	$rootScope.logs="";
-	utils.updateLogs = function(statusText){
-		//$rootScope.$apply(function(){
-			$rootScope.logs=statusText+'<br />'+$rootScope.logs;
-		//});
-	};
-	return utils;
-}]);
-
-services.factory('DBHelper',['$http','$interval','Constants','Config',
-function($http,$interval,Constants,Config){
+services.factory('DBHelper',['$http','$interval','Constants','Config','debuggerUtils',
+function($http,$interval,Constants,Config, debuggerUtils){
 	
 	//Open/Create the Log file(for unsent records)
 	new CSInterface().evalScript('$._extFile.openFile()');
@@ -612,7 +632,7 @@ function($http,$interval,Constants,Config){
 	
 	var sendLoggedRecords=function(){
 		
-		debugUtils.updateLogs("[syncRecordsTimerHandler]: Record are being fetched from local file and sending to server");
+		debuggerUtils.updateLogs("[syncRecordsTimerHandler]: Record are being fetched from local file and sending to server");
 		new CSInterface().evalScript('$._extFile.readAndSend()',function(data){
 			processAndSend(data);
 		});
@@ -653,15 +673,15 @@ function($http,$interval,Constants,Config){
 		.success(function(data){
 			console.log(data);
 			if(data=="Invalid event details."){
-				debugUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
+				debuggerUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
 				logit(batchedRecords);
 			}
 			else{
-				debugUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
+				debuggerUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
 			}
 		}
 		).error(function(data){
-			debugUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
+			debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
 			
 			logit(batchedRecords);
 		})
@@ -669,7 +689,7 @@ function($http,$interval,Constants,Config){
 	
 	//Log unsend events to file.
 	var logit=function(buffer){
-			debugUtils.updateLogs("Logging unsent events to local file");
+			debuggerUtils.updateLogs("Logging unsent events to local file");
 			var records=JSON.parse(buffer);
 			var record;
 			for(var i=0;i<records.length;i++){
@@ -712,6 +732,18 @@ function($http,$interval,Constants,Config){
 
 
 ////////----------App Watcher Ends------------------///////////
+services.factory('debuggerUtils',['Constants','$rootScope',
+function(Constants,$rootScope){
+	var utils={};
+	$rootScope.logs="";
+	utils.updateLogs = function(statusText){
+		//$rootScope.$apply(function(){
+			$rootScope.logs=statusText+'<br />'+$rootScope.logs;
+		//});
+	};
+	return utils;
+}]);
+
 function loadJSX() {
     var csInterface = new CSInterface();
     var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/";

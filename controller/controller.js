@@ -84,9 +84,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	$scope.processing=false;
 	
 	
-	for(i=0;i<100;i++){
-		$rootScope.projectProperties.push(new projectNo(i));
-	}
+	
 	//Config.init()
 	//.then(function(data){
 	var data = new Object();
@@ -95,6 +93,8 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		if(data != "false"){
 			console.log(JSON.parse(data));
 			Config.data=JSON.parse(data);
+			
+			Constants.update(Config.data);
 			Config.username=Config.data.username;
 			Config.password=Config.data.password;
 			Config.keepMeLoggedIn=Config.data.keepMeLoggedIn;
