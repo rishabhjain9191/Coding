@@ -68,8 +68,8 @@ services.factory('Constants',function(){
 		//*** APP_EVENT_POLL needs additional analysis, currently need only in Fl/Flash Pro
 		
 		
-		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
-		//constants.URL_SERVICE = "http://ttdev.creativeworx.com";
+		//constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+		constants.URL_SERVICE = "http://ttdev.creativeworx.com";
 		
 		// Service calls : see cooresponding calls in the ServiceController.php - created by simply defining the function
 		constants.BATCHDATA_SEND_ADDRESS = "/service/log";                           // *
@@ -254,6 +254,7 @@ function($rootScope, Constants, Config, $http, $q){
 		console.log("Done Resetting ");
 	},
 	utils.changeStyleToSelected=function(index){
+
 		//The project in XMP is not there in the user's project list
 		if($rootScope.projectProperties[index]){
 			console.log($rootScope.projectProperties);
@@ -262,6 +263,7 @@ function($rootScope, Constants, Config, $http, $q){
 			$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075)";
 			$rootScope.projectProperties[index].message="In Progress";
 		}
+
 	};
 	
 	utils.changeStyleToDeselected=function(index){
@@ -468,7 +470,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		console.log(event);
 		//Check whether any project id is associated with this document or not
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
-		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworx file recursively, and get project Id, else get 0.
+		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworxproject file recursively, and get project Id, else get 0.
 		new CSInterface().evalScript('$._extCWFile.getProjectID()', function(pid){
 			console.log("project id from .creativeworx file"+pid);
 			if(pid!=""){//Assign that project id to the current document

@@ -9,14 +9,27 @@
 		</div>
 	</div>
 	
-	<div style="height: 15px; font-size: 9px;">
+	<!--<div style="height: 15px; font-size: 9px;">
 		<span class="link" ng-click="create()">Create</span>
 		<span class="link" ng-click="edit()">Edit</span>
 		<span class="link" ng-click="asgnPrjFldr()">Assign</span>
 		<span class="link" ng-click="feedback()">Contact</span>
 		<span class="link" ng-click="about()">Abt</span>
 		<span class="link" ng-click="logout()">Lgt</span>
+	</div>-->
+	<div class="projectsContainer">
+		<ul class='projects'>
+			 <li  ng-repeat='project in projects' ng-mouseenter="hover(project)" ng-mouseleave="hover(project)" ng-click='processProjectClick(project.pid, $index)' ng-style='projectProperties[$index].style'  >
+				<div class="project1">
+					<div class="pName">{{project.name}}</div>
+					<span class="progress">{{projectProperties[$index].message}}<span>
+				</div>
+				<div class="meta" ng-show="project.showMeta">Job ID: {{project.jobid}}</div>
+			</li>
+		</ul>
+		<div class="pad">{{noProjectsMessage}}</div>
 	</div>
+
 	<ul class='projects'>
 		 <li  ng-repeat='project in projects' ng-mouseenter="hover(project)" ng-mouseleave="hover(project)" ng-click='processProjectClick(project.pid, $index)' ng-style='projectProperties[$index].style'  >
 			<div class="project1">
@@ -28,6 +41,8 @@
 	</ul>
 	<div ng-show="showNoProjectsMessage" class="pad">{{noProjectsMessage}}</div>
 	
+
+
 	<modal-dialog show='modalShown'>
 	  <p>{{alert_message}}<p>
 	</modal-dialog>

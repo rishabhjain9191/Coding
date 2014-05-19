@@ -153,6 +153,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		} 
 	};
 	
+
 	$scope.create=function(){
 		$location.path('createNew');
 	};
@@ -189,15 +190,11 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		$location.path("login");
 	};
 	
+
 	$scope.webpage=function(){
 		new CSInterface().openURLInDefaultBrowser(Constants.URL_SERVICE);
 	};
-	$scope.feedback=function(){
-		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_BETA_FEEDBACK);
-	};
-	$scope.about=function(){
-		$location.path('about');
-	};
+	
 	$scope.hover = function(project) {
 		return project.showMeta = !project.showMeta;
     };

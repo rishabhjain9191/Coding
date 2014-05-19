@@ -73,9 +73,11 @@ app.config(['$routeProvider', function($routeProvider){
 }]);
 
 
-app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils', 'preloader','debuggerUtils',
-function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader, debuggerUtils){
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils', 'preloader','debuggerUtils', 'AppWatcher','projectUtils',
+function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader, debuggerUtils, AppWatcher, projectUtils){
 	
+	$rootScope.modalShown=false;
+	$rootScope.showFlyout=false;
 	// Initialize $rootScope;
 	$rootScope.logs="";
 	$rootScope.loading=false;
@@ -148,6 +150,55 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 			});
 		}
 	});
+	
+	
+	$rootScope.toggleFlyout=function(){
+		$rootScope.showFlyout = !$rootScope.showFlyout;
+	};
+	
+	$rootScope.create=function(){
+		$rootScope.showFlyout = false;
+		$location.path('createNew');
+	};
+	
+	$rootScope.edit=function(){
+		$rootScope.showFlyout = false;
+		$location.path('editProject');
+	};
+	
+	
+	$rootScope.asgnPrjFldr=function(){
+		$rootScope.showFlyout = false;
+		//1. Check the Current Document is saved or not
+		//If no project is selected, alert-No Project Selected
+		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
+			$rootScope.alert_message = "No Project Selected !";
+			$rootScope.modalShown=true;
+		}
+		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
+		else{
+			new CSInterface().evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
+				//alert(data);
+				console.log(data);
+			});
+		}
+		
+	};
+	
+	$rootScope.logout=function(){
+		$rootScope.showFlyout = false;
+		AppWatcher.removeEventListeners();
+		$location.path("login");
+	};
+	
+	$rootScope.feedback=function(){
+		$rootScope.showFlyout = false;
+		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_BETA_FEEDBACK);
+	};
+	$rootScope.about=function(){
+		$rootScope.showFlyout = false;
+		$location.path('about');
+	};
 	//}, function(){});
 }]);
 
