@@ -1,25 +1,24 @@
 var pathToUnsendEvents = "";
 if(Folder.fs=="Windows"){
- pathToUnsendEvents = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxDB.json";
+	pathToUnsendEvents = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxDB.json";
 }else if(Folder.fs=="Macintosh"){
- pathToUnsendEvents = "~/Library/Application Support/CreativeWorx/CreativeWorxDB.json";
+	pathToUnsendEvents = "~/Library/Application Support/CreativeWorx/CreativeWorxDB.json";
 }
-
 
 var file;
 $._extFile={
 	openFile:function(){
 		file=new File(pathToUnsendEvents);
 		file.open("e", "json", "????");
-		},
+	},
 	
 	writeObj:function(str){
 		try{
-		file.seek(0,2);
-		file.writeln(str);
+			file.seek(0,2);
+			file.writeln(str);
 		}
 		catch(e){
-		alert(e);
+			alert(e);
 		}
 	},
 	
@@ -45,9 +44,7 @@ $._extFile={
 		if(rec.length>1){rec=rec.substring(0,rec.length-1);}
 		rec=rec+']';
 		return rec;
-
 	}
-
 }
 
 

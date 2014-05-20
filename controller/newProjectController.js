@@ -1,10 +1,7 @@
 app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils',function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils){
-	//$scope.alert_message="Project name cannot be left blank!";
-	//$scope.modalShown = false;
 	preloader.hideLoading();
 	$scope.project={};
 	$scope.colorBox={};
-	
 	$scope.create=function(){
 		if($scope.project.name && $scope.project.name.length>=3){	
 			debuggerUtils.updateLogs("Creating new project: " + $scope.project.name);
@@ -19,7 +16,6 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 				.then(function(data){
 					preloader.hideLoading();
 					$scope.message=data.Msg;
-					console.log(data.Msg);
 					if(data.IsSuccess){
 						debuggerUtils.updateLogs("[CreateProjectResult]: Successfully created new project.");
 						$location.path('projects');
@@ -29,11 +25,9 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 						$scope.message=data.Msg;
 					}
 				}, function(data){preloader.hideLoading();$scope.message=data.Msg});
-				
 			}
 		}
 		else{
-			//$scope.modalShown = true;
 			$scope.message="Project name requires 3 characters."
 		}
 	},
@@ -54,7 +48,6 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 					colorSelected="#"+colorSelected;
 					$scope.project.colorcode=colorSelected;
 					$scope.colorBox.background=colorSelected;
-					//console.log("Color selected: "+colorSelected);
 				}
 			});
 		});

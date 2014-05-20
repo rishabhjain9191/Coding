@@ -5,48 +5,47 @@ $._ext_ILST_XMP={
 	*/
 	getProjectDetails : function(){
 		if (ExternalObject.AdobeXMPScript == undefined) {
-		ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
+			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
 		try {
-		var myDocument=app.activeDocument;
-		if (myDocument) {
-		
-			var xmp=new XMPMeta(myDocument.XMPString);
-			var value=xmp.getProperty(XMPConst.NS_XMP, "ProjectID");
-			//alert("In getProjectDetails"+value);	
-		} catch(e) {
-			//console.log("in catch of getXMPDataId error: ", e);
+			var myDocument=app.activeDocument;
+			if (myDocument) {
+				var xmp=new XMPMeta(myDocument.XMPString);
+				var value=xmp.getProperty(XMPConst.NS_XMP, "ProjectID");
+			} 
 		}
-	}
-	if(value===undefined||value.value==" "){
-		value="";
-	}
-	//alert("returning "+value);
-	return value+'';
+		catch(e) {
+			
+		}
+		if(value===undefined||value.value==" "){
+			value="";
+		}
+		return value+'';
 	},
+	
 	getProjectID : function(){
 		if (ExternalObject.AdobeXMPScript == undefined) {
-		ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
+			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
 		var myDocument=app.activeDocument;
 		if (myDocument) {
-		try {
-			var xmp=new XMPMeta(myDocument.XMPString);
-			var value=xmp.getProperty(XMPConst.NS_XMP, "ProjectID");
+			try {
+				var xmp=new XMPMeta(myDocument.XMPString);
+				var value=xmp.getProperty(XMPConst.NS_XMP, "ProjectID");
+				
+			}catch(e) {
 			
-		} catch(e) {
-			//console.log("in catch of getXMPDataId error: ", e);
+			}
 		}
-	}
-	if(value== undefined||value.value==" "){
-		value="";
-	}
-	return value+'';
+		if(value== undefined||value.value==" "){
+			value="";
+		}
+		return value+'';
 	},
 	
 	removeXMP:function(){
 		if (ExternalObject.AdobeXMPScript == undefined) {
-		ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
+			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
 		var myDocument=app.activeDocument;
 		var xmp=new XMPMeta(myDocument.XMPString);
@@ -56,8 +55,8 @@ $._ext_ILST_XMP={
 	},
 	
 	insertXMP:function(value){
-	if (ExternalObject.AdobeXMPScript == undefined) {
-		ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
+		if (ExternalObject.AdobeXMPScript == undefined) {
+			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
 		var myDocument=app.activeDocument;
 		var xmp=new XMPMeta(myDocument.XMPString);
@@ -88,57 +87,63 @@ $._ext_ILST_XMP={
 	},
 	
 	getInstanceID:function(){
-	if (ExternalObject.AdobeXMPScript == undefined) {
-		ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
+		if (ExternalObject.AdobeXMPScript == undefined) {
+			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
 		var myDocument=app.activeDocument;
-			if (myDocument) {
+		if (myDocument) {
 			try {
 				var xmp=new XMPMeta(myDocument.XMPString);
 				var value=xmp.getProperty(XMPConst.NS_XMP_MM, "InstanceID");
 				value=value.value.substr(5);
-				
 			} catch(e) {
-				//console.log("in catch of getXMPDataId error: ", e);
+		
 			}
 		}	
-	if(value===undefined||value.value==" "){
-		value="";
-	}
-	return value+'';
+		if(value===undefined||value.value==" "){
+			value="";
+		}
+		return value+'';
 	},
+	
 	getOriginalID:function(){
-	if (ExternalObject.AdobeXMPScript == undefined) {
-		ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
+		if (ExternalObject.AdobeXMPScript == undefined) {
+			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
 		var myDocument=app.activeDocument;
 		if (myDocument) {
-		try {
-			var xmp=new XMPMeta(myDocument.XMPString);
-			var value=xmp.getProperty(XMPConst.NS_XMP_MM, "OriginalDocumentID");
-			value=value.value.substr(5);
-			
-		} catch(e) {
-			//console.log("in catch of getXMPDataId error: ", e);
+			try {
+				var xmp=new XMPMeta(myDocument.XMPString);
+				var value=xmp.getProperty(XMPConst.NS_XMP_MM, "OriginalDocumentID");
+				value=value.value.substr(5);
+				
+			} catch(e) {
+
+			}
 		}
-	}
-	if(value===undefined||value.value==" "){
-		value="";
-	}
-	return value+'';
+		if(value===undefined||value.value==" "){
+			value="";
+		}
+		return value+'';
 	},
+	
 	getDocumentID:function(){
+		if (ExternalObject.AdobeXMPScript == undefined) {
+			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
+		}
 		var myDocument=app.activeDocument;
-		try{
-			value = myDocument.id;
-			
+		if (myDocument) {
+			try {
+				var xmp=new XMPMeta(myDocument.XMPString);
+				var value=xmp.getProperty(XMPConst.NS_XMP_MM, "DocumentID");
+				value=value.value.substr(5);
+			} catch(e) {
+		
+			}
+		}	
+		if(value===undefined||value.value==" "){
+			value="";
 		}
-		catch(e){
-			value='0';
-		}
-		if(value===undefined){
-			value='0';
-		}
-		return value;
+		return value+'';
 	}
 };

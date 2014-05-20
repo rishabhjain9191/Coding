@@ -57,7 +57,7 @@ $._extCWFile={
 		
 	updateOrCreateFile : function(pid, uid) {
 		try{
-			myFile = app.documents[0].fullName;
+			myFile = app.activeDocument.fullName;
 			parentFolder = myFile.parent;
 			var file = this.checkIfFileExists(parentFolder);
 			var file = new File(parentFolder+"/.creativeworxproject");
@@ -70,7 +70,7 @@ $._extCWFile={
 	},
 	
 	getProjectID : function() {
-		myFile = app.documents[0].fullName;
+		myFile = app.activeDocument.fullName;
 		parentFolder = myFile.parent;
 		var file = this.checkIfFileExistsRecursively(parentFolder);
 		if(file){
@@ -84,6 +84,4 @@ $._extCWFile={
 			return "";
 		}
 	},
-	
 };
-

@@ -5,12 +5,10 @@ function($scope, $rootScope, $location, $http,Config, Constants, loginUtils,prel
 	$scope.modalShown = false;
 	$scope.keepLoggedIn='false';	
 	$scope.message="";
-	console.log("Logging in User");
 	$scope.login=function(){
 		if($scope.user && $scope.user.email!="" && $scope.user.password!=""){	
 			preloader.showLoading();
 			var hashedPassword=MD5($scope.user.password);
-			
 			Config.username = $scope.user.email;
 			Config.password = hashedPassword;
 			
@@ -18,13 +16,14 @@ function($scope, $rootScope, $location, $http,Config, Constants, loginUtils,prel
 			.then(function(data){
 				preloader.hideLoading();
 				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
-				else{//User Authenticated
+				else{
+					//User Authenticated
 					Config.data=data[0];
 					Config.keepMeLoggedIn=$scope.checked;
 					Config.userid=Config.data.userid;
 					Config.firstname=Config.data.firstname;
 					new CSInterface().evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
-						//console.log(data);
+						
 					});
 					$location.path('projects');
 				}
@@ -39,12 +38,10 @@ function($scope, $rootScope, $location, $http,Config, Constants, loginUtils,prel
 	};
 	
 	$scope.signup=function(){
-		console.log("Opening SignUp in Browser");
 		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_SIGNUP);
 	};
 	
 	$scope.forgetLogin=function(){
-		console.log("Opening Forget Login in Browser");
 		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_FORGOT_LOGIN);
 	};
 }]);

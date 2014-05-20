@@ -1,16 +1,11 @@
 app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils){
-	 //$scope.alert_message="Project name cannot be left blank!";
-	 //$scope.modalShown = false;
 	 preloader.hideLoading();
-	
 	 $scope.colorBox={};
 	 projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
 	.then(function(data){$scope.projects=data;
 		$scope.project=$scope.projects[0];
 		$scope.name=$scope.project.name;
-		console.log($scope.name);
 		$scope.colorBox.background=$scope.project.colorcode;
-		console.log($scope.colorBox.background);
 	}, function(data){});
 	
 	var newName, newJobId, newColorCode, newBudget;
@@ -26,7 +21,6 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 			projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode)
 			.then(function(data){
 				preloader.hideLoading();
-				console.log(data.Msg);
 				if(data.IsSuccess){
 					debuggerUtils.updateLogs("[EditProjectResult]: Successfully edited the project.");
 					$location.path('projects');
@@ -41,7 +35,6 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 			});
 		}
 		else{
-			//$scope.modalShown = true;
 			$scope.message="Project name requires 3 characters."
 		}
 	},
@@ -68,7 +61,6 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 					colorSelected="#"+colorSelected;
 					$scope.project.colorcode=colorSelected;
 					$scope.colorBox.background=colorSelected;
-					//console.log("Color selected: "+colorSelected);
 				}
 			});
 		});

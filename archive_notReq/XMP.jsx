@@ -1,31 +1,31 @@
-$._ext_IDSN_XMP={
+$._extXMP={
 	/*
 		Gets Current Document's XMP data for project id.
 	*/
 	getProjectDetails : function(){
-		try {
-			var myDocument=app.activeDocument;
-			if (myDocument) {
+		var myDocument=app.activeDocument;
+		if (myDocument) {
+			try {
 				value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
-				if(value==null)return "";
-			} 
-		}catch(e) {
-			value="";
+				
+			} catch(e) {
+				console.log("in catch of getXMPDataId error: ", e);
+			}
 		}
 		return value+'';
 	},
 	
 	removeXMP:function(){
 		var myDocument=app.activeDocument;
-		myDocument.metadataPreferences.setProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]", "0");
+		myDocument.metadataPreferences.setProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]", "");
 	},
 	
 	insertXMP:function(value){
 		var myDocument=app.activeDocument;
 		var value1=myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
         if(value1==""){
-			var myNewContainer = myDocument.metadataPreferences.createContainerItem("http://ns.adobe.com/xap/1.0/", "projectID");
-		}
+                    var myNewContainer = myDocument.metadataPreferences.createContainerItem("http://ns.adobe.com/xap/1.0/", "projectID");
+            }
 		myDocument.metadataPreferences.setProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]",value);
 	},
 	
@@ -43,55 +43,57 @@ $._ext_IDSN_XMP={
 		var myDocument=app.activeDocument;
 		try{
 			value = myDocument.filePath;
-		}catch(e){
-			value='';
-		}
-		return value;
-	},
-	
-	getProjectID:function(){
-		try {
-			var myDocument=app.activeDocument;
-			if (myDocument) {
-				value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
-				if(value==null)return "";
-			} 
-		}catch(e) {
-			value="";
-		}
-		return value+'';
-	},
-	
-	getInstanceID:function(){
-		var myDocument=app.activeDocument;
-		try{
-			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "InstanceID");
-			value=value.substr(8);//Removing "xmp.iid:"
-		}catch(e){
-			value='';
-		}
-		return value;
-	},
-	
-	getOriginalID:function(){
-		var myDocument=app.activeDocument;
-		try{
-			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "OriginalDocumentID");
-			value=value.substr(8); //Removing "xmp.did:"
-		}catch(e){
-			value='';
-		}
-		return value;
-	},
-	
-	getDocumentID:function(){
-		var myDocument=app.activeDocument;
-		try{
-			value = myDocument.id;
 		}
 		catch(e){
 			value='';
 		}
 		return value;
+	},
+	getProjectID:function(){
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
+		}
+		catch(e){
+			value='';
+		}
+		return value;
+	},
+	getInstanceID:function(){
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "InstanceID");
+			value=value.substr(8);//Removing "xmp.iid:"
+		}
+		catch(e){
+			value='';
+		}
+		return value;
+	},
+	getOriginalID:function(){
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "OriginalDocumentID");
+			value=value.substr(8); //Removing "xmp.did:"
+		}
+		catch(e){
+			value='';
+		}
+		return value;
+	},
+	getDocumentID:function(){
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.index;
+			
+		}
+		catch(e){
+			value='';
+		}
+		return value;
+	},
+	checkDocLength:function(){
+		var len=app.documents.length;
+		return len+'';
 	}
 };

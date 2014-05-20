@@ -250,13 +250,11 @@ function($rootScope, Constants, Config, $http, $q){
 		this.selectedProjectId=0;
 		this.selectedProjectIndex=-1;
 		this.currentProjectId=-1;	
-		console.log("Done Resetting ");
 	},
 	utils.changeStyleToSelected=function(index){
 
 		//The project in XMP is not there in the user's project list
 		if($rootScope.projectProperties[index]){
-			console.log($rootScope.projectProperties);
 			$rootScope.projectProperties[index].style.border="1px solid "+$rootScope.projectProperties[index].style.color;
 			var rgba = hexToRgb($rootScope.projectProperties[index].style.color);
 			$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075)";
@@ -276,7 +274,6 @@ function($rootScope, Constants, Config, $http, $q){
 	};
 	utils.setSelectedProjectIndex=function(val){
 		this.selectedProjectIndex=val;
-		console.log("Selected project index stored");
 	};
 	
 	utils.getSelectedProjectIndex=function(){
@@ -294,23 +291,13 @@ function($rootScope, Constants, Config, $http, $q){
 	};
 	utils.getProjects=function(username, password, userid){
 		var deferred=$q.defer();
-		/*var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS+'?username='+username+'&password='+password+'&userid='+userid;
-		console.log(url);
-		$http({method:'get',
-			url:url
-		})*/
-		
-		
-		console.log(Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS);
-		
 		var params=[];
 		params['username']=username;
 		params['password']=password;
 		params['userid']=userid;
-		url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS;
+		var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS;
 		$http.post(url,params)
 		.success(function(data){
-			console.log(data);
 			utils.projectIndexes={};
 			for(var i=0;i<data.length;i++){
 				var pid=data[i].pid;
@@ -319,7 +306,6 @@ function($rootScope, Constants, Config, $http, $q){
 				$rootScope.projectProperties[i].style.color=data[i].colorcode;
 				data.showMeta=false;
 			}
-			console.log(utils.projectIndexes);
 			deferred.resolve(data);
 		})
 		.error(function(data){deferred.reject(data);})
@@ -328,12 +314,6 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.addProject=function(projectName, jobId, budgetHrs, color){
 		var deferred=$q.defer();
-		/*var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
-		console.log(url);
-		$http({method:'get',
-		url:url
-		})*/
-		
 		var params= $.param({userid: Config.data.userid, name: projectName, jobid: jobId, budget: budgetHrs, color: color });
 		var params=[];
 		params['userid']=Config.data.userid;
@@ -350,15 +330,6 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color){
 		var deferred=$q.defer();
-
-		/*var url=Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS+'?projectid='+projectId+'&userid='+Config.data.userid+'&name='+projectName+'&jobid='+jobId+'&budget='+budgetHrs+'&color='+color;
-
-		console.log(url);
-			$http({method:'POST',
-			url:url
-		})*/
-		
-		
 		var params=[];
 		params['projectid']=projectId;
 		params['userid']=Config.data.userid;
@@ -391,7 +362,6 @@ function($rootScope, Constants, Config, $http, $q){
 				console.log(utils.getSelectedProjectIndex());
 				//When the doc. has an associated project, select the project(change style and message)
 				$rootScope.$apply(function() {
-					console.log("Data from XMP<"+data+">");
 					if(utils.getSelectedProjectIndex()!=-1){
 						utils.changeStyleToDeselected(utils.getSelectedProjectIndex());
 						
@@ -447,7 +417,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	 
 	function onDocumentAfterDeactivate(event){
 		console.log(event.type);
-		new CSInterface().evalScript('$._extXMP.checkDocLength()', function(data){
+		new CSInterface().evalScript('app.documents.length', function(data){
 			if(parseInt(data)==0){
 				projectUtils.selectProject();
 			}
@@ -533,14 +503,14 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 	var documentChanged = function(event){
 		console.log(event);
-		Logger.log(event.type);
+		//Logger.log(event.type);
 	};
 	
 	var pswatcher={};
 	pswatcher.init=function(){
 		//Define Event Listeners
 		new CSInterface().addEventListener("PhotoshopCallback", documentChanged);
-		promise_logUserActiveStatus= $interval(activityTimerHandler, /*5*60**/3000);
+		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*60*1000);
 	};
 	pswatcher.remove=function(){
 		new CSInterface().removeEventListener('PhotoshopCallback', documentChanged);
@@ -558,14 +528,37 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	var utils={};
 	console.log("In Logger...");
 	utils.log=function(event){
-
 		console.log("Updating App Model...");
 		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
 			//console.log(data);
 			AppModel.updateModel(JSON.parse(data));
+			event=eventIdToName(event);
 			createLoggingData(event);
 		});
 
+	};
+	
+	var eventIdToName=function(event){
+		rtnString = event;
+		/*switch(eventType)
+			{
+				case "1332768288":
+				{
+					rtnString = Constants.EVENT_DOCUMENT_OPEN;
+					break;
+				}
+				case "1131180832":
+				{
+					rtnString = Constants.EVENT_DOCUMENT_CLOSE; // "documentClose";
+					break;
+				}	
+				default:
+				{
+					break;
+				}
+			}
+			*/
+			return rtnString; 
 	};
 	
 	var createLoggingData=function(eventType){

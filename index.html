@@ -1,55 +1,43 @@
 <!doctype html>
 <html ng-app="TimeTracker">
-<head>
-<link href="assets/CSS/styles.css" rel="stylesheet" type="text/css">
-<!--<link href="assets/CSS/colorpicker.css" rel="stylesheet" type="text/css">-->
-
-<script src="js/utils.js"></script>
-<script src="lib/jquery-2.1.1.min.js"></script> 
-<!--<script src="lib/CSInterface-4.0.0.js"></script> -->
-<script src="lib/CSInterface-4.2.0.js"></script> 
-<script src="lib/cs_host_adapter-2.0.js"></script>
-
-<script src="lib/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
-
-<script src="lib/WebSQL.min.js"></script>
-
-<!-- <script src="services/appwatcher.js"></script> -->
-<script src="services/services.js"></script>
-
-<script>loadJSX()</script>
-<script src="controller/controller.js"></script>
-<script src="controller/loginController.js"></script>
-<script src="controller/aboutController.js"></script>
-<script src="controller/projectController.js"></script>
-<script src="controller/newProjectController.js"></script>
-<script src="controller/editProjectController.js"></script>
-<script src="controller/logController.js"></script>
-
-</head>
-<body ng-controller='viewCtrl'>
-<div class="header">
-	<div class="navContainer" ng-click='toggleFlyout()'>
-		<div class="nav"></div>
-	</div>
-</div>
-<div class="flyout" ng-show='showFlyout'>
-	<div class="menu_item" ng-click="create()">Create a New Project</div>
-	<div class="menu_item" ng-click="edit()">Edit a Project</div>
-	<div class="menu_item" ng-click="asgnPrjFldr()">Assign Project to Folder</div>
-	<div class="separator"></div>
-	<div class="menu_item" ng-click="about()">About TimeTracker</div>
-	<div class="menu_item" ng-click="feedback()">Check for updates...</div>
-	<div class="menu_item" ng-click="feedback()">Feedback...</div>
-	<div class="separator"></div>
-	<div class="menu_item" ng-click="logout()">Logout</div>
-</div>
-<div class="loading-spinner" ng-show="loading" ></div>
-<div ng-view ng-style="opaqueStyle"></div>
-<div class="footer">POWERED BY CREATIVEWORX</div>
-<modal-dialog show='modalShown'>
-  <p>{{alert_message}}<p>
-</modal-dialog>
-</body>
+	<head>
+		<link href="assets/CSS/styles.css" rel="stylesheet" type="text/css">
+		<script src="js/utils.js"></script>
+		<script src="lib/CSInterface-4.2.0.js"></script> 
+		<script src="lib/cs_host_adapter-2.0.js"></script>
+		<script src="lib/angular.min.js"></script>
+		<script src="lib/angular-route.min.js"></script>
+		<script src="services/services.js"></script>
+		<script>loadJSX()</script>
+		<script src="controller/controller.js"></script>
+		<script src="controller/loginController.js"></script>
+		<script src="controller/aboutController.js"></script>
+		<script src="controller/projectController.js"></script>
+		<script src="controller/newProjectController.js"></script>
+		<script src="controller/editProjectController.js"></script>
+		<script src="controller/logController.js"></script>
+	</head>
+	<body ng-controller='viewCtrl'>
+		<div class="header">
+			<div class="navContainer" ng-click='toggleFlyout()'>
+				<div class="nav"></div>
+			</div>
+		</div>
+		<div class="flyout" ng-show='showFlyout'>
+			<div class="menu_item" ng-click="create()">Create a New Project</div>
+			<div class="menu_item" ng-click="edit()">Edit a Project</div>
+			<div class="menu_item" ng-click="asgnPrjFldr()">Assign Project to Folder</div>
+			<div class="menu_item" ng-click="refreshProjects()">Refresh Projects</div>
+			<div class="separator"></div>
+			<div class="menu_item" ng-click="about()">About TimeTracker</div>
+			<div class="menu_item" ng-click="feedback()">Check for updates...</div>
+			<div class="menu_item" ng-click="feedback()">Feedback...</div>
+			<div class="separator"></div>
+			<div class="menu_item" ng-click="logout()">Logout</div>
+		</div>
+		<div class="loading-spinner" ng-show="loading" ></div>
+		<div ng-view ng-style="opaqueStyle"></div>
+		<div class="footer">POWERED BY CREATIVEWORX</div>
+		<modal-dialog show='modalShown'><p>{{alert_message}}<p></modal-dialog>
+	</body>
 </html>

@@ -1,8 +1,6 @@
-app.controller('logCtrl',['$scope', '$rootScope', '$location',
-function($scope, $rootScope, $location){
-
+app.controller('logCtrl',['$scope', '$rootScope', '$location', '$window',
+function($scope, $rootScope, $location, $window){
 	$scope.return1=function(){
-		$location.path('projects');
-		//$window.history.back();
+		$window.history.back();
 	};
 }]);

@@ -1,47 +1,45 @@
 var app=angular.module('TimeTracker',['TTServices','ngRoute'],function($httpProvider) {
-  // Use x-www-form-urlencoded Content-Type
-  $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+	// Use x-www-form-urlencoded Content-Type
+	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
  
-  /**
-   * The workhorse; converts an object to x-www-form-urlencoded serialization.
-   * @param {Object} obj
-   * @return {String}
-   */ 
-  var param = function(obj) {
-    var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
-      
-    for(name in obj) {
-      value = obj[name];
-        
-      if(value instanceof Array) {
-        for(i=0; i<value.length; ++i) {
-          subValue = value[i];
-          fullSubName = name + '[' + i + ']';
-          innerObj = {};
-          innerObj[fullSubName] = subValue;
-          query += param(innerObj) + '&';
-        }
-      }
-      else if(value instanceof Object) {
-        for(subName in value) {
-          subValue = value[subName];
-          fullSubName = name + '[' + subName + ']';
-          innerObj = {};
-          innerObj[fullSubName] = subValue;
-          query += param(innerObj) + '&';
-        }
-      }
-      else if(value !== undefined && value !== null)
-        query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
-    }
-      
-    return query.length ? query.substr(0, query.length - 1) : query;
-  };
+	/**
+	* Converts an object to x-www-form-urlencoded serialization.
+	* @param {Object} obj
+	* @return {String}
+	*/ 
+	var param = function(obj) {
+		var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
+		for(name in obj) {
+			value = obj[name];
+			if(value instanceof Array) {
+				for(i=0; i<value.length; ++i) {
+					subValue = value[i];
+					fullSubName = name + '[' + i + ']';
+					innerObj = {};
+					innerObj[fullSubName] = subValue;
+					query += param(innerObj) + '&';
+				}
+			}
+			else if(value instanceof Object) {
+				for(subName in value) {
+					subValue = value[subName];
+					fullSubName = name + '[' + subName + ']';
+					innerObj = {};
+					innerObj[fullSubName] = subValue;
+					query += param(innerObj) + '&';
+				}
+			}
+			else if(value !== undefined && value !== null){
+				query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+			}
+		}
+        return query.length ? query.substr(0, query.length - 1) : query;
+	};
  
-  // Override $http service's default transformRequest
-  $httpProvider.defaults.transformRequest = [function(data) {
-    return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-  }];
+	// Override $http service's default transformRequest
+	$httpProvider.defaults.transformRequest = [function(data) {
+		return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+	}];
 });
 
 app.config(['$routeProvider', function($routeProvider){
@@ -74,11 +72,10 @@ app.config(['$routeProvider', function($routeProvider){
 
 
 app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils', 'preloader','debuggerUtils', 'AppWatcher','projectUtils','$window',
-function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader, debuggerUtils, AppWatcher, projectUtils,$window){
-	
+function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader, debuggerUtils, AppWatcher, projectUtils,$window){	
+	// Initialize $rootScope variables
 	$rootScope.modalShown=false;
 	$rootScope.showFlyout=false;
-	// Initialize $rootScope;
 	$rootScope.logs="";
 	$rootScope.loading=false;
 	$rootScope.opaqueStyle={};
@@ -87,18 +84,12 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		$rootScope.projectProperties.push(new projectNo(i));
 	}	
 	$scope.processing=false;
-	
-	
-	
-	//Config.init()
-	//.then(function(data){
+
 	var data = new Object();
 	data = JSON.stringify(data);
 	new CSInterface().evalScript('$._extXML.readConfig()', function(data){
 		if(data != "false"){
-			console.log(JSON.parse(data));
 			Config.data=JSON.parse(data);
-			
 			Constants.update(Config.data);
 			Config.username=Config.data.username;
 			Config.password=Config.data.password;
@@ -120,15 +111,11 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 			debuggerUtils.updateLogs("==============");
 			
 			if(Config.keepMeLoggedIn=="false"){	
-				console.log("keep me log in false");
-				//console.log($location);
 				$scope.$apply(function() {
 					$location.path('login');
 				});
-				//location.href="views/login.html";
 			}
 			else if(Config.keepMeLoggedIn=="true"){
-				console.log("keep me log in true");
 				loginUtils.login(Config.username, Config.password)
 				.then(function(data){
 					console.log(data);
@@ -137,8 +124,6 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 					}
 					else{
 						//User Authenticated
-						//Config.data=data[0];
-						//Config.keepMeLoggedIn=$scope.keepLoggedIn;
 						$location.path('projects');
 					}
 				},function(error){
@@ -147,13 +132,11 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 			}
 		}
 		else{
-			console.log("Going to login screen");
 			$scope.$apply(function() {
-			  $location.path('login');
+				$location.path('login');
 			});
 		}
 	});
-	
 	
 	$rootScope.toggleFlyout=function(){
 		$rootScope.showFlyout = !$rootScope.showFlyout;
@@ -166,15 +149,9 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	
 	function closeMenuWhenClickingElsewhere(event, callbackOnClose) {
 		var clickedElement = event.target;
-		//console.log($window.document.getElementsByClassName('nav'));
-		//console.log(clickedElement);
 		if (!clickedElement) return;
-
 		var elementClasses = clickedElement.classList;
-		//var elementClasses = angular.element(document).find('body')[0].classList;
-		console.log(elementClasses);
 		var clickedOnSearchDrawer = elementClasses.contains('nav');
-
 		if (!clickedOnSearchDrawer) {
 			callbackOnClose();
 			return;
@@ -203,11 +180,12 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
 		else{
 			new CSInterface().evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
-				//alert(data);
-				console.log(data);
+				if(data == "false"){
+					$rootScope.alert_message="Unable to assign the project!";
+					$rootScope.modalShown=true;
+				}
 			});
 		}
-		
 	};
 	
 	$rootScope.logout=function(){
@@ -216,7 +194,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		projectUtils.reset();
 		$rootScope.projectProperties=new Array();
 		for(i=0;i<100;i++){
-		$rootScope.projectProperties.push(new projectNo(i));
+			$rootScope.projectProperties.push(new projectNo(i));
 		}	
 		$location.path("login");
 	};
@@ -229,30 +207,35 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		$rootScope.showFlyout = false;
 		$location.path('about');
 	};
-	//}, function(){});
+	$rootScope.refreshProjects=function(){
+		$rootScope.showFlyout = false;
+		//projectUtils.refreshProjects();
+		//$location.path("projects");
+		console.log($rootScope);
+	};
 }]);
 
 
 app.directive('modalDialog', function() {
-  return {
-    restrict: 'E',
-    scope: {
-      show: '='
-    },
-    replace: true, // Replace with the template below
-    transclude: true, // we want to insert custom content inside the directive
-    link: function(scope, element, attrs) {
-      scope.dialogStyle = {};
-      if (attrs.width)
-        scope.dialogStyle.width = attrs.width;
-      if (attrs.height)
-        scope.dialogStyle.height = attrs.height;
-      scope.hideModal = function() {
-        scope.show = false;
-      };
-    },
-    template: "<div class='ng-modal' ng-show='show'><div class='ng-modal-overlay' ng-click='hideModal()'></div><div class='ng-modal-dialog' ng-style='dialogStyle'><div class='ng-modal-close' ng-click='hideModal()'>X</div><div class='ng-modal-dialog-content' ng-transclude></div></div></div>"
-  };
+	return {
+		restrict: 'E',
+		scope: {
+			show: '='
+		},
+		replace: true, // Replace with the template below
+		transclude: true, // we want to insert custom content inside the directive
+		link: function(scope, element, attrs) {
+			scope.dialogStyle = {};
+			if (attrs.width)
+				scope.dialogStyle.width = attrs.width;
+			if (attrs.height)
+				scope.dialogStyle.height = attrs.height;
+			scope.hideModal = function() {
+				scope.show = false;
+			};
+		},
+		template: "<div class='ng-modal' ng-show='show'><div class='ng-modal-overlay' ng-click='hideModal()'></div><div class='ng-modal-dialog' ng-style='dialogStyle'><div class='ng-modal-close' ng-click='hideModal()'>X</div><div class='ng-modal-dialog-content' ng-transclude></div></div></div>"
+	};
 });
 
 

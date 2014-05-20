@@ -2,7 +2,6 @@
 	<div class="pheader2">
 		<span><b>Select existing project to edit</b></span>
 		<select ng-model='project' ng-change='changeProject(project)' ng-options='p.name for p in projects'>
-			<!--<option value="">--Choose Project</option>-->
 		</select>
 		<hr>
 	</div>
@@ -32,7 +31,4 @@
 		<br/>
 		<div class="message" ng-show='message'>{{message}}</div>
 	</div>
-	<!--<modal-dialog show='modalShown'>
-	  <p>{{alert_message}}<p>
-	</modal-dialog>-->
 </div>

@@ -1,9 +1,8 @@
-app.controller('aboutCtrl',['$scope', '$location', 'Constants',
-function($scope, $location, Constants){
+app.controller('aboutCtrl',['$scope', '$location', 'Constants', '$window',
+function($scope, $location, Constants, $window){
 	$scope.app_version_no = Constants.EXTENSION_VERSION_NUMBER;	
 	$scope.return1=function(){
-		$location.path('projects');
-		//$window.history.back();
+		$window.history.back();
 	};
 	
 	$scope.terms=function(){
