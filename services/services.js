@@ -115,6 +115,7 @@ services.factory('Constants',function(){
 		constants.URL_VERSION = 		  "/downloads/timetracker/TimeTrackerUpdate.xml";
 		
 		constants.APP_NAME=new CSInterface().hostEnvironment.appName;
+		constants.EXTENSION_ID=new CSInterface().getExtensionID();
 		
 		constants.update=function(configData){
 			if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
@@ -130,8 +131,6 @@ services.factory('Constants',function(){
 			if(configData.fileUploadAddress) this.FILE_UPLOAD_ADDRESS=configData.fileUploadAddress;
 			if(configData.logEnabled) this.LOG_ENABLE=configData.logEnabled;
 			//(configData.configversion)?this.URL_SERVICE=configData.configversion;
-			
-			
 		};
 		
 	return constants;
@@ -420,7 +419,7 @@ function($rootScope, Constants, Config, $http, $q){
 /***************************************************************
 ****************************************************************
 ***************************************************************/
-services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils',function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils ){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'WatcherPhotoshop', function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, watcherPS ){
 	console.log('App Watcher Started');
 	
 	var utils={};
@@ -430,18 +429,20 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		new CSInterface().removeEventListener('documentAfterSave', onDocumentAfterSave);
 		new CSInterface().removeEventListener('applicationActivate',onApplicationActivate);
 		new CSInterface().removeEventListener('applicationBeforeQuit',onApplicationBeforeQuit);
+		watcherPS.remove();
 	};
 	
 	
 	utils.addEventListeners=function(){
-	//Define Event Listeners
-	new CSInterface().addEventListener('documentAfterActivate', onDocumentAfterActivate);
-	new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
-	new CSInterface().addEventListener('documentAfterSave', onDocumentAfterSave);
-	new CSInterface().addEventListener('applicationActivate', onApplicationActivate);
-	new CSInterface().addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
-	new CSInterface().addEventListener('projectSelected', onProjectSelected);
-	new CSInterface().addEventListener('onCreationComplete', onCreationComplete);
+		//Define Event Listeners
+		new CSInterface().addEventListener('documentAfterActivate', onDocumentAfterActivate);
+		new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
+		new CSInterface().addEventListener('documentAfterSave', onDocumentAfterSave);
+		new CSInterface().addEventListener('applicationActivate', onApplicationActivate);
+		new CSInterface().addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
+		new CSInterface().addEventListener('projectSelected', onProjectSelected);
+		new CSInterface().addEventListener('onCreationComplete', onCreationComplete);
+		watcherPS.init();
 	};
 	 
 	function onDocumentAfterDeactivate(event){
@@ -454,16 +455,16 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	};
 	
 	function onProjectSelected(event){
-		Logger.log(event);
+		Logger.log(event.type);
 	};
 	function onCreationComplete(event){
-		Logger.log(event);
+		Logger.log(event.type);
 	};
 	function onDocumentAfterActivate(event){
 		console.log(event);
 		debuggerUtils.updateLogs(event.type);
 		projectUtils.selectProject();
-		Logger.log(event);
+		Logger.log(event.type);
 		
 	};
 	function onDocumentAfterSave(event){
@@ -482,31 +483,73 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 					event.type="projectSelected";
 					event.data="<projectSelected />";
 					new CSInterface().dispatchEvent(event);
-					var abc={};
-					abc.type="documentAfterSave";
-					Logger.log(abc);
+					Logger.log("documentAfterSave");
 				});
 			}
 		});
 			
 		}
 		if(projectUtils.getCurrentProjectId()!=0){
-			Logger.log(event);
+			Logger.log(event.type);
 		}
 	};
 	function onApplicationActivate(event){
 		console.log(event);
 		//projectUtils.selectProject();
-		Logger.log(event);
+		Logger.log(event.type);
 	};
 	function onApplicationBeforeQuit(event){
 		/*.........................*/
-		Logger.log(event);
+		Logger.log(event.type);
 	};  
 	
 	return utils;
 
 }]);
+
+
+services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$interval',function(Constants, Logger, debuggerUtils, $interval){
+	
+	var prevHistoryState="";
+	var promise_logUserActiveStatus="";
+	var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");  
+	event.extensionId = Constants.EXTENSION_ID;  
+	console.log(event);
+	event.data = PSEvent.CUT+","+PSEvent.COPY+","+PSEvent.PASTE;
+	new CSInterface().dispatchEvent(event);
+	
+	var activityTimerHandler = function(){
+		//app.activeDocument.hostObjectDelegate
+		new CSInterface().evalScript("app.activeDocument.activeHistoryState.name", function(data){
+			if(prevHistoryState==data){
+				console.log("NOT ACTIVE");
+			}else{
+				console.log("ACTIVE");
+				Logger.log("userActive");
+				prevHistoryState=data;
+			}
+		}); 
+	};
+	
+	var documentChanged = function(event){
+		console.log(event);
+		Logger.log(event.type);
+	};
+	
+	var pswatcher={};
+	pswatcher.init=function(){
+		//Define Event Listeners
+		new CSInterface().addEventListener("PhotoshopCallback", documentChanged);
+		promise_logUserActiveStatus= $interval(activityTimerHandler, /*5*60**/3000);
+	};
+	pswatcher.remove=function(){
+		new CSInterface().removeEventListener('PhotoshopCallback', documentChanged);
+		$interval.cancel(promise_logUserActiveStatus);
+	};
+	
+	return pswatcher;
+}]);
+
 
 services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function(Constants,Config ,DBHelper, AppModel){
 	/* Get the Data from App Model*/
@@ -515,13 +558,14 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	var utils={};
 	console.log("In Logger...");
 	utils.log=function(event){
-	var eventType=event.type;
-	console.log("Updating App Model...");
-	new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
-		console.log("data from reading the document"+data);
-		AppModel.updateModel(JSON.parse(data));
-		createLoggingData(eventType);
-	});
+
+		console.log("Updating App Model...");
+		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
+			//console.log(data);
+			AppModel.updateModel(JSON.parse(data));
+			createLoggingData(event);
+		});
+
 	};
 	
 	var createLoggingData=function(eventType){

@@ -143,6 +143,10 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	};
 	
 	
+	$scope.openHomePage=function(projectId){
+		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE);
+	};
+	
 	$scope.checkSelected=function(projectId){
 		console.log("Style changed");
 		if(projectId==projectUtils.getCurrentProjectId()){
@@ -153,7 +157,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		} 
 	};
 	
-
+	
 	$scope.hover = function(project) {
 		return project.showMeta = !project.showMeta;
     };

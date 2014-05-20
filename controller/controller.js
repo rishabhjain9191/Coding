@@ -73,8 +73,8 @@ app.config(['$routeProvider', function($routeProvider){
 }]);
 
 
-app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils', 'preloader','debuggerUtils', 'AppWatcher','projectUtils',
-function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader, debuggerUtils, AppWatcher, projectUtils){
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils', 'preloader','debuggerUtils', 'AppWatcher','projectUtils','$window',
+function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader, debuggerUtils, AppWatcher, projectUtils,$window){
 	
 	$rootScope.modalShown=false;
 	$rootScope.showFlyout=false;
@@ -85,7 +85,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	$rootScope.projectProperties=new Array();
 	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
-		}	
+	}	
 	$scope.processing=false;
 	
 	
@@ -157,7 +157,29 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	
 	$rootScope.toggleFlyout=function(){
 		$rootScope.showFlyout = !$rootScope.showFlyout;
+		/*if ($rootScope.showFlyout) {
+			$window.onclick = function (event) {
+				closeMenuWhenClickingElsewhere(event, $rootScope.toggleFlyout);
+			};
+		}*/ 
 	};
+	
+	function closeMenuWhenClickingElsewhere(event, callbackOnClose) {
+		var clickedElement = event.target;
+		//console.log($window.document.getElementsByClassName('nav'));
+		//console.log(clickedElement);
+		if (!clickedElement) return;
+
+		var elementClasses = clickedElement.classList;
+		//var elementClasses = angular.element(document).find('body')[0].classList;
+		console.log(elementClasses);
+		var clickedOnSearchDrawer = elementClasses.contains('nav');
+
+		if (!clickedOnSearchDrawer) {
+			callbackOnClose();
+			return;
+		}
+	}
 	
 	$rootScope.create=function(){
 		$rootScope.showFlyout = false;
