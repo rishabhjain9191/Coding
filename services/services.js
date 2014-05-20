@@ -518,7 +518,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	var eventType=event.type;
 	console.log("Updating App Model...");
 	new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
-		//console.log(data);
+		console.log("data from reading the document"+data);
 		AppModel.updateModel(JSON.parse(data));
 		createLoggingData(eventType);
 	});
