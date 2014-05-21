@@ -18,6 +18,7 @@ function($scope, $rootScope, $location, $http,Config, Constants, loginUtils,prel
 				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
 				else{
 					//User Authenticated
+					$rootScope.canEdit=canEdit(data[0].oid, data[0].usertype);
 					Config.data=data[0];
 					Config.keepMeLoggedIn=$scope.checked;
 					Config.userid=Config.data.userid;

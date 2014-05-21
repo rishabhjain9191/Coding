@@ -1,7 +1,9 @@
 <!doctype html>
 <html ng-app="TimeTracker">
 	<head>
+		<link href="assets/CSS/jquery-ui.css" rel="stylesheet" type="text/css">
 		<link href="assets/CSS/styles.css" rel="stylesheet" type="text/css">
+		
 		<script src="js/utils.js"></script>
 		<script src="lib/CSInterface-4.2.0.js"></script> 
 		<script src="lib/cs_host_adapter-2.0.js"></script>
@@ -16,6 +18,17 @@
 		<script src="controller/newProjectController.js"></script>
 		<script src="controller/editProjectController.js"></script>
 		<script src="controller/logController.js"></script>
+		
+		<script src="lib/jquery-2.1.1.min.js"></script>
+		<script src="lib/jquery-ui.js"></script>
+		
+		<script>
+  $(function() {
+    $( document ).tooltip({
+      track: true
+    });
+  });
+  </script>
 	</head>
 	<body ng-controller='viewCtrl'>
 		<div class="header">
@@ -24,8 +37,8 @@
 			</div>
 		</div>
 		<div class="flyout" ng-show='showFlyout'>
-			<div class="menu_item" ng-click="create()">Create a New Project</div>
-			<div class="menu_item" ng-click="edit()">Edit a Project</div>
+			<div class="menu_item" ng-show="canEdit" ng-click="create()">Create a New Project</div>
+			<div class="menu_item" ng-show="canEdit" ng-click="edit()">Edit a Project</div>
 			<div class="menu_item" ng-click="asgnPrjFldr()">Assign Project to Folder</div>
 			<div class="menu_item" ng-click="refreshProjects()">Refresh Projects</div>
 			<div class="separator"></div>

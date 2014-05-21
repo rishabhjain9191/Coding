@@ -9,8 +9,8 @@
 	</div>
 	<div class="projectsContainer">
 		<ul class='projects'>
-			 <li  ng-repeat='project in projects' ng-mouseenter="hover(project)" ng-mouseleave="hover(project)" ng-click='processProjectClick(project.pid, $index)' ng-style='projectProperties[$index].style'  >
-				<div class="project1">
+			 <li  ng-repeat='project in projects'  ng-click='processProjectClick(project.pid, $index)' ng-style='projectProperties[$index].style'  title="Job ID: {{project.jobid}}">
+				<div class="project1" >
 					<div class="pName">{{project.name}}</div>
 					<span class="progress">{{projectProperties[$index].message}}<span>
 				</div>

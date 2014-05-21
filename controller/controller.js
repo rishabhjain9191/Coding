@@ -124,6 +124,8 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 					}
 					else{
 						//User Authenticated
+						console.log("User Authenticaed");
+						$rootScope.canEdit=canEdit(data[0].oid, data[0].usertype);
 						$location.path('projects');
 					}
 				},function(error){
@@ -244,3 +246,13 @@ function projectNo(i){
 	this.style={};
 	this.message="";
 };
+
+function canEdit(oid, usertype){
+	console.log(oid,usertype);
+	if(oid&&usertype=='normal'){
+		return false;
+	}
+	else{
+		return false;
+	}
+}
