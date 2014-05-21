@@ -1,11 +1,25 @@
-app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils){
+app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants){
 	 preloader.hideLoading();
-	 $scope.colorBox={};
+	 
+	 $scope.showColorPanel=false;
+	 // creating the colors array for the colorbox
+	 $scope.colors=[];
+	 var projectColors = constants.PROJECT_COLORS;
+	 for(var i=0; i<projectColors.length; i++){
+		var obj = {};
+		obj.colorindex=i;
+		obj.colorcode=projectColors[i];
+		$scope.colors.push(obj);
+	 }
+	 
 	 projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
 	.then(function(data){$scope.projects=data;
 		$scope.project=$scope.projects[0];
 		$scope.name=$scope.project.name;
-		$scope.colorBox.background=$scope.project.colorcode;
+		$scope.colorBtnStyle={};
+		$scope.colorPreviewStyle={};
+		$scope.colorBtnStyle.background=$scope.project.colorcode;
+		$scope.colorPreviewStyle.background=$scope.project.colorcode;
 	}, function(data){});
 	
 	var newName, newJobId, newColorCode, newBudget;
@@ -45,10 +59,15 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 	
 	$scope.changeProject=function(p){
 		$scope.name = p.name;
-		$scope.colorBox.background=p.colorcode;
+		$scope.colorBtnStyle.background=p.colorcode;
+		$scope.colorPreviewStyle.background=p.colorcode;
 	},
 	
-	$scope.selectColor=function(){
+	$scope.showColorBox=function(){
+		/*
+			256*256 colors
+		*/
+		/*
 		var projColor= "0x888888";
 		if($scope.project.colorcode!="" && $scope.project.colorcode)
 			projColor=($scope.project.colorcode).replace("#","0x");
@@ -60,9 +79,25 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 					colorSelected=("000000" + data).substr(-6,6);
 					colorSelected="#"+colorSelected;
 					$scope.project.colorcode=colorSelected;
-					$scope.colorBox.background=colorSelected;
+					$scope.colorBtnStyle.background=colorSelected;
 				}
 			});
 		});
-	}	
+		*/
+		
+		/*
+			25 colors
+		*/
+		$scope.showColorPanel=!$scope.showColorPanel;
+	},
+	
+	$scope.showPreview=function(index){
+		$scope.colorPreviewStyle.background=$scope.colors[index].colorcode;
+	},
+	
+	$scope.selectColor=function(index){
+		$scope.showColorPanel=false;
+		$scope.project.colorcode=$scope.colors[index].colorcode;
+		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
+	}
 }]);

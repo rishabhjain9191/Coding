@@ -174,14 +174,17 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		//1. Check the Current Document is saved or not
 		//If no project is selected, alert-No Project Selected
 		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
-			$rootScope.alert_message = "No Project Selected !";
+			$rootScope.alert_message = "Assign Project requires an open document that has already been saved.";
 			$rootScope.modalShown=true;
 		}
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
 		else{
 			new CSInterface().evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
 				if(data == "false"){
-					$rootScope.alert_message="Unable to assign the project!";
+					$rootScope.alert_message="Assign Project requires an open document that has already been saved.";
+					$rootScope.modalShown=true;
+				}else{
+					$rootScope.alert_message="The current project has been assigned to the current folder.";
 					$rootScope.modalShown=true;
 				}
 			});
@@ -234,7 +237,7 @@ app.directive('modalDialog', function() {
 				scope.show = false;
 			};
 		},
-		template: "<div class='ng-modal' ng-show='show'><div class='ng-modal-overlay' ng-click='hideModal()'></div><div class='ng-modal-dialog' ng-style='dialogStyle'><div class='ng-modal-close' ng-click='hideModal()'>X</div><div class='ng-modal-dialog-content' ng-transclude></div></div></div>"
+		template: "<div class='ng-modal' ng-show='show'><div class='ng-modal-overlay' ng-click='hideModal()'></div><div class='ng-modal-dialog' ng-style='dialogStyle'><div class='ng-modal-dialog-content' ng-transclude></div><button class='lightBtn' style='width: 71px;' ng-click='hideModal()'>OK</button></div></div>"
 	};
 });
 
