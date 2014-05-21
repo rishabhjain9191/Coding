@@ -21,7 +21,7 @@ services.factory('Constants',function(){
 		constants.IMAGE_STATUS_ERROR = "ERROR"; // Currently only error is file not found
 		//??? consider adding other errors involving conditions that may be recoverable, errors not recoverable
 		
-		constants.PROJECT_COLORS= [
+		/*constants.PROJECT_COLORS= [
 			"0x888888", //0
 			"0xFFF772", //1
 			"0xF8AE3B", //2
@@ -47,6 +47,33 @@ services.factory('Constants',function(){
 			"0x6A482C", //22
 			"0x5D5D5D", //23
 			"0x999999"  //24
+		];*/
+		constants.PROJECT_COLORS= [
+			"#888888", //0
+			"#FFF772", //1
+			"#F8AE3B", //2
+			"#EA7527", //3
+			"#CC4824", //4
+			"#C02006", //5
+			"#A5080B", //6
+			"#A32445", //7
+			"#E47284", //8
+			"#854E9D", //9
+			"#7166A3", //10
+			"#A588B5", //11
+			"#83B8E5", //12
+			"#337EBD", //13
+			"#004382", //14
+			"#00606E", //15
+			"#1D6348", //16
+			"#239E6E", //17
+			"#88E2AC", //18
+			"#62A162", //19
+			"#1F6F1F", //20
+			"#937862", //21
+			"#6A482C", //22
+			"#5D5D5D", //23
+			"#999999"  //24
 		];
 		
 		// Note: constant values are retrieved from server or from config file values. The following are
@@ -68,8 +95,8 @@ services.factory('Constants',function(){
 		//*** APP_EVENT_POLL needs additional analysis, currently need only in Fl/Flash Pro
 		
 		
-		//constants.URL_SERVICE = "https://timetracker.creativeworx.com";
-		constants.URL_SERVICE = "http://ttdev.creativeworx.com";
+		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+		//constants.URL_SERVICE = "http://ttdev.creativeworx.com";
 		
 		// Service calls : see cooresponding calls in the ServiceController.php - created by simply defining the function
 		constants.BATCHDATA_SEND_ADDRESS = "/service/log";                           // *
@@ -257,7 +284,7 @@ function($rootScope, Constants, Config, $http, $q){
 		if($rootScope.projectProperties[index]){
 			$rootScope.projectProperties[index].style.border="1px solid "+$rootScope.projectProperties[index].style.color;
 			var rgba = hexToRgb($rootScope.projectProperties[index].style.color);
-			$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075)";
+			$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075) url(assets/Images/project_item_handle_background.gif) no-repeat left";
 			$rootScope.projectProperties[index].message="In Progress";
 		}
 
@@ -304,7 +331,6 @@ function($rootScope, Constants, Config, $http, $q){
 				utils.projectIndexes[pid]=i;
 				$rootScope.projectProperties[i].style={};
 				$rootScope.projectProperties[i].style.color=data[i].colorcode;
-				data.showMeta=false;
 			}
 			deferred.resolve(data);
 		})
@@ -314,7 +340,6 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.addProject=function(projectName, jobId, budgetHrs, color){
 		var deferred=$q.defer();
-		var params= $.param({userid: Config.data.userid, name: projectName, jobid: jobId, budget: budgetHrs, color: color });
 		var params=[];
 		params['userid']=Config.data.userid;
 		params['name']= projectName;
@@ -417,7 +442,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	 
 	function onDocumentAfterDeactivate(event){
 		console.log(event.type);
-		new CSInterface().evalScript('app.documents.length', function(data){
+		new CSInterface().evalScript('$._extcommon.checkDocLength()',function(data){
 			if(parseInt(data)==0){
 				projectUtils.selectProject();
 			}

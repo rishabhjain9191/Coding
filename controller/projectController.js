@@ -78,7 +78,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	refreshProjects();
 	
 	$scope.processProjectClick=function(projectId, index){
-		new CSInterface().evalScript('app.documents.length',function(data){
+		new CSInterface().evalScript('$._extcommon.checkDocLength()',function(data){
 			if(parseInt(data)){
 				processProject(projectId,index)
 			}else{
@@ -137,8 +137,4 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			return {'font-weight':'normal'};
 		} 
 	};
-		
-	$scope.hover = function(project) {
-		return project.showMeta = !project.showMeta;
-    };
 }]);

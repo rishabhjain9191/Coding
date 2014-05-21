@@ -23,6 +23,7 @@ body{
 button,select,input{
 	font-family: "Verdana";
 	font-size:9px;
+	cursor: pointer;
 }
 
 select{
@@ -31,6 +32,60 @@ select{
 
 .pointer{
 	cursor: pointer;
+}
+
+.lightBtn {
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, rgb(228, 228, 228)), color-stop(1, rgb(202, 202, 202)) );
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border: 1px solid rgb(170, 170, 170);
+	color: rgb(56, 56, 56);
+	font-family: arial;
+	font-size: 10px;
+	font-weight: bold;
+	font-style: normal;
+	height: 23px;
+	line-height: 19px;
+	width: 115px;
+	text-decoration: none;
+	text-align: center;
+}
+.lightBtn:hover {
+	background:#eee;
+	border: 1px solid rgb(42, 141, 219);
+}
+
+.darkBtn {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #a1a1a1), color-stop(1, rgb(66, 66, 66)) );
+	background-color:#a1a1a1;
+	border-top-left-radius:5px;
+	border-top-right-radius:5px;
+	border-bottom-right-radius:5px;
+	border-bottom-left-radius: 5px;
+	text-indent: 0;
+	border: 1px solid #dcdcdc;
+	display: inline-block;
+	color: #ffffff;
+	font-family: arial;
+	font-size: 10px;
+	font-weight: bold;
+	font-style: normal;
+	height: 25px;
+	line-height: 21px;
+	width: 115px;
+	text-decoration: none;
+	text-align: center;
+}
+.darkBtn:hover {
+	background:#ffffff;
+	border: 1px solid gray;
+	color: #000000;
+}
+.darkBtn:active {
+	position:relative;
+	top:1px;
 }
 
 /***/
@@ -149,29 +204,6 @@ li{
 	background: url(../Images/project_item_handle_background.gif) no-repeat left;
 }
 
-.meta {
-    background: rgb(228, 228, 199);
-	z-index: 9999;
-	padding: 10px;
-	float: left;
-	-webkit-border-radius: 10px;
-	border-radius: 3px;
-	font-size: 10px;
-	position: relative;
-	color: black;
-	top: 30px;
-	right: 30%;
-}
-
-.project1{
-    /*display: inline;*/
-}
-
-.project:hover+.meta {
-    display: inline;
-}
-
-
 .pad{
 	/*height: 25px;*/
 	background-color: rgb(82, 82, 82);
@@ -209,12 +241,48 @@ li{
 	
 }
 
-.colorbox{
-	width: 17px;
+.colorBtn{
+	width: 15px;
 	cursor: pointer;
 	margin-left: 9px;
-	height: 16px;
-	border: 1px solid gray;
+	height: 14px;
+	border: 2px solid rgb(151, 151, 151);
+}
+
+.colorsPanel{
+	position: fixed;
+	top: 94px;
+	width: 171px;
+	background: rgb(241, 241, 241);
+	height: 107px;
+	left: 19px;
+	padding: 4px;
+}
+
+.colorPreview{
+	position: relative;
+	width: 100%;
+	background: black;
+	height: 47px;
+	margin-bottom: 3px;
+}
+
+.colors{
+	position: relative;
+	width: 100%;
+	height: 57px;
+	background-color: black;
+}
+
+.colors div{
+	float: left;
+	height: 17px;
+	width: 17px;
+	border: 1px solid black;
+}
+
+.colors div:hover{
+	border: 1px solid white;
 }
 
 .budget{
@@ -228,7 +296,7 @@ li{
 }
 #about{
 	text-align: center;
-	padding: 24px;
+	padding: 24px 10px 24px 10px;
 	color: #555;
 
 }
@@ -369,26 +437,25 @@ li{
   opacity: 0.8;
 }
 .ng-modal-dialog {
-  /* A centered div above the overlay with a box shadow. */
-  z-index:10000;
-  position: fixed;
-  width: 90%;
-  /* Center the dialog */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-
-  background-color: #fff;
-  box-shadow: 4px 4px 80px #000;
-  background-color: rgb(201, 201, 201);
-  font-family: arial;
+  z-index: 10000;
+	position: fixed;
+	width: 100%;
+	top: 50%;
+	left: 50%;
+	Unknown property name.transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	Unknown property name.-moz-transform: translate(-50%, -50%);
+	background-color: #fff;
+	box-shadow: 4px 4px 80px #000;
+	background-color: rgb(124, 149, 160);
+	font-family: verdana;
+	color: rgb(255, 255, 255);
+	padding: 15px;
+	text-align: center;
 }
 .ng-modal-dialog-content {
-	padding: 5px;
-	text-align: center;
 	font-size: 10px;
+	padding: 0 8px 0 8px;
 }
 .ng-modal-close {
 	position: absolute;

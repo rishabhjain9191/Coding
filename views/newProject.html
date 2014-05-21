@@ -15,7 +15,13 @@
 		<div class="group">
 			<div style="float: left; width: 45px;">
 				<span>Color:</span>
-				<div class="colorbox" ng-click="selectColor()" ng-model="project.colorcode" type="text" ng-style="colorBox"></div>
+				<div class="colorBtn" ng-model="project.colorcode" ng-style="colorBtnStyle" ng-click="showColorBox()"></div>
+				<div class="colorsPanel" style="top: 64px;" ng-show="showColorPanel">
+					<div class="colorPreview" ng-style="colorPreviewStyle"></div>
+					<div class="colors">
+						<div class="pointer" ng-repeat="color in colors" ng-mouseover="showPreview($index)" ng-click="selectColor($index)" ng-style="{'background-color':color.colorcode}"></div>
+					</div>
+				</div>
 			</div>
 			<div style="float: left; width: 160px;">
 				<span>Budget (in hours):</span>
@@ -23,10 +29,9 @@
 			</div>
 		</div>
 		<div class="stretch middle">
-			<button ng-click="cancel()">Cancel</button>
-			<button ng-click="create()">Save</button>
+			<button class="darkBtn" style="width: 70px;" ng-click="cancel()">Cancel</button>&nbsp;
+			<button class="darkBtn" style="width: 70px;" ng-click="create()">Save</button>
 		</div>
-		<br/>
 		<div class="message" ng-show='message'>{{message}}</div>
 	</div>
 </div>
