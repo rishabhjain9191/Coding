@@ -1,3 +1,12 @@
+/**
+ * styles.css
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+
 /* Fonts */
 @font-face
 {
@@ -10,6 +19,8 @@
 	src:url("./assets/Fonts/DroidSans-Bold.ttf");
 	font-family: cwFontDroidSansBold;
 }
+
+
 /**** Elements ****/
 
 body{
@@ -88,6 +99,12 @@ select{
 	top:1px;
 }
 
+pre{
+    white-space: pre-wrap;
+	font-family: arial;
+	margin-top: 6px;
+}
+ 
 /***/
 
 #content{

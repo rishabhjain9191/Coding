@@ -1,4 +1,13 @@
-app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader','debuggerUtils',
+/**
+ * projectCtrl - projectController.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader','debuggerUtils',
 function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher, preloader,debuggerUtils){
 	console.log("Projects view loaded");
 	preloader.showLoading();

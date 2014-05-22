@@ -1,4 +1,13 @@
-$._extCWFile={
+/**
+ * $_extCWFile - CWProjectfileUtils.jsx
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ $._extCWFile={
 
 	writeXMLFile : function(file, xml) {
 		file.encoding = "UTF8";

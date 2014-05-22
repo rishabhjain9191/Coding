@@ -1,3 +1,12 @@
+/**
+ * aboutCtrl - aboutController.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
 app.controller('aboutCtrl',['$scope', '$location', 'Constants', '$window',
 function($scope, $location, Constants, $window){
 	$scope.app_version_no = Constants.EXTENSION_VERSION_NUMBER;	

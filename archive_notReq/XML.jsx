@@ -1,4 +1,13 @@
-$._extXML={
+/**
+ * $_ext_PHXS_XMP - PhotoShopXMPUtils.jsx
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ $._extXML={
 	isExists : function() {
 		var configFile = new File(pathToConfigFile);
 		var configFolder=configFile.parent;

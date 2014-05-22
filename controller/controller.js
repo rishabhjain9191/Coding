@@ -1,4 +1,13 @@
-var app=angular.module('TimeTracker',['TTServices','ngRoute'],function($httpProvider) {
+/**
+ * viewCtrl - controller.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ var app=angular.module('TimeTracker',['TTServices','ngRoute'],function($httpProvider) {
 	// Use x-www-form-urlencoded Content-Type
 	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
  
@@ -251,7 +260,6 @@ function projectNo(i){
 };
 
 function canEdit(oid, usertype){
-	console.log(oid,usertype);
 	if(oid&&usertype=='normal'){
 		return false;
 	}

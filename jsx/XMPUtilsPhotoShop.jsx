@@ -1,4 +1,13 @@
-$._ext_PHXS_XMP={
+/**
+ * $_ext_PHXS_XMP - XMPUtilsPhotoShop.jsx
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ $._ext_PHXS_XMP={
 	/*
 		Gets Current Document's XMP data for project id.
 	*/

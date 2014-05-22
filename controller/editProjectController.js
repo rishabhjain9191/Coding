@@ -1,4 +1,13 @@
-app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants){
+/**
+ * editProjectController - editProjectController.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants){
 	 preloader.hideLoading();
 	 
 	 $scope.showColorPanel=false;
