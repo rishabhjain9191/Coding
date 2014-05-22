@@ -9,7 +9,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	AppWatcher.addEventListeners();
 	var prev_index=-1;
 	
-	var refreshProjects=function(){
+	$rootScope.refreshProjects=function(){
 		debuggerUtils.updateLogs("Project request attempt for [" +Config.username+ "]");
 		projectUtils.getProjects(Config.username, Config.password, Config.userid)
 		.then(function(data){
@@ -75,7 +75,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			matchProjectIds();
 		});
 	} 
-	refreshProjects();
+	$rootScope.refreshProjects();
 	
 	$scope.processProjectClick=function(projectId, index){
 		new CSInterface().evalScript('$._extcommon.checkDocLength()',function(data){

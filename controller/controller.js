@@ -212,8 +212,9 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		$rootScope.showFlyout = false;
 		$location.path('about');
 	};
-	$rootScope.refreshProjects=function(){
+	$rootScope.refreshProjects1=function(){
 		$rootScope.showFlyout = false;
+		$rootScope.refreshProjects();
 		//projectUtils.refreshProjects();
 		//$location.path("projects");
 		console.log($rootScope);
