@@ -3,6 +3,7 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 	$scope.project={};
 	$scope.colorBtnStyle={};
 	$scope.colorPreviewStyle={};
+	$scope.colorindex=0;
 	$scope.colorBtnStyle.background="#888888";
 	$scope.colorPreviewStyle.background="#888888";
 	$scope.showColorPanel=false;
@@ -27,7 +28,8 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 				($scope.project.jobId)?(jobId=jobId):(jobId="");
 				($scope.project.budgetHrs)?(budgetHrs=budgetHrs):(budgetHrs="");
 				($scope.project.colorcode)?(color=colorcode):(color="");
-				projectUtils.addProject(name, jobId, budgetHrs, color)
+				($scope.colorindex!==null)?(colorIndex=$scope.colorindex):(colorIndex=0);
+				projectUtils.addProject(name, jobId, budgetHrs, color, colorIndex)
 				.then(function(data){
 					preloader.hideLoading();
 					$scope.message=data.Msg;
@@ -85,6 +87,7 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 	$scope.selectColor=function(index){
 		$scope.showColorPanel=false;
 		$scope.project.colorcode=$scope.colors[index].colorcode;
+		$scope.colorindex=$scope.colors[index].colorindex;
 		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
 	}
 }]);

@@ -338,7 +338,7 @@ function($rootScope, Constants, Config, $http, $q){
 		return deferred.promise;
 	};
 	
-	utils.addProject=function(projectName, jobId, budgetHrs, color){
+	utils.addProject=function(projectName, jobId, budgetHrs, color, colorindex){
 		var deferred=$q.defer();
 		var params=[];
 		params['userid']=Config.data.userid;
@@ -346,6 +346,7 @@ function($rootScope, Constants, Config, $http, $q){
 		params['jobid']=jobId;
 		params['budget']=budgetHrs;
 		params['color']=color;
+		params['colorindex']=colorindex;
 		
 		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
 		.success(function(data){deferred.resolve(data);})
@@ -353,7 +354,7 @@ function($rootScope, Constants, Config, $http, $q){
 		return deferred.promise;
 	};
 	
-	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color){
+	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color, colorindex){
 		var deferred=$q.defer();
 		var params=[];
 		params['projectid']=projectId;
@@ -362,6 +363,7 @@ function($rootScope, Constants, Config, $http, $q){
 		params['jobid']=jobId;
 		params['budget']=budgetHrs;
 		params['color']=color;
+		params['colorindex']=colorindex;
 		
 		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
 		.success(function(data){deferred.resolve(data);})
@@ -597,7 +599,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 		addObj.startTime=AppModel.eventStartTime;
 		addObj.endTime=AppModel.eventEndTime;
 		addObj.imageName="";
-		addObj.eventRecordedTime=new Date().toISOString().slice(0, 19).replace('T', ' ');
+		addObj.eventRecordedTime=new Date();
 		//addObj.status=Constants.STATUS_NEW;
 		//addObj.imageStatus=Constants.IMAGE_STATUS_NEW;
 		var obj={"event": {
@@ -653,6 +655,8 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 		this.documentPath=data.docPath;
 		this.documentID=data.docID;
 		this.userID=Config.data.userid;
+		this.eventStartTime = new Date();
+		this.eventEndTime = new Date();
 		
 	};
 	/* Return required parameters (getters)*/
@@ -713,13 +717,21 @@ function($http,$interval,Constants,Config, debuggerUtils){
 		var rec=[];
 		console.log(Records);
 		if(Records.length>1){
-		if(Records.length>Constants.BATCH_SIZE){
+		if(Records.length>=Constants.BATCH_SIZE){
 			for(var i=0;i<Constants.BATCH_SIZE;i++){
-				rec.push(Records.splice(0,1));
+				rec.push((Records.splice(0,1))[0]);
+				rec[i].jsonEventPackage=JSON.stringify(rec[i].jsonEventPackage);
 			}
+			console.log(JSON.stringify(rec));
 			send(JSON.stringify(rec));
 			rec=[];
 		}
+		// Todo: do strigngify here also.... !!! 
+		console.log("Length of records : "+Records.length);
+		for(var i =0;i<Records.length;i++){
+			Records[i].jsonEventPackage=JSON.stringify(Records[i].jsonEventPackage);
+		}
+		console.log("Records sending..."+Records);
 		send(JSON.stringify(Records));
 		}
 	};
@@ -729,6 +741,7 @@ function($http,$interval,Constants,Config, debuggerUtils){
 		//Send Batched Records to Server
 		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
 		var details={};
+		
 		details['data']=batchedRecords;
 		details['username']=Config.username;
 		details['password']=Config.password;
@@ -760,6 +773,10 @@ function($http,$interval,Constants,Config, debuggerUtils){
 				//records[i].jsonEventPackage=JSON.stringify(records[i].jsonEventPackage)/* .replace(/"/g, '\\"') */;
 				
 				record=JSON.stringify(records[i]);
+				record=record.replace('jsonEventPackage":"','jsonEventPackage":');
+				record=record.replace('}}"}','}}}');
+				
+				
 				
 				console.log("Sending to file"+record);
 				new CSInterface().evalScript('$._extFile.writeObj(\''+record+'\')');
@@ -771,13 +788,17 @@ function($http,$interval,Constants,Config, debuggerUtils){
 	var buffer=[];
 	//Buffer them till the buffer size and then sends them.
 	dbhelper.addItemToEventLogTable=function(obj){
-		if(buffer.length<Constants.BATCH_SIZE){
+		if(buffer.length<Constants.BATCH_SIZE-1&&obj.jsonEventPackage.event.type!="documentAfterSave"){
 			console.log("Data Buffered");
 			console.log(buffer);
+			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
 			buffer.push(obj);
 		}
+		
 		else{
 				//Send to server
+				obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
+				buffer.push(obj);
 				console.log("Sending buffer");
 				console.log(buffer);
 				console.log(JSON.stringify(buffer));

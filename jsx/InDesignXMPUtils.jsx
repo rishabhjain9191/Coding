@@ -85,11 +85,20 @@ $._ext_IDSN_XMP={
 	},
 	
 	getDocumentID:function(){
-		var myDocument=app.activeDocument;
+		/*var myDocument=app.activeDocument;
 		try{
 			value = myDocument.id;
 		}
 		catch(e){
+			value='';
+		}
+		return value;
+		*/
+		var myDocument=app.activeDocument;
+		try{
+			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "DocumentID");
+			value=value.substr(8); //Removing "xmp.did:"
+		}catch(e){
 			value='';
 		}
 		return value;

@@ -32,7 +32,7 @@ $._extFile={
 		//Delete the file and create a new one
 		file.close();
 		file=new File(pathToUnsendEvents);
-		file.open("w", "json", "????");
+		file.open("e", "json", "????");
 		file.close();
 		file.open("e", "json", "????"); 
 		

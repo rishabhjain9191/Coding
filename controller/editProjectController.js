@@ -13,7 +13,9 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 	 }
 	 
 	 projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
-	.then(function(data){$scope.projects=data;
+	.then(function(data){
+		//color:index; colorcode:hex code
+		$scope.projects=data;
 		$scope.project=$scope.projects[0];
 		$scope.name=$scope.project.name;
 		$scope.colorBtnStyle={};
@@ -24,15 +26,16 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 	
 	var newName, newJobId, newColorCode, newBudget;
 	$scope.save=function(){
-		if($scope.name && $scope.name!=""){
+		if($scope.name && $scope.name.length>3){
 			debuggerUtils.updateLogs("Saving updated project information for: " + $scope.name + " " + $scope.project.projectid);
 			preloader.showLoading();
 			var projectId=$scope.project.projectid;
 			newName=$scope.name;
-			($scope.project.jobid)?(newJobId=$scope.project.jobid):(newjobId="");
+			($scope.project.jobid)?(newJobId=$scope.project.jobid):(newJobId="");
 			($scope.project.colorcode)?(newColorCode=$scope.project.colorcode):(newColorCode="");
+			($scope.project.color)?(newColorIndex=$scope.project.color):(newColorIndex="");
 			($scope.project.budget)?(newBudget=$scope.project.budget):(newBudget="");
-			projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode)
+			projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode, newColorIndex)
 			.then(function(data){
 				preloader.hideLoading();
 				if(data.IsSuccess){
@@ -98,6 +101,7 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 	$scope.selectColor=function(index){
 		$scope.showColorPanel=false;
 		$scope.project.colorcode=$scope.colors[index].colorcode;
+		$scope.project.color=$scope.colors[index].colorindex;
 		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
 	}
 }]);
