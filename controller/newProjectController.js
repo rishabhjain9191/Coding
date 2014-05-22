@@ -1,4 +1,4 @@
-app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants', function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants){
+app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants','$window', function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants,$window){
 	preloader.hideLoading();
 	$scope.project={};
 	$scope.colorBtnStyle={};
@@ -17,7 +17,8 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 		obj.colorcode=projectColors[i];
 		$scope.colors.push(obj);
 	 }
-	 
+	
+		
 	$scope.create=function(){
 		if($scope.project.name && $scope.project.name.length>=3){	
 			debuggerUtils.updateLogs("Creating new project: " + $scope.project.name);
@@ -77,7 +78,14 @@ app.controller('createNewProject',['$scope','$rootScope','$location','projectUti
 		/*
 			25 colors
 		*/
-		$scope.showColorPanel=!$scope.showColorPanel;
+		if(event.srcElement.parentElement){
+			if(!event.srcElement.className.match("colorBtn")&& event.srcElement.parentElement.className!="colorsPanel")
+				$scope.showColorPanel = false;
+			else if(event.srcElement.className.match("colorBtn"))
+				$scope.showColorPanel=!$scope.showColorPanel;
+			else
+				$scope.showColorPanel=true;
+		}
 	},
 	
 	$scope.showPreview=function(index){

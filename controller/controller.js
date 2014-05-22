@@ -149,6 +149,15 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		}*/ 
 	};
 	
+	 $window.onclick = function (event) {
+		$rootScope.$apply(function(){
+		console.log(event.srcElement);
+			if(event.srcElement.className!="nav")
+			$rootScope.showFlyout = false;
+			
+		});
+	}; 
+			
 	function closeMenuWhenClickingElsewhere(event, callbackOnClose) {
 		var clickedElement = event.target;
 		if (!clickedElement) return;

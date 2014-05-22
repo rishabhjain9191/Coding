@@ -1,4 +1,4 @@
-app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants){
+app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants','$window', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants, $window){
 	 preloader.hideLoading();
 	 
 	 $scope.showColorPanel=false;
@@ -12,6 +12,16 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 		$scope.colors.push(obj);
 	 }
 	 
+	/*  $window.onclick = function (event) {
+		$scope.$apply(function(){
+			console.log(event.srcElement);
+			if(event.srcElement.parentElement){
+				if(!event.srcElement.className.match("colorBtn")&& event.srcElement.parentElement.className!="colorsPanel")
+					$scope.showColorPanel = false;
+			}
+		});
+	} */
+	
 	 projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
 	.then(function(data){
 		//color:index; colorcode:hex code
@@ -66,7 +76,7 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 		$scope.colorPreviewStyle.background=p.colorcode;
 	},
 	
-	$scope.showColorBox=function(){
+	$scope.showColorBox=function(event){
 		/*
 			256*256 colors
 		*/
@@ -91,7 +101,18 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 		/*
 			25 colors
 		*/
-		$scope.showColorPanel=!$scope.showColorPanel;
+		
+		
+		if(event.srcElement.parentElement){
+			if(!event.srcElement.className.match("colorBtn")&& event.srcElement.parentElement.className!="colorsPanel")
+				$scope.showColorPanel = false;
+			else if(event.srcElement.className.match("colorBtn"))
+				$scope.showColorPanel=!$scope.showColorPanel;
+			else
+				$scope.showColorPanel=true;
+		}
+			
+		
 	},
 	
 	$scope.showPreview=function(index){
@@ -104,4 +125,5 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 		$scope.project.color=$scope.colors[index].colorindex;
 		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
 	}
+	
 }]);
