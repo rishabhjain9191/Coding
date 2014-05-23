@@ -1,6 +1,18 @@
-function MD5(str){
+/**
+ * utils.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ /*
+	Adapted from https://github.com/kvz/phpjs/blob/master/functions/strings/md5.js
+ */
+ function MD5(str){
   var xl;
-
+	
   var rotateLeft = function(lValue, iShiftBits) {
     return (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits));
   };

@@ -1,4 +1,13 @@
-app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants','$window', function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants,$window){
+/**
+ * createNewProject - newProjectController.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants', function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants){
 	preloader.hideLoading();
 	$scope.project={};
 	$scope.colorBtnStyle={};

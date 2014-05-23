@@ -1,9 +1,12 @@
 <div id="contents">
 	<div class="pheader">
 		<div style="float: left; ">
-			<span>Welcome back, {{firstname}}</span>
+			<div style="float: left">Welcome back, </div>
+			<div class ='fName'>
+			{{firstname}}
+			</div>
 		</div>
-		<div style="float: right; ">
+		<div style="position: absolute; right: 6px;">
 			<img class="pointer" ng-click="openHomePage()" src="./assets/images/launch_icon.png">
 		</div>
 	</div>

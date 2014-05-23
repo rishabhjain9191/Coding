@@ -1,3 +1,12 @@
+/**
+ * $_extFile - DBFileUtils.jsx
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
 var pathToUnsendEvents = "";
 if(Folder.fs=="Windows"){
 	pathToUnsendEvents = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxDB.json";
@@ -32,7 +41,7 @@ $._extFile={
 		//Delete the file and create a new one
 		file.close();
 		file=new File(pathToUnsendEvents);
-		file.open("e", "json", "????");
+		file.open("w", "json", "????");
 		file.close();
 		file.open("e", "json", "????"); 
 		

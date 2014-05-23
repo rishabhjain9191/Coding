@@ -1,4 +1,13 @@
-app.controller('loginCtrl',['$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader',
+/**
+ * loginCtrl - loginController.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ app.controller('loginCtrl',['$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader',
 function($scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader){
 	preloader.hideLoading();
 	$scope.alert_message="Username and Password cannot be left blank!";

@@ -1,3 +1,12 @@
+/**
+ * styles.css
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+
 /* Fonts */
 @font-face
 {
@@ -10,6 +19,8 @@
 	src:url("./assets/Fonts/DroidSans-Bold.ttf");
 	font-family: cwFontDroidSansBold;
 }
+
+
 /**** Elements ****/
 
 body{
@@ -88,6 +99,12 @@ select{
 	top:1px;
 }
 
+pre{
+    white-space: pre-wrap;
+	font-family: arial;
+	margin-top: 6px;
+}
+ 
 /***/
 
 #content{
@@ -161,8 +178,18 @@ input[type="checkbox"]{
 	padding: 5px;
 	line-height: 2.6;
 	color: #666;
+	float: left;
+	
 }
-
+.fName{
+	float: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: absolute;
+	right: 37px;
+	left: 94px;
+}
 .pheader2{
 	height: 60px;
 	padding: 5px;
@@ -177,6 +204,7 @@ input[type="checkbox"]{
 	float: left;
 	height: 11px;
 	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 ul{
@@ -522,7 +550,11 @@ li{
 	padding: 4px;
 	position: absolute;
 	z-index: 9999;
-	max-width: 300px;
+	max-width: 100px;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	overflow:hidden;
+	
 	/*box-shadow: 0 0 5px #aaa;*/
 }
 body .ui-tooltip {

@@ -1,4 +1,14 @@
-app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants','$window', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants, $window){
+/**
+ * editProjectController - editProjectController.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants){
+
 	 preloader.hideLoading();
 	 
 	 $scope.showColorPanel=false;
@@ -11,16 +21,6 @@ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','
 		obj.colorcode=projectColors[i];
 		$scope.colors.push(obj);
 	 }
-	 
-	/*  $window.onclick = function (event) {
-		$scope.$apply(function(){
-			console.log(event.srcElement);
-			if(event.srcElement.parentElement){
-				if(!event.srcElement.className.match("colorBtn")&& event.srcElement.parentElement.className!="colorsPanel")
-					$scope.showColorPanel = false;
-			}
-		});
-	} */
 	
 	 projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
 	.then(function(data){

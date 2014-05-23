@@ -1,174 +1,134 @@
+/**
+ * services.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
 var services=angular.module('TTServices',[]);
 
 services.factory('Constants',function(){
+	
 	var constants={};
+	
+	constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
+	constants.EXTENSION_VERSION_NUMBER = "1.1.7";
+	constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
+	
+	constants.CW_NAMESPACE_NAME = "creativeworx";
+	constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
 		
-		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
+	constants.STATUS_NEW = "NEW";
+	constants.STATUS_ATTEMPTED = "ATTEMPTED";
+	constants.STATUS_TRANSFERRED = "TRANSFERRED";
+	constants.IMAGE_STATUS_NEW = "NEW";
+	constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
+	constants.IMAGE_STATUS_NOIMAGE = "NONE"
+	constants.IMAGE_STATUS_ERROR = "ERROR";
+	constants.PROJECT_COLORS= [
+		"#888888", //0
+		"#FFF772", //1
+		"#F8AE3B", //2
+		"#EA7527", //3
+		"#CC4824", //4
+		"#C02006", //5
+		"#A5080B", //6
+		"#A32445", //7
+		"#E47284", //8
+		"#854E9D", //9
+		"#7166A3", //10
+		"#A588B5", //11
+		"#83B8E5", //12
+		"#337EBD", //13
+		"#004382", //14
+		"#00606E", //15
+		"#1D6348", //16
+		"#239E6E", //17
+		"#88E2AC", //18
+		"#62A162", //19
+		"#1F6F1F", //20
+		"#937862", //21
+		"#6A482C", //22
+		"#5D5D5D", //23
+		"#999999"  //24
+	];
 		
-		constants.EXTENSION_VERSION_NUMBER = "1.1.7";
+	constants.TIMEINTERVAL = 1000*60*4; 	// Default send data time interval of 4 minutes
+	constants.TIMEINTERVAL_MIN = 1000; 		// Minimum time inteval 1 second in milliseconds
+	constants.TIMEINTERVAL_MAX = 1000*60*60;// Maximum time interval1 hour in milliseconds
+	constants.BATCH_SIZE = 5; 				// Default number of events to send to server 
+	constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
+	constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
+	constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
+	constants.IMAGE_TIMEINTERVAL = 50000;
+	constants.THRESHOLD_COUNT = 100;
+	constants.APP_EVENT_POLL = 5000; 		// How frequently to check for events in the app
+	
+	constants.URL_SERVICE = "https://timetracker.creativeworx.com";
 		
-		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
+	constants.BATCHDATA_SEND_ADDRESS = "/service/log";
+	constants.CHECK_STATUS_ADDRESS = "/service/checkstatus";
+	constants.FILE_UPLOAD_ADDRESS = "/service/fileupload";
+	constants.LOGIN_ADDRESS = "/service/getuserdetails";
+	constants.PROJECT_RETRIEVE_ADDRESS = "/service/getprojectlist";
+	constants.CHECK_USER_DETAILS_ADDRESS = "/service/userdetails";
+	constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject";
 		
-		constants.CW_NAMESPACE_NAME = "creativeworx";
-		constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
+	constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
+	constants.IMAGES_FOLDER_NAME = "/images";
+	constants.DATABASE_FILE_NAME = "CreativeWorx.db";
 		
-		constants.STATUS_NEW = "NEW";
-		constants.STATUS_ATTEMPTED = "ATTEMPTED";
-		constants.STATUS_TRANSFERRED = "TRANSFERRED";
-		constants.IMAGE_STATUS_NEW = "NEW";
-		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
-		constants.IMAGE_STATUS_NOIMAGE = "NONE"
-		constants.IMAGE_STATUS_ERROR = "ERROR"; // Currently only error is file not found
-		//??? consider adding other errors involving conditions that may be recoverable, errors not recoverable
+	constants.LOG_ENABLE = true;
+	constants.USERNAME = "creativeworx";
+	constants.PASSWORD = "creativeworx";
 		
-		/*constants.PROJECT_COLORS= [
-			"0x888888", //0
-			"0xFFF772", //1
-			"0xF8AE3B", //2
-			"0xEA7527", //3
-			"0xCC4824", //4
-			"0xC02006", //5
-			"0xA5080B", //6
-			"0xA32445", //7
-			"0xE47284", //8
-			"0x854E9D", //9
-			"0x7166A3", //10
-			"0xA588B5", //11
-			"0x83B8E5", //12
-			"0x337EBD", //13
-			"0x004382", //14
-			"0x00606E", //15
-			"0x1D6348", //16
-			"0x239E6E", //17
-			"0x88E2AC", //18
-			"0x62A162", //19
-			"0x1F6F1F", //20
-			"0x937862", //21
-			"0x6A482C", //22
-			"0x5D5D5D", //23
-			"0x999999"  //24
-		];*/
-		constants.PROJECT_COLORS= [
-			"#888888", //0
-			"#FFF772", //1
-			"#F8AE3B", //2
-			"#EA7527", //3
-			"#CC4824", //4
-			"#C02006", //5
-			"#A5080B", //6
-			"#A32445", //7
-			"#E47284", //8
-			"#854E9D", //9
-			"#7166A3", //10
-			"#A588B5", //11
-			"#83B8E5", //12
-			"#337EBD", //13
-			"#004382", //14
-			"#00606E", //15
-			"#1D6348", //16
-			"#239E6E", //17
-			"#88E2AC", //18
-			"#62A162", //19
-			"#1F6F1F", //20
-			"#937862", //21
-			"#6A482C", //22
-			"#5D5D5D", //23
-			"#999999"  //24
-		];
+	constants.EVENT_DOCUMENT_OPEN = "documentOpen";
+	constants.EVENT_DOCUMENT_CLOSE = "documentClose";
+	constants.EVENT_PROJECT_SELECTED = "projectedSelected";
 		
-		// Note: constant values are retrieved from server or from config file values. The following are
-		//  used to provide safe boundries as well as default values in case of errors
-		// See ConfigVO class and login results for details.
-		constants.TIMEINTERVAL     = 1000*60*4; // Default send data time interval of 4 minutes
-		constants.TIMEINTERVAL_MIN = 1000; // Minimum time inteval 1 second in milliseconds
-		constants.TIMEINTERVAL_MAX = 1000*60*60; // Maximum time interval1 hour in milliseconds
-		constants.BATCH_SIZE = 5; // Default number of events to send to server 
-		constants.BATCH_SIZE_MIN = 1; // Minimum number of events to send, send at least 1
-		constants.BATCH_SIZE_MAX = 1000; // Maxiumn number of events to send, 1000
+	// URL for Links
+	constants.URL_SITE = "http://www.creativeworx.com";
+	constants.URL_TERMS_OF_SERVICE = "/terms.php";
+	constants.URL_PRIVACY_POLICY = "/privacy.php";
+	constants.URL_SIGNUP = "/signup?plan=ext";
+	constants.URL_BETA_FEEDBACK = "/betaFeedback.php";
+	constants.URL_FORGOT_LOGIN = "/user/forgotpassword";
+	
+	constants.FILENAME_EXTENSION =   "TimeTracker.zxp";
+	
+	constants.URL_UPDATE = "http://www.creativeworx.com";
+	constants.URL_DOWNLOAD = "/downloads/timetracker/TimeTracker";
+	constants.URL_ZXP_DOWNLOAD = "/downloads/timetracker/" + constants.FILENAME_EXTENSION;
+	constants.URL_ZIP_DOWNLOAD = "/downloads/timetracker/TimeTracker.zip";
+	constants.URL_VERSION = "/downloads/timetracker/TimeTrackerUpdate.xml";
 		
-		constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
-		constants.IMAGE_TIMEINTERVAL = 50000;
-		constants.THRESHOLD_COUNT = 100;
-
-
-		constants.APP_EVENT_POLL = 5000; // How frequently to check for events in the app
-		//*** APP_EVENT_POLL needs additional analysis, currently need only in Fl/Flash Pro
+	constants.APP_NAME=new CSInterface().hostEnvironment.appName;
+	constants.EXTENSION_ID=new CSInterface().getExtensionID();
 		
-		
-		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
-		//constants.URL_SERVICE = "http://ttdev.creativeworx.com";
-		
-		// Service calls : see cooresponding calls in the ServiceController.php - created by simply defining the function
-		constants.BATCHDATA_SEND_ADDRESS = "/service/log";                           // *
-		constants.CHECK_STATUS_ADDRESS = "/service/checkstatus";
-		constants.FILE_UPLOAD_ADDRESS = "/service/fileupload";
-		constants.LOGIN_ADDRESS = "/service/getuserdetails";                         // *
-		constants.PROJECT_RETRIEVE_ADDRESS = "/service/getprojectlist";              // *
-		constants.CHECK_USER_DETAILS_ADDRESS = "/service/userdetails"; //***
-																									  // *
-		constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject"; // using existing single project update /service/updateprojectlist";
-		
-
-		constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
-		constants.IMAGES_FOLDER_NAME = "/images";
-		constants.DATABASE_FILE_NAME = "CreativeWorx.db";
-		
-		constants.LOG_ENABLE = true;
-		constants.USERNAME = "creativeworx";
-		constants.PASSWORD = "creativeworx";
-		
-		constants.EVENT_DOCUMENT_OPEN = "documentOpen";
-		constants.EVENT_DOCUMENT_CLOSE = "documentClose";
-		
-		constants.EVENT_PROJECT_SELECTED = "projectedSelected";
-		
-		// URL for Links
-		
-		constants.URL_SITE =             "http://www.creativeworx.com";
-		
-		constants.URL_TERMS_OF_SERVICE = "/terms.php";
-		constants.URL_PRIVACY_POLICY =   "/privacy.php";
-		constants.URL_SIGNUP = 		  "/signup?plan=ext";
-		constants.URL_BETA_FEEDBACK = 	  "/betaFeedback.php";
-		constants.URL_FORGOT_LOGIN =     "/user/forgotpassword";
-		
-		constants.FILENAME_EXTENSION =   "TimeTracker.zxp";
-		
-		constants.URL_UPDATE =           "http://www.creativeworx.com";
-		
-		constants.URL_DOWNLOAD = 		  "/downloads/timetracker/TimeTracker";
-		constants.URL_ZXP_DOWNLOAD = 	  "/downloads/timetracker/" + constants.FILENAME_EXTENSION;
-		constants.URL_ZIP_DOWNLOAD = 	  "/downloads/timetracker/TimeTracker.zip";
-		constants.URL_VERSION = 		  "/downloads/timetracker/TimeTrackerUpdate.xml";
-		
-		constants.APP_NAME=new CSInterface().hostEnvironment.appName;
-		constants.EXTENSION_ID=new CSInterface().getExtensionID();
-		
-		constants.update=function(configData){
-			if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
-			if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
-			if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
-			if(configData.timeInterval) this.TIMEINTERVAL=configData.timeInterval;
-			if(configData.checkOnlineTimeInterval) this.CHECK_ONLINE_TIMEINTERVAL=configData.checkOnlineTimeInterval;
-			if(configData.imageTimeInterval) this.IMAGE_TIMEINTERVAL=configData.imageTimeInterval;
-			if(configData.batchSize) this.BATCH_SIZE=configData.batchSize;
-			if(configData.thresholdCount) this.THRESHOLD_COUNT=configData.thresholdCount;
-			if(configData.batchDataSendAddress) this.BATCHDATA_SEND_ADDRESS=configData.batchDataSendAddress;
-			if(configData.checkStatusAddress) this.CHECK_STATUS_ADDRESS=configData.checkStatusAddress;
-			if(configData.fileUploadAddress) this.FILE_UPLOAD_ADDRESS=configData.fileUploadAddress;
-			if(configData.logEnabled) this.LOG_ENABLE=configData.logEnabled;
-			//(configData.configversion)?this.URL_SERVICE=configData.configversion;
-		};
+	constants.update=function(configData){
+		if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
+		if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
+		if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
+		if(configData.timeInterval) this.TIMEINTERVAL=configData.timeInterval;
+		if(configData.checkOnlineTimeInterval) this.CHECK_ONLINE_TIMEINTERVAL=configData.checkOnlineTimeInterval;
+		if(configData.imageTimeInterval) this.IMAGE_TIMEINTERVAL=configData.imageTimeInterval;
+		if(configData.batchSize) this.BATCH_SIZE=configData.batchSize;
+		if(configData.thresholdCount) this.THRESHOLD_COUNT=configData.thresholdCount;
+		if(configData.batchDataSendAddress) this.BATCHDATA_SEND_ADDRESS=configData.batchDataSendAddress;
+		if(configData.checkStatusAddress) this.CHECK_STATUS_ADDRESS=configData.checkStatusAddress;
+		if(configData.fileUploadAddress) this.FILE_UPLOAD_ADDRESS=configData.fileUploadAddress;
+		if(configData.logEnabled) this.LOG_ENABLE=configData.logEnabled;
+		//(configData.configversion)?this.URL_SERVICE=configData.configversion;
+	};
 		
 	return constants;
 });
 
-
-
 services.factory('Config', ['Constants','$q',function(Constants, $q){
 	var config={};
 	config.data='';
-
 	config.serviceAddress = Constants.URL_SERVICE;
 	config.siteAddress = Constants.URL_SITE;
 	config.updateAddress = Constants.URL_UPDATE;
@@ -183,38 +143,8 @@ services.factory('Config', ['Constants','$q',function(Constants, $q){
 	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
 	config.logEnabled = Constants.LOG_ENABLE;
 	config.configversion = 1;
-	
-  
-	/* config.userName="rishabh.jain9191@gmail.com";
-	config.password="0a27b76628db3a7e47d627e71d3d4cc2";
-	config.keepMeLoggedIn="true"; */
-	
-	// var init=function(){
-	//var deferred=$q.defer();
-	 // new CSInterface().evalScript('$._ext.isExists()',function(data){
-		// if(data == "1"){
-			// new CSInterface().evalScript('$._ext.readConfig()', function(data1){
-				// console.log(data1);
-				// console.log(JSON.parse(data1));
-				// config=JSON.parse(data1);
-				// console.log(config);
-				// deferred.resolve("0");
-				
-			// });
-		// }
-		
-	// });
-	//return deferred.promise;
-	
-	
-	//config.write=function(){
-		
-	//};
-	// init();
 	return config;
-	
-	
-	}]);
+}]);
 	
 
 services.factory('preloader',['$rootScope',
@@ -236,7 +166,6 @@ function(Constants, Config, $http, $q){
 	var utils={};
 	utils.loginResult='aa';
 	utils.login=function(username, password){
-		
 		var deferred=$q.defer();
 		if(username=='undefined'){username=Config.username;}
 		if(password=='undefined'){password=Config.password;}
@@ -244,30 +173,26 @@ function(Constants, Config, $http, $q){
 		params['username']=username;
 		params['password']=password;
 		params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
-		
+
 		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
 		$http.post(url,params)
 			.success(function(data,status){
-			
 				deferred.resolve(data);
 			})
 			.error(function(data,status){
-					deferred.reject(data);
-			/* this.loginResult=true; */
+				deferred.reject(data);
 			})
 			return deferred.promise;
-		
 	};
 	return utils;
 }]);
 
 services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q',
 function($rootScope, Constants, Config, $http, $q){
-	
 	$rootScope.projectProperties=new Array();
-		for(i=0;i<100;i++){
+	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
-		}
+	}
 	var utils={};
 	utils.selectedProjectId=0;			//Project Clicked(Selected) Id
 	utils.selectedProjectIndex=-1;		//Project Clicked(Selected) Index
@@ -277,19 +202,16 @@ function($rootScope, Constants, Config, $http, $q){
 		this.selectedProjectId=0;
 		this.selectedProjectIndex=-1;
 		this.currentProjectId=-1;	
-	},
+	};
 	utils.changeStyleToSelected=function(index){
-
-		//The project in XMP is not there in the user's project list
+		//Check if the project in XMP is not there in the user's project list
 		if($rootScope.projectProperties[index]){
 			$rootScope.projectProperties[index].style.border="1px solid "+$rootScope.projectProperties[index].style.color;
 			var rgba = hexToRgb($rootScope.projectProperties[index].style.color);
 			$rootScope.projectProperties[index].style.background="rgba("+rgba.r+", "+rgba.g+", "+rgba.b+", 0.075) url(assets/Images/project_item_handle_background.gif) no-repeat left";
 			$rootScope.projectProperties[index].message="In Progress";
 		}
-
 	};
-	
 	utils.changeStyleToDeselected=function(index){
 		$rootScope.projectProperties[index].style.border="1px solid #555";
 		$rootScope.projectProperties[index].style.background="";
@@ -305,8 +227,7 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.getSelectedProjectIndex=function(){
 		return (this.selectedProjectIndex);
-	};
-	
+	};	
 	utils.getCurrentProjectId=function(){
 		return this.currentProjectId;
 	};
@@ -332,6 +253,7 @@ function($rootScope, Constants, Config, $http, $q){
 				$rootScope.projectProperties[i].style={};
 				$rootScope.projectProperties[i].style.color=data[i].colorcode;
 			}
+			console.log(utils.projectIndexes);
 			deferred.resolve(data);
 		})
 		.error(function(data){deferred.reject(data);})
@@ -374,8 +296,7 @@ function($rootScope, Constants, Config, $http, $q){
 	utils.selectProject=function(){
 		//Check the current document's XMP
 		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
-			//alert(data);
-			if(data==""||!utils.projectIndexes[parseInt(data)]){
+			if(data==""||!utils.projectIndexes.hasOwnProperty(parseInt(data))){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
 					$rootScope.$apply(function(){
@@ -386,7 +307,6 @@ function($rootScope, Constants, Config, $http, $q){
 				utils.setCurrentProjectId(-1);
 			}
 			else{
-				console.log(utils.getSelectedProjectIndex());
 				//When the doc. has an associated project, select the project(change style and message)
 				$rootScope.$apply(function() {
 					if(utils.getSelectedProjectIndex()!=-1){
@@ -394,31 +314,25 @@ function($rootScope, Constants, Config, $http, $q){
 						
 					}
 					if(data!=""/* ||data!="EvalScript error." */){
+						console.log("Data from project xmp : "+data);
 						utils.changeStyleToSelected(utils.projectIndexes[parseInt(data)]);
 					}
 					utils.setSelectedProjectIndex(utils.projectIndexes[parseInt(data)]);
 					utils.setCurrentProjectId(parseInt(data));
-				});
-				
+				});				
 			}
-
-		});
-		
-	};
-	
-	
-	
+		});		
+	};	
 	return utils;
-
 }]);
 
-////////----------App Watcher Begins------------------///////////
-/***************************************************************
-****************************************************************
-***************************************************************/
+
+
+/********************************/
+/********** App Watcher *********/
+/********************************/
+
 services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'WatcherPhotoshop', function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, watcherPS ){
-	console.log('App Watcher Started');
-	
 	var utils={};
 	utils.removeEventListeners=function(){
 		new CSInterface().removeEventListener('documentAfterActivate',onDocumentAfterActivate);
@@ -427,8 +341,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		new CSInterface().removeEventListener('applicationActivate',onApplicationActivate);
 		new CSInterface().removeEventListener('applicationBeforeQuit',onApplicationBeforeQuit);
 		watcherPS.remove();
-	};
-	
+	};	
 	
 	utils.addEventListeners=function(){
 		//Define Event Listeners
@@ -461,17 +374,16 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		console.log(event);
 		debuggerUtils.updateLogs(event.type);
 		projectUtils.selectProject();
-		Logger.log(event.type);
-		
+		Logger.log(event.type);		
 	};
 	function onDocumentAfterSave(event){
 		console.log(event);
-		//Check whether any project id is associated with this document or not
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
 		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworxproject file recursively, and get project Id, else get 0.
 		new CSInterface().evalScript('$._extCWFile.getProjectID()', function(pid){
 			console.log("project id from .creativeworx file"+pid);
-			if(pid!=""){//Assign that project id to the current document
+			if(pid!=""){
+				//Assign that project id to the current document
 				new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+pid+'\')',function(data){
 					console.log("XMP Inserted");
 					projectUtils.setCurrentProjectId(pid);
@@ -492,11 +404,9 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	};
 	function onApplicationActivate(event){
 		console.log(event);
-		//projectUtils.selectProject();
 		Logger.log(event.type);
 	};
 	function onApplicationBeforeQuit(event){
-		/*.........................*/
 		Logger.log(event.type);
 	};  
 	
@@ -518,16 +428,15 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	var activityTimerHandler = function(){
 		//app.activeDocument.hostObjectDelegate
 		new CSInterface().evalScript("app.activeDocument.activeHistoryState.name", function(data){
-			if(prevHistoryState==data){
-				console.log("NOT ACTIVE");
-			}else{
-				console.log("ACTIVE");
+			if(prevHistoryState!=data){
+				console.log("Event trigerred: userActive");
 				Logger.log("userActive");
 				prevHistoryState=data;
 			}
 		}); 
 	};
 	
+	//OnHold. For logging PS events: Make,Delete, Open, Close
 	var documentChanged = function(event){
 		console.log(event);
 		//Logger.log(event.type);
@@ -535,7 +444,6 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 	var pswatcher={};
 	pswatcher.init=function(){
-		//Define Event Listeners
 		new CSInterface().addEventListener("PhotoshopCallback", documentChanged);
 		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*60*1000);
 	};
@@ -557,7 +465,6 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	utils.log=function(event){
 		console.log("Updating App Model...");
 		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
-			//console.log(data);
 			AppModel.updateModel(JSON.parse(data));
 			event=eventIdToName(event);
 			createLoggingData(event);
@@ -567,25 +474,24 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	
 	var eventIdToName=function(event){
 		rtnString = event;
-		/*switch(eventType)
+		/*switch(eventType){
+			case "1332768288":
 			{
-				case "1332768288":
-				{
-					rtnString = Constants.EVENT_DOCUMENT_OPEN;
-					break;
-				}
-				case "1131180832":
-				{
-					rtnString = Constants.EVENT_DOCUMENT_CLOSE; // "documentClose";
-					break;
-				}	
-				default:
-				{
-					break;
-				}
+				rtnString = Constants.EVENT_DOCUMENT_OPEN;
+				break;
 			}
-			*/
-			return rtnString; 
+			case "1131180832":
+			{
+				rtnString = Constants.EVENT_DOCUMENT_CLOSE; // "documentClose";
+				break;
+			}	
+			default:
+			{
+				break;
+			}
+		}
+		*/
+		return rtnString; 
 	};
 	
 	var createLoggingData=function(eventType){
@@ -602,25 +508,24 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 		addObj.eventRecordedTime=new Date();
 		//addObj.status=Constants.STATUS_NEW;
 		//addObj.imageStatus=Constants.IMAGE_STATUS_NEW;
-		var obj={"event": {
-								"type": eventType,
-								"documentID": AppModel.documentID,
-								"instanceID": AppModel.instanceID,
-								"originalID": AppModel.originalID,
-								"documentName": AppModel.documentName,
-								"documentPath": AppModel.documentPath,
-								"hostName": AppModel.hostName,
-								"hostVers": AppModel.hostVers,
-								"extName": Constants.EXTENSION_NAME,
-								"extVers": Constants.EXTENSION_VERSION_NUMBER
-								}
-							};
-		addObj.jsonEventPackage=obj/* .replace(/"/g, '\\"') */;
+		var obj={
+			"event": {
+				"type": eventType,
+				"documentID": AppModel.documentID,
+				"instanceID": AppModel.instanceID,
+				"originalID": AppModel.originalID,
+				"documentName": AppModel.documentName,
+				"documentPath": AppModel.documentPath,
+				"hostName": AppModel.hostName,
+				"hostVers": AppModel.hostVers,
+				"extName": Constants.EXTENSION_NAME,
+				"extVers": Constants.EXTENSION_VERSION_NUMBER
+			}
+		};
+		addObj.jsonEventPackage=obj;
 		console.log(addObj);
-		DBHelper.addItemToEventLogTable(addObj);
-		
+		DBHelper.addItemToEventLogTable(addObj);		
 	};
-	
 	return utils;
 }]);
 
@@ -635,7 +540,7 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 		 utils.documentName = "";
 		 utils.documentPath = "";
 		 utils.eventStartTime = new Date();
-		 utils.eventEndTime = new Date(); //*** End time 5 minutes after start (in milliseconds)
+		 utils.eventEndTime = new Date();
 		 //utils.jsonEventInfo = "";
 		 utils.hostName="";
 		 utils.hostVers="";
@@ -687,24 +592,25 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 	getDocumentPath=function(){
 		new CSInterface().evalScript('app.activeDocument.filePath', function(data){console.log(data);return data});
 	};
-	/*Setters*/
+	
 	return utils;
 	
 }]);
+
+
 services.factory('DBHelper',['$http','$interval','Constants','Config','debuggerUtils',
 function($http,$interval,Constants,Config, debuggerUtils){
 	
 	//Open/Create the Log file(for unsent records)
 	new CSInterface().evalScript('$._extFile.openFile()');
 	
-	
 	var sendLoggedRecords=function(){
-		
 		debuggerUtils.updateLogs("[syncRecordsTimerHandler]: Record are being fetched from local file and sending to server");
 		new CSInterface().evalScript('$._extFile.readAndSend()',function(data){
 			processAndSend(data);
 		});
 	};
+	
 	//Setup Interval to read the unsend record file and try to send them.
 	var promise_sendLoggedRecords= $interval(sendLoggedRecords,0.5*60*1000);
 	
@@ -712,27 +618,22 @@ function($http,$interval,Constants,Config, debuggerUtils){
 	//Get the records, batch them if if size>batch size and then send them to server
 	var processAndSend=function(records){
 		//Check Record Size(if recordSize>batch size, break them into batches before sending)
-		console.log(records);
 		var Records=JSON.parse(records);
 		var rec=[];
-		console.log(Records);
 		if(Records.length>1){
-		if(Records.length>=Constants.BATCH_SIZE){
-			for(var i=0;i<Constants.BATCH_SIZE;i++){
-				rec.push((Records.splice(0,1))[0]);
-				rec[i].jsonEventPackage=JSON.stringify(rec[i].jsonEventPackage);
+			if(Records.length>=Constants.BATCH_SIZE){
+				for(var i=0;i<Constants.BATCH_SIZE;i++){
+					rec.push((Records.splice(0,1))[0]);
+					rec[i].jsonEventPackage=JSON.stringify(rec[i].jsonEventPackage);
+				}
+				console.log(JSON.stringify(rec));
+				send(JSON.stringify(rec));
+				rec=[];
 			}
-			console.log(JSON.stringify(rec));
-			send(JSON.stringify(rec));
-			rec=[];
-		}
-		// Todo: do strigngify here also.... !!! 
-		console.log("Length of records : "+Records.length);
-		for(var i =0;i<Records.length;i++){
-			Records[i].jsonEventPackage=JSON.stringify(Records[i].jsonEventPackage);
-		}
-		console.log("Records sending..."+Records);
-		send(JSON.stringify(Records));
+			for(var i =0;i<Records.length;i++){
+				Records[i].jsonEventPackage=JSON.stringify(Records[i].jsonEventPackage);
+			}
+			send(JSON.stringify(Records));
 		}
 	};
 	
@@ -759,29 +660,22 @@ function($http,$interval,Constants,Config, debuggerUtils){
 		}
 		).error(function(data){
 			debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
-			
 			logit(batchedRecords);
 		})
 	};
 	
-	//Log unsend events to file.
+	//Log unsent events to the file
 	var logit=function(buffer){
-			debuggerUtils.updateLogs("Logging unsent events to local file");
-			var records=JSON.parse(buffer);
-			var record;
-			for(var i=0;i<records.length;i++){
-				//records[i].jsonEventPackage=JSON.stringify(records[i].jsonEventPackage)/* .replace(/"/g, '\\"') */;
-				
-				record=JSON.stringify(records[i]);
-				record=record.replace('jsonEventPackage":"','jsonEventPackage":');
-				record=record.replace('}}"}','}}}');
-				
-				
-				
-				console.log("Sending to file"+record);
-				new CSInterface().evalScript('$._extFile.writeObj(\''+record+'\')');
-			}
-		};
+		debuggerUtils.updateLogs("Logging unsent events to local file");
+		var records=JSON.parse(buffer);
+		var record;
+		for(var i=0;i<records.length;i++){
+			record=JSON.stringify(records[i]);
+			record=record.replace('jsonEventPackage":"','jsonEventPackage":');
+			record=record.replace('}}"}','}}}');
+			new CSInterface().evalScript('$._extFile.writeObj(\''+record+'\')');
+		}
+	};
 	
 	
 	dbhelper={};
@@ -793,37 +687,30 @@ function($http,$interval,Constants,Config, debuggerUtils){
 			console.log(buffer);
 			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
 			buffer.push(obj);
-		}
-		
+		}		
 		else{
-				//Send to server
-				obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
-				buffer.push(obj);
-				console.log("Sending buffer");
-				console.log(buffer);
-				console.log(JSON.stringify(buffer));
-				send(JSON.stringify(buffer));
-				
-				//empty the buffer
-				buffer=[];
-			}
-			
-		};
-		
-			
-	return dbhelper;
-	
+			//Send to server
+			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
+			buffer.push(obj);
+			console.log("Sending buffer");
+			console.log(buffer);
+			console.log(JSON.stringify(buffer));
+			send(JSON.stringify(buffer));
+			//empty the buffer
+			buffer=[];
+		}
+	};			
+	return dbhelper;	
 }]);
 
 
-////////----------App Watcher Ends------------------///////////
 services.factory('debuggerUtils',['Constants','$rootScope',
 function(Constants,$rootScope){
 	var utils={};
 	$rootScope.logs="";
 	utils.updateLogs = function(statusText){
 		//$rootScope.$apply(function(){
-			$rootScope.logs=statusText+'<br />'+$rootScope.logs;
+			$rootScope.logs=statusText+'\n'+$rootScope.logs;
 		//});
 	};
 	return utils;

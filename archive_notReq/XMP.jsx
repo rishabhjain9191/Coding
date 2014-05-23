@@ -1,18 +1,27 @@
-$._extXMP={
+/**
+ * $_extXMP - PhotoShopXMPUtils.jsx
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ $._extXMP={
 	/*
 		Gets Current Document's XMP data for project id.
 	*/
 	getProjectDetails : function(){
 		var myDocument=app.activeDocument;
 		if (myDocument) {
-			try {
-				value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
-				
-			} catch(e) {
-				console.log("in catch of getXMPDataId error: ", e);
-			}
+		try {
+			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
+			
+		} catch(e) {
+			console.log("in catch of getXMPDataId error: ", e);
 		}
-		return value+'';
+	}
+	return value+'';
 	},
 	
 	removeXMP:function(){

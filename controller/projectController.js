@@ -1,4 +1,13 @@
-app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader','debuggerUtils',
+/**
+ * projectCtrl - projectController.js
+ *
+ * @category   CreativeWorx
+ * @package    Extension
+ * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
+ * @license    All rights reserved.
+ */
+ 
+ app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader','debuggerUtils',
 function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher, preloader,debuggerUtils){
 	console.log("Projects view loaded");
 	preloader.showLoading();
@@ -18,6 +27,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			event.data="<onCreationComplete />";
 			new CSInterface().dispatchEvent(event);
 			$scope.projects=data;	// all the project details are saved in $scope.projects
+			console.log("Projects Lenght  : "+data.length);
 			projectUtils.selectProject();
 			preloader.hideLoading();
 			debuggerUtils.updateLogs("[ProjectResult]: Successfully fetched the projects for the user.");
