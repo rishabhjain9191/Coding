@@ -13,101 +13,106 @@ services.factory('Constants',function(){
 	
 	var constants={};
 	
-	constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-	constants.EXTENSION_VERSION_NUMBER = "1.1.7";
-	constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 	
-	constants.CW_NAMESPACE_NAME = "creativeworx";
-	constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
+		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
+		constants.EXTENSION_VERSION_NUMBER = "1.0.17";
+		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 		
-	constants.STATUS_NEW = "NEW";
-	constants.STATUS_ATTEMPTED = "ATTEMPTED";
-	constants.STATUS_TRANSFERRED = "TRANSFERRED";
-	constants.IMAGE_STATUS_NEW = "NEW";
-	constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
-	constants.IMAGE_STATUS_NOIMAGE = "NONE"
-	constants.IMAGE_STATUS_ERROR = "ERROR";
-	constants.PROJECT_COLORS= [
-		"#888888", //0
-		"#FFF772", //1
-		"#F8AE3B", //2
-		"#EA7527", //3
-		"#CC4824", //4
-		"#C02006", //5
-		"#A5080B", //6
-		"#A32445", //7
-		"#E47284", //8
-		"#854E9D", //9
-		"#7166A3", //10
-		"#A588B5", //11
-		"#83B8E5", //12
-		"#337EBD", //13
-		"#004382", //14
-		"#00606E", //15
-		"#1D6348", //16
-		"#239E6E", //17
-		"#88E2AC", //18
-		"#62A162", //19
-		"#1F6F1F", //20
-		"#937862", //21
-		"#6A482C", //22
-		"#5D5D5D", //23
-		"#999999"  //24
-	];
+		constants.CW_NAMESPACE_NAME = "creativeworx";
+		constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
+			
+		constants.STATUS_NEW = "NEW";
+		constants.STATUS_ATTEMPTED = "ATTEMPTED";
+		constants.STATUS_TRANSFERRED = "TRANSFERRED";
+		constants.IMAGE_STATUS_NEW = "NEW";
+		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
+		constants.IMAGE_STATUS_NOIMAGE = "NONE"
+		constants.IMAGE_STATUS_ERROR = "ERROR";
+		constants.PROJECT_COLORS= [
+			"#888888", //0
+			"#FFF772", //1
+			"#F8AE3B", //2
+			"#EA7527", //3
+			"#CC4824", //4
+			"#C02006", //5
+			"#A5080B", //6
+			"#A32445", //7
+			"#E47284", //8
+			"#854E9D", //9
+			"#7166A3", //10
+			"#A588B5", //11
+			"#83B8E5", //12
+			"#337EBD", //13
+			"#004382", //14
+			"#00606E", //15
+			"#1D6348", //16
+			"#239E6E", //17
+			"#88E2AC", //18
+			"#62A162", //19
+			"#1F6F1F", //20
+			"#937862", //21
+			"#6A482C", //22
+			"#5D5D5D", //23
+			"#999999"  //24
+		];
+			
+		constants.TIMEINTERVAL = 1000*60*4; 	// Default send data time interval of 4 minutes
+		constants.TIMEINTERVAL_MIN = 1000; 		// Minimum time inteval 1 second in milliseconds
+		constants.TIMEINTERVAL_MAX = 1000*60*60;// Maximum time interval1 hour in milliseconds
+		constants.BATCH_SIZE = 5; 				// Default number of events to send to server 
+		constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
+		constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
+		constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
+		constants.IMAGE_TIMEINTERVAL = 50000;
+		constants.THRESHOLD_COUNT = 100;
+		constants.APP_EVENT_POLL = 5000; 		// How frequently to check for events in the app
 		
-	constants.TIMEINTERVAL = 1000*60*4; 	// Default send data time interval of 4 minutes
-	constants.TIMEINTERVAL_MIN = 1000; 		// Minimum time inteval 1 second in milliseconds
-	constants.TIMEINTERVAL_MAX = 1000*60*60;// Maximum time interval1 hour in milliseconds
-	constants.BATCH_SIZE = 5; 				// Default number of events to send to server 
-	constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
-	constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
-	constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
-	constants.IMAGE_TIMEINTERVAL = 50000;
-	constants.THRESHOLD_COUNT = 100;
-	constants.APP_EVENT_POLL = 5000; 		// How frequently to check for events in the app
+		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+			
+		constants.BATCHDATA_SEND_ADDRESS = "/service/log";
+		constants.CHECK_STATUS_ADDRESS = "/service/checkstatus";
+		constants.FILE_UPLOAD_ADDRESS = "/service/fileupload";
+		constants.LOGIN_ADDRESS = "/service/getuserdetails";
+		constants.PROJECT_RETRIEVE_ADDRESS = "/service/getprojectlist";
+		constants.CHECK_USER_DETAILS_ADDRESS = "/service/userdetails";
+		constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject";
+			
+		constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
+		constants.IMAGES_FOLDER_NAME = "/images";
+		constants.DATABASE_FILE_NAME = "CreativeWorx.db";
+			
+		constants.LOG_ENABLE = true;
+		constants.USERNAME = "creativeworx";
+		constants.PASSWORD = "creativeworx";
+			
+		constants.EVENT_DOCUMENT_OPEN = "documentOpen";
+		constants.EVENT_DOCUMENT_CLOSE = "documentClose";
+		constants.EVENT_PROJECT_SELECTED = "projectedSelected";
+			
+		// URL for Links
+		constants.URL_SITE = "http://www.creativeworx.com";
+		constants.URL_TERMS_OF_SERVICE = "/terms.php";
+		constants.URL_PRIVACY_POLICY = "/privacy.php";
+		constants.URL_SIGNUP = "/signup?plan=ext";
+		constants.URL_BETA_FEEDBACK = "/betaFeedback.php";
+		constants.URL_FORGOT_LOGIN = "/user/forgotpassword";
+		
+		constants.FILENAME_EXTENSION =   "TimeTracker.zxp";
+		
+		constants.URL_UPDATE = "http://www.creativeworx.com";
+		constants.URL_DOWNLOAD = "/downloads/timetracker/TimeTracker";
+		constants.URL_ZXP_DOWNLOAD = "/downloads/timetracker/" + constants.FILENAME_EXTENSION;
+		constants.URL_ZIP_DOWNLOAD = "/downloads/timetracker/TimeTracker.zip";
+		constants.URL_VERSION = "/downloads/timetracker/TimeTrackerUpdate.xml";
+			
+		constants.APP_NAME=new CSInterface().hostEnvironment.appName;
+		constants.EXTENSION_ID=new CSInterface().getExtensionID();
+		deferred.resolve(1);
+		
 	
-	constants.URL_SERVICE = "https://timetracker.creativeworx.com";
-		
-	constants.BATCHDATA_SEND_ADDRESS = "/service/log";
-	constants.CHECK_STATUS_ADDRESS = "/service/checkstatus";
-	constants.FILE_UPLOAD_ADDRESS = "/service/fileupload";
-	constants.LOGIN_ADDRESS = "/service/getuserdetails";
-	constants.PROJECT_RETRIEVE_ADDRESS = "/service/getprojectlist";
-	constants.CHECK_USER_DETAILS_ADDRESS = "/service/userdetails";
-	constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject";
-		
-	constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
-	constants.IMAGES_FOLDER_NAME = "/images";
-	constants.DATABASE_FILE_NAME = "CreativeWorx.db";
-		
-	constants.LOG_ENABLE = true;
-	constants.USERNAME = "creativeworx";
-	constants.PASSWORD = "creativeworx";
-		
-	constants.EVENT_DOCUMENT_OPEN = "documentOpen";
-	constants.EVENT_DOCUMENT_CLOSE = "documentClose";
-	constants.EVENT_PROJECT_SELECTED = "projectedSelected";
-		
-	// URL for Links
-	constants.URL_SITE = "http://www.creativeworx.com";
-	constants.URL_TERMS_OF_SERVICE = "/terms.php";
-	constants.URL_PRIVACY_POLICY = "/privacy.php";
-	constants.URL_SIGNUP = "/signup?plan=ext";
-	constants.URL_BETA_FEEDBACK = "/betaFeedback.php";
-	constants.URL_FORGOT_LOGIN = "/user/forgotpassword";
+	}	
 	
-	constants.FILENAME_EXTENSION =   "TimeTracker.zxp";
-	
-	constants.URL_UPDATE = "http://www.creativeworx.com";
-	constants.URL_DOWNLOAD = "/downloads/timetracker/TimeTracker";
-	constants.URL_ZXP_DOWNLOAD = "/downloads/timetracker/" + constants.FILENAME_EXTENSION;
-	constants.URL_ZIP_DOWNLOAD = "/downloads/timetracker/TimeTracker.zip";
-	constants.URL_VERSION = "/downloads/timetracker/TimeTrackerUpdate.xml";
-		
-	constants.APP_NAME=new CSInterface().hostEnvironment.appName;
-	constants.EXTENSION_ID=new CSInterface().getExtensionID();
-		
-	constants.update=function(configData){
+	constants.updateFromConfig=function(configData){
 		if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
 		if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
 		if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
@@ -126,7 +131,89 @@ services.factory('Constants',function(){
 	return constants;
 });
 
-services.factory('Config', ['Constants','$q',function(Constants, $q){
+services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$http,$q){
+	var utils={};
+	utils.minVersion="";
+	utils.version="";
+	utils.downloadPath="";
+	var updateParamsUpdate=function(){
+		var deferred=$q.defer();
+		var url=Constants.URL_UPDATE + Constants.URL_VERSION + "?" + Constants.EXTENSION_VERSION_NUMBER;
+		$http.get(url)
+		.success(function(data,status){
+			var x2js = new X2JS();
+			var jsonObj = x2js.xml_str2json(data);
+			console.log(jsonObj);
+			utils.minVersion=jsonObj.ExtensionUpdateInformation.minversion;
+			utils.version=jsonObj.ExtensionUpdateInformation.version;
+			utils.downloadPath=jsonObj.ExtensionUpdateInformation.download;
+			deferred.resolve(1);
+		})
+		.error(function(){deferred.reject(0);})
+		
+		return deferred.promise;
+	};
+	
+	var isNewerVersion=function(candidateVersion){
+		var rtnBool = false;
+		
+		// Split the candidate version into number components
+		var candidateValues = candidateVersion.split(".");
+		var currentValues = Constants.EXTENSION_VERSION_NUMBER.split(".");
+		
+		// Validate candidate value, current value assumed to be correct
+		if (candidateValues.length >= 3) {
+			
+			if (  parseInt(candidateValues[0]) >  parseInt(currentValues[0]) ) {
+				rtnBool = true;
+			} else if (
+				( parseInt(candidateValues[0]) == parseInt(currentValues[0]) ) &&
+				( parseInt(candidateValues[1]) >  parseInt(currentValues[1]) ) ) {
+				rtnBool = true;
+			} else if (
+				( parseInt(candidateValues[0]) == parseInt(currentValues[0]) ) &&
+				( parseInt(candidateValues[1]) == parseInt(currentValues[1]) ) &&
+				( parseInt(candidateValues[2]) >  parseInt(currentValues[2]) ) ) {
+				rtnBool = true;
+			} else if (
+				( parseInt(candidateValues[0]) == parseInt(currentValues[0]) ) &&
+				( parseInt(candidateValues[1]) == parseInt(currentValues[1]) ) &&
+				( parseInt(candidateValues[2]) == parseInt(currentValues[2]) ) ) {
+				//TODO: check for various values like beta, final, test... What are the standards 
+				
+			}
+		}	
+	
+	return rtnBool;
+	}	
+	
+	
+	utils.checkForUpdate=function(){
+		var deferred=$q.defer();
+		updateParamsUpdate().then(function(result){
+			/*Compare with Min. Version
+				Return Codes :
+				100 : Update Must 
+				200 : Update Optional 
+				300 : No Update Required
+			*/
+			console.log(utils.minVersion);
+			if(isNewerVersion(utils.minVersion))deferred.resolve(100);
+			else if(isNewerVersion(utils.version))deferred.resolve(200);
+			else deferred.resolve(300);
+		},function(result){
+			//If we failed to update the update parameters-Do Nothing (OR Recheck ??)
+			deferred.reject(-1);
+		});
+		
+		return deferred.promise;
+		
+	};
+	return utils;
+}]);
+
+
+services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants, $q, debuggerUtils){
 	var config={};
 	config.data='';
 	config.serviceAddress = Constants.URL_SERVICE;
@@ -143,8 +230,14 @@ services.factory('Config', ['Constants','$q',function(Constants, $q){
 	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
 	config.logEnabled = Constants.LOG_ENABLE;
 	config.configversion = 1;
+	
+	/*
+		Read from the config file and update config values
+	*/
+
 	return config;
 }]);
+
 	
 
 services.factory('preloader',['$rootScope',
@@ -161,10 +254,62 @@ function($rootScope){
 	return utils;
 }]);
 
-services.factory('loginUtils',['Constants', 'Config','$http','$q',
-function(Constants, Config, $http, $q){
+services.factory('loginUtils',['debuggerUtils','Constants', '$location','$rootScope','Config','$http','$q',
+function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 	var utils={};
 	utils.loginResult='aa';
+	utils.tryLoginFromConfig=function(){
+		new CSInterface().evalScript('$._extXML.readConfig()', function(data){
+			if(data != "false"){
+				Config.data=JSON.parse(data);
+				Constants.update(Config.data);
+				Config.username=Config.data.username;
+				Config.password=Config.data.password;
+				Config.keepMeLoggedIn=Config.data.keepMeLoggedIn;
+				Config.firstname=Config.data.firstname;
+				Config.userid=Config.data.userid;
+				
+				debuggerUtils.updateLogs("==============");
+				debuggerUtils.updateLogs("[LocalStorage]: readConfig()");
+				debuggerUtils.updateLogs("Time : " + Config.data.timeInterval);
+				debuggerUtils.updateLogs("Service Address: " + Config.data.serviceAddress);
+				debuggerUtils.updateLogs("Check Online Interval: " + Config.data.checkOnlineTimeInterval);
+				debuggerUtils.updateLogs("Image Time Interval: " + Config.data.imageTimeInterval);
+				debuggerUtils.updateLogs("Batch Size: " + Config.data.batchSize);
+				debuggerUtils.updateLogs("Threshold Count: " + Config.data.thresholdCount);
+				debuggerUtils.updateLogs("Username: " + Config.data.username);
+				debuggerUtils.updateLogs("Password: " + Config.data.password);
+				debuggerUtils.updateLogs("Logging Enabled: " /*todo*/);
+				debuggerUtils.updateLogs("==============");
+				
+				if(Config.keepMeLoggedIn=="false"){	
+					$location.path('login');
+				}
+				else if(Config.keepMeLoggedIn=="true"){
+					utils.login(Config.username, Config.password)
+					.then(function(data){
+						console.log(data);
+						if(data.Msg=="Error: Authentication failed"){
+							$location.path('login');
+						}
+						else{
+							//User Authenticated
+							console.log("User Authenticaed");
+							$rootScope.canEdit=canEdit(data[0].oid, data[0].usertype);
+							$rootScope.LoggedInItems=true;
+							$location.path('projects');
+						}
+					},function(error){
+						$location.path('login');
+					});
+				}
+				else{			
+					$location.path('login');
+				}
+			}
+		});	
+	};
+	
 	utils.login=function(username, password){
 		var deferred=$q.defer();
 		if(username=='undefined'){username=Config.username;}

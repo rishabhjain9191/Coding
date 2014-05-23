@@ -34,6 +34,7 @@ function($scope, $rootScope, $location, $http,Config, Constants, loginUtils,prel
 					Config.firstname=Config.data.firstname;
 					new CSInterface().evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 					});
+					//Config.updateConfig();
 					$rootScope.LoggedInItems=true;
 					$location.path('projects');
 				}

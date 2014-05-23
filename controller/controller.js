@@ -76,12 +76,16 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'logCtrl',
 			templateUrl:'./views/log.html'
 		})
+		.when('/update',{
+			controller:'updateCtrl',
+			templateUrl:'./views/update.html'
+		})
 		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
 }]);
 
 
-app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils', 'preloader','debuggerUtils', 'AppWatcher','projectUtils','$window',
-function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader, debuggerUtils, AppWatcher, projectUtils,$window){	
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils', 'preloader','debuggerUtils', 'AppWatcher','projectUtils','$window','updateUtils',
+function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader, debuggerUtils, AppWatcher, projectUtils,$window, updateUtils){	
 	// Initialize $rootScope variables
 	$rootScope.modalShown=false;
 	$rootScope.showFlyout=false;
@@ -90,66 +94,33 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	$rootScope.opaqueStyle={};
 	$rootScope.LoggedInItems=false;
 	$rootScope.projectProperties=new Array();
+	
+	
+	
+	
+	//Check for Updates
+		updateUtils.checkForUpdate()
+		.then(function(updateReq){
+			if(updateReq){
+			switch(updateReq){
+				case 100:$location.path('update');return;
+				case 200:$location.path('update');return;
+				case 300||-1:loginUtils.tryLoginFromConfig();return;
+				
+				
+			}
+		}
+		})
+		
+		//console.log(updateReq);
+	
+	
 	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
 	}	
-	$scope.processing=false;
+	
 
-	var data = new Object();
-	data = JSON.stringify(data);
-	new CSInterface().evalScript('$._extXML.readConfig()', function(data){
-		if(data != "false"){
-			Config.data=JSON.parse(data);
-			Constants.update(Config.data);
-			Config.username=Config.data.username;
-			Config.password=Config.data.password;
-			Config.keepMeLoggedIn=Config.data.keepMeLoggedIn;
-			Config.firstname=Config.data.firstname;
-			Config.userid=Config.data.userid;
-			
-			debuggerUtils.updateLogs("==============");
-			debuggerUtils.updateLogs("[LocalStorage]: readConfig()");
-			debuggerUtils.updateLogs("Time : " + Config.data.timeInterval);
-			debuggerUtils.updateLogs("Service Address: " + Config.data.serviceAddress);
-			debuggerUtils.updateLogs("Check Online Interval: " + Config.data.checkOnlineTimeInterval);
-			debuggerUtils.updateLogs("Image Time Interval: " + Config.data.imageTimeInterval);
-			debuggerUtils.updateLogs("Batch Size: " + Config.data.batchSize);
-			debuggerUtils.updateLogs("Threshold Count: " + Config.data.thresholdCount);
-			debuggerUtils.updateLogs("Username: " + Config.data.username);
-			debuggerUtils.updateLogs("Password: " + Config.data.password);
-			debuggerUtils.updateLogs("Logging Enabled: " /*todo*/);
-			debuggerUtils.updateLogs("==============");
-			
-			if(Config.keepMeLoggedIn=="false"){	
-				$scope.$apply(function() {
-					$location.path('login');
-				});
-			}
-			else if(Config.keepMeLoggedIn=="true"){
-				loginUtils.login(Config.username, Config.password)
-				.then(function(data){
-					console.log(data);
-					if(data.Msg=="Error: Authentication failed"){
-						$location.path('login');
-					}
-					else{
-						//User Authenticated
-						console.log("User Authenticaed");
-						$rootScope.canEdit=canEdit(data[0].oid, data[0].usertype);
-						$rootScope.LoggedInItems=true;
-						$location.path('projects');
-					}
-				},function(error){
-					$location.path('login');
-				});
-			}
-		}
-		else{
-			$scope.$apply(function() {
-				$location.path('login');
-			});
-		}
-	});
+	
 	
 	$rootScope.toggleFlyout=function(){
 		$rootScope.showFlyout = !$rootScope.showFlyout;
@@ -169,16 +140,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		});
 	}; 
 			
-	function closeMenuWhenClickingElsewhere(event, callbackOnClose) {
-		var clickedElement = event.target;
-		if (!clickedElement) return;
-		var elementClasses = clickedElement.classList;
-		var clickedOnSearchDrawer = elementClasses.contains('nav');
-		if (!clickedOnSearchDrawer) {
-			callbackOnClose();
-			return;
-		}
-	}
+	
 	
 	$rootScope.create=function(){
 		$rootScope.showFlyout = false;
@@ -280,3 +242,5 @@ function canEdit(oid, usertype){
 		return true;
 	}
 }
+
+
