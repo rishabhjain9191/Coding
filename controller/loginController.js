@@ -33,8 +33,8 @@ function($scope, $rootScope, $location, $http,Config, Constants, loginUtils,prel
 					Config.userid=Config.data.userid;
 					Config.firstname=Config.data.firstname;
 					new CSInterface().evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
-						
 					});
+					$rootScope.LoggedInItems=true;
 					$location.path('projects');
 				}
 			},function(error){

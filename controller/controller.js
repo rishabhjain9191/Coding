@@ -88,6 +88,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	$rootScope.logs="";
 	$rootScope.loading=false;
 	$rootScope.opaqueStyle={};
+	$rootScope.LoggedInItems=false;
 	$rootScope.projectProperties=new Array();
 	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
@@ -135,6 +136,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 						//User Authenticated
 						console.log("User Authenticaed");
 						$rootScope.canEdit=canEdit(data[0].oid, data[0].usertype);
+						$rootScope.LoggedInItems=true;
 						$location.path('projects');
 					}
 				},function(error){
@@ -218,7 +220,8 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		$rootScope.projectProperties=new Array();
 		for(i=0;i<100;i++){
 			$rootScope.projectProperties.push(new projectNo(i));
-		}	
+		}
+		$rootScope.LoggedInItems=false;		
 		$location.path("login");
 	};
 	
