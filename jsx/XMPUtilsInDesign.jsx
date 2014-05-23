@@ -39,20 +39,28 @@
 	},
 	
 	getDetails:function(){
-		return 	'{"projectID":"'+this.getProjectID()+'",'+
+		try{
+			document = app.activeDocument.name;
+		}
+		catch(e){
+			document = "";
+		}
+		
+		return '{"projectID":"'+this.getProjectID()+'",'+
 				'"instanceID":"'+this.getInstanceID()+'",'+
 				'"originalID":"'+this.getOriginalID()+'",'+
-				'"docName":"'+app.activeDocument.name+'",'+
+				'"docName":"'+document+'",'+
 				'"docPath":"'+this.getFilePath()+'",'+
-				'"docID":"'+this.getDocumentID()+'"}';
+				'"docID":"'+this.getDocumentID()+'"}';;
 	},
 	
 	
 	getFilePath:function(){
-		var myDocument=app.activeDocument;
 		try{
+			var myDocument=app.activeDocument;
 			value = myDocument.filePath;
-		}catch(e){
+		}
+		catch(e){
 			value='';
 		}
 		return value;
@@ -65,49 +73,44 @@
 				value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/", "projectID/*[1]");
 				if(value==null)return "";
 			} 
-		}catch(e) {
+		}
+		catch(e) {
 			value="";
 		}
 		return value+'';
 	},
 	
 	getInstanceID:function(){
-		var myDocument=app.activeDocument;
 		try{
+			var myDocument=app.activeDocument;
 			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "InstanceID");
 			value=value.substr(8);//Removing "xmp.iid:"
-		}catch(e){
+		}
+		catch(e){
 			value='';
 		}
 		return value;
 	},
 	
 	getOriginalID:function(){
-		var myDocument=app.activeDocument;
 		try{
+			var myDocument=app.activeDocument;
 			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "OriginalDocumentID");
 			value=value.substr(8); //Removing "xmp.did:"
-		}catch(e){
+		}
+		catch(e){
 			value='';
 		}
 		return value;
 	},
 	
 	getDocumentID:function(){
-		/*var myDocument=app.activeDocument;
 		try{
-			value = myDocument.id;
-		}
-		catch(e){
-			value='';
-		}
-		return value;
-		*/
-		var myDocument=app.activeDocument;
-		try{
+			var myDocument=app.activeDocument;
 			value = myDocument.metadataPreferences.getProperty("http://ns.adobe.com/xap/1.0/mm/", "DocumentID");
 			value=value.substr(8); //Removing "xmp.did:"
-		}catch(e){
+		}
+		catch(e){
 			value='';
 		}
 		return value;

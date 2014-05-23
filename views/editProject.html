@@ -1,4 +1,4 @@
-<div ng-click="showColorBox($event)">
+<div ng-click="showColorBox()">
 	<div class="pheader2">
 		<span><b>Select existing project to edit</b></span>
 		<select ng-model='project' ng-change='changeProject(project)' ng-options='p.name for p in projects'>
@@ -17,7 +17,8 @@
 		<div class="group">
 			<div class="colorDiv" style="float: left; width: 45px;">
 				<span>Color:</span>
-				<div class="colorBtn" ng-model="project.colorcode" ng-style="colorBtnStyle"></div>
+				<ui-colorpicker ng-show="showAllColors" ng-model="targetColor"></ui-colorpicker>
+				<div class="colorBtn" ng-hide="showAllColors" ng-model="project.colorcode" ng-style="colorBtnStyle"></div>
 				<div class="colorsPanel" ng-show="showColorPanel">
 					<div class="colorPreview" ng-style="colorPreviewStyle"></div>
 					<div class="colors">

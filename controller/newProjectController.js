@@ -9,10 +9,18 @@
  
  app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants', function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants){
 	preloader.hideLoading();
+	
+	//Todo: check for the colorbox version here
+	if(true)
+		$scope.showAllColors=false;
+	else
+		$scope.showAllColors=true;
+		
 	$scope.project={};
 	$scope.colorBtnStyle={};
 	$scope.colorPreviewStyle={};
 	$scope.colorindex=0;
+	$scope.targetColor="#888888";
 	$scope.colorBtnStyle.background="#888888";
 	$scope.colorPreviewStyle.background="#888888";
 	$scope.showColorPanel=false;
@@ -37,7 +45,7 @@
 				var name=name;
 				($scope.project.jobId)?(jobId=jobId):(jobId="");
 				($scope.project.budgetHrs)?(budgetHrs=budgetHrs):(budgetHrs="");
-				($scope.project.colorcode)?(color=colorcode):(color="");
+				color=$scope.targetColor;
 				($scope.colorindex!==null)?(colorIndex=$scope.colorindex):(colorIndex=0);
 				projectUtils.addProject(name, jobId, budgetHrs, color, colorIndex)
 				.then(function(data){
@@ -104,6 +112,7 @@
 	$scope.selectColor=function(index){
 		$scope.showColorPanel=false;
 		$scope.project.colorcode=$scope.colors[index].colorcode;
+		$scope.targetColor=$scope.colors[index].colorcode;
 		$scope.colorindex=$scope.colors[index].colorindex;
 		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
 	}

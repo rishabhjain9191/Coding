@@ -1,4 +1,4 @@
-<div ng-click="showColorBox($event)">
+<div ng-click="showColorBox()">
 	<div class="pheader">
 		<span><b>Create New Project</b></span>
 		<hr>
@@ -15,7 +15,8 @@
 		<div class="group">
 			<div style="float: left; width: 45px;">
 				<span>Color:</span>
-				<div class="colorBtn" ng-model="project.colorcode" ng-style="colorBtnStyle"></div>
+				<ui-colorpicker ng-model="targetColor" ng-show="showAllColors"></ui-colorpicker>
+				<div class="colorBtn" ng-hide="showAllColors" ng-model="project.colorcode" ng-style="colorBtnStyle"></div>
 				<div class="colorsPanel" style="top: 64px;" ng-show="showColorPanel">
 					<div class="colorPreview" ng-style="colorPreviewStyle"></div>
 					<div class="colors">

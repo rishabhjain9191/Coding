@@ -11,6 +11,12 @@
 
 	 preloader.hideLoading();
 	 
+	 //Todo: check for the colorbox version here
+	if(true)
+		$scope.showAllColors=true;
+	else
+		$scope.showAllColors=false;
+	 
 	 $scope.showColorPanel=false;
 	 // creating the colors array for the colorbox
 	 $scope.colors=[];
@@ -30,6 +36,7 @@
 		$scope.name=$scope.project.name;
 		$scope.colorBtnStyle={};
 		$scope.colorPreviewStyle={};
+		$scope.targetColor=$scope.project.colorcode;
 		$scope.colorBtnStyle.background=$scope.project.colorcode;
 		$scope.colorPreviewStyle.background=$scope.project.colorcode;
 	}, function(data){});
@@ -42,7 +49,7 @@
 			var projectId=$scope.project.projectid;
 			newName=$scope.name;
 			($scope.project.jobid)?(newJobId=$scope.project.jobid):(newJobId="");
-			($scope.project.colorcode)?(newColorCode=$scope.project.colorcode):(newColorCode="");
+			newColorCode=$scope.targetColor;
 			($scope.project.color)?(newColorIndex=$scope.project.color):(newColorIndex="");
 			($scope.project.budget)?(newBudget=$scope.project.budget):(newBudget="");
 			projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode, newColorIndex)
@@ -76,7 +83,7 @@
 		$scope.colorPreviewStyle.background=p.colorcode;
 	},
 	
-	$scope.showColorBox=function(event){
+	$scope.showColorBox=function(){
 		/*
 			256*256 colors
 		*/
@@ -102,7 +109,6 @@
 			25 colors
 		*/
 		
-		
 		if(event.srcElement.parentElement){
 			if(!event.srcElement.className.match("colorBtn")&& event.srcElement.parentElement.className!="colorsPanel")
 				$scope.showColorPanel = false;
@@ -110,9 +116,7 @@
 				$scope.showColorPanel=!$scope.showColorPanel;
 			else
 				$scope.showColorPanel=true;
-		}
-			
-		
+		}		
 	},
 	
 	$scope.showPreview=function(index){
@@ -122,6 +126,7 @@
 	$scope.selectColor=function(index){
 		$scope.showColorPanel=false;
 		$scope.project.colorcode=$scope.colors[index].colorcode;
+		$scope.targetColor=$scope.colors[index].colorcode;
 		$scope.project.color=$scope.colors[index].colorindex;
 		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
 	}
