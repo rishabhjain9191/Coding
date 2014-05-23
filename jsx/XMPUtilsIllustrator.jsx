@@ -13,6 +13,7 @@
 		Gets Current Document's XMP data for project id.
 	*/
 	getProjectDetails : function(){
+		var value;
 		if (ExternalObject.AdobeXMPScript == undefined) {
 			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
@@ -20,7 +21,7 @@
 			var myDocument=app.activeDocument;
 			if (myDocument) {
 				var xmp=new XMPMeta(myDocument.XMPString);
-				var value=xmp.getProperty(XMPConst.NS_XMP, "ProjectID");
+				value=xmp.getProperty(XMPConst.NS_XMP, "ProjectID");
 			} 
 		}
 		catch(e) {
@@ -33,18 +34,19 @@
 	},
 	
 	getProjectID : function(){
+		var value;
 		if (ExternalObject.AdobeXMPScript == undefined) {
 			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
-		var myDocument=app.activeDocument;
-		if (myDocument) {
-			try {
+		try{
+			var myDocument=app.activeDocument;
+			if (myDocument) {
 				var xmp=new XMPMeta(myDocument.XMPString);
-				var value=xmp.getProperty(XMPConst.NS_XMP, "ProjectID");
-				
-			}catch(e) {
-			
+				value=xmp.getProperty(XMPConst.NS_XMP, "ProjectID");
 			}
+		}
+		catch(e){
+			
 		}
 		if(value== undefined||value.value==" "){
 			value="";
@@ -75,18 +77,25 @@
 	},
 	
 	getDetails:function(){
+		try{
+			document = app.activeDocument.fullName.name;
+		}
+		catch(e){
+			document = "";
+		}
+		
 		return 	'{"projectID":"'+this.getProjectDetails()+'",'+
 				'"instanceID":"'+this.getInstanceID()+'",'+
 				'"originalID":"'+this.getOriginalID()+'",'+
-				'"docName":"'+app.activeDocument.fullName.name+'",'+
+				'"docName":"'+document+'",'+
 				'"docPath":"'+this.getFilePath()+'",'+
 				'"docID":"'+this.getDocumentID()+'"}';
 	},
 	
 	
 	getFilePath:function(){
-		var myDocument=app.activeDocument;
 		try{
+			var myDocument=app.activeDocument;
 			value = myDocument.fullName.path;
 		}
 		catch(e){
@@ -96,19 +105,20 @@
 	},
 	
 	getInstanceID:function(){
+		var value;		
 		if (ExternalObject.AdobeXMPScript == undefined) {
 			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
-		var myDocument=app.activeDocument;
-		if (myDocument) {
-			try {
+		try{
+			var myDocument=app.activeDocument;
+			if (myDocument) {
 				var xmp=new XMPMeta(myDocument.XMPString);
-				var value=xmp.getProperty(XMPConst.NS_XMP_MM, "InstanceID");
+				value=xmp.getProperty(XMPConst.NS_XMP_MM, "InstanceID");
 				value=value.value.substr(5);
-			} catch(e) {
-		
-			}
-		}	
+			}	
+		}
+		catch(e){
+		}
 		if(value===undefined||value.value==" "){
 			value="";
 		}
@@ -116,19 +126,20 @@
 	},
 	
 	getOriginalID:function(){
+		var value;
 		if (ExternalObject.AdobeXMPScript == undefined) {
 			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
-		var myDocument=app.activeDocument;
-		if (myDocument) {
-			try {
+		try {
+			var myDocument=app.activeDocument;
+			if (myDocument) {
 				var xmp=new XMPMeta(myDocument.XMPString);
-				var value=xmp.getProperty(XMPConst.NS_XMP_MM, "OriginalDocumentID");
+				value=xmp.getProperty(XMPConst.NS_XMP_MM, "OriginalDocumentID");
 				value=value.value.substr(5);
-				
-			} catch(e) {
-
 			}
+		}
+		catch(e){
+		
 		}
 		if(value===undefined||value.value==" "){
 			value="";
@@ -137,19 +148,21 @@
 	},
 	
 	getDocumentID:function(){
+		var value;
 		if (ExternalObject.AdobeXMPScript == undefined) {
 			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
 		}
-		var myDocument=app.activeDocument;
-		if (myDocument) {
-			try {
+		try{
+			var myDocument=app.activeDocument;
+			if (myDocument) {
 				var xmp=new XMPMeta(myDocument.XMPString);
-				var value=xmp.getProperty(XMPConst.NS_XMP_MM, "DocumentID");
+				value=xmp.getProperty(XMPConst.NS_XMP_MM, "DocumentID");
 				value=value.value.substr(5);
-			} catch(e) {
+			}	
+		}
+		catch(e){
 		
-			}
-		}	
+		}
 		if(value===undefined||value.value==" "){
 			value="";
 		}

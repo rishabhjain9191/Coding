@@ -44,18 +44,24 @@
 	},
 	
 	getDetails:function(){
-		return 	'{"projectID":"'+this.getProjectID()+'",'+
+		try{
+			document = app.activeDocument.name;
+		}
+		catch(e){
+			document = "";
+		}
+		return '{"projectID":"'+this.getProjectID()+'",'+
 				'"instanceID":"'+this.getInstanceID()+'",'+
 				'"originalID":"'+this.getOriginalID()+'",'+
-				'"docName":"'+app.activeDocument.name+'",'+
+				'"docName":"'+document+'",'+
 				'"docPath":"'+this.getFilePath()+'",'+
 				'"docID":"'+this.getDocumentID()+'"}';
 	},
 	
 	
 	getFilePath:function(){
-		var myDocument=app.activeDocument;
 		try{
+			var myDocument=app.activeDocument;
 			value = myDocument.fullName.path;
 		}
 		catch(e){
@@ -79,9 +85,9 @@
 		}
 	},
 	getInstanceID:function(){
-		var document=app.activeDocument;
 		var value='';
 		try{
+			var document=app.activeDocument;
 			value=document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
 			if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
 			var xmp = new XMPMeta( document.xmpMetadata.rawData);  
@@ -95,9 +101,9 @@
 		return value;
 	},
 	getOriginalID:function(){
-		var document=app.activeDocument;
 		var value="";
 		try{
+			var document=app.activeDocument;
 			value=document.name + document.fullName.created.getMonth().toString() + document.fullName.created.getDay().toString() + document.fullName.created.getYear().toString();
 		
 			if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
@@ -113,8 +119,8 @@
 	},
 	getDocumentID:function(){
 		var value='';
-		var myDocument=app.activeDocument;
 		try{
+			var myDocument=app.activeDocument;
 			if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
 			var xmp = new XMPMeta( myDocument.xmpMetadata.rawData);  
 			var val = xmp.getProperty(XMPConst.NS_XMP_MM, "DocumentID"); 

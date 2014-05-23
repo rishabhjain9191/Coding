@@ -286,10 +286,9 @@ function($rootScope, Constants, Config, $http, $q){
 		params['budget']=budgetHrs;
 		params['color']=color;
 		params['colorindex']=colorindex;
-		
 		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
 		.success(function(data){deferred.resolve(data);})
-		.error(function(data){debuggerUtils.updateLogs("[LoginResult]: Try/Catch Failed"/*todo*/);alert(data);deferred.reject(data);})
+		.error(function(data){debuggerUtils.updateLogs("[LoginResult]: Try/Catch Failed: "+data/*todo*/);deferred.reject(data);})
 		return deferred.promise;
 	};
 	

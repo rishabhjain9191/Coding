@@ -151,19 +151,12 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	
 	$rootScope.toggleFlyout=function(){
 		$rootScope.showFlyout = !$rootScope.showFlyout;
-		/*if ($rootScope.showFlyout) {
-			$window.onclick = function (event) {
-				closeMenuWhenClickingElsewhere(event, $rootScope.toggleFlyout);
-			};
-		}*/ 
 	};
 	
-	 $window.onclick = function (event) {
+	$window.onclick = function (event) {
 		$rootScope.$apply(function(){
-		console.log(event.srcElement);
 			if(event.srcElement.className!="nav")
-			$rootScope.showFlyout = false;
-			
+				$rootScope.showFlyout = false;
 		});
 	}; 
 			
@@ -262,6 +255,32 @@ app.directive('modalDialog', function() {
 	};
 });
 
+app.directive('uiColorpicker', function() {
+    return {
+        restrict: 'E',
+        require: 'ngModel',
+        scope: false,
+        replace: true,
+        template: "<span><input class='input-small' /></span>",
+        link: function(scope, element, attrs, ngModel) {
+            var input = element.find('input');
+            var options = angular.extend({
+                color: ngModel.$viewValue,
+                change: function(color) {
+                    scope.$apply(function() {
+                      ngModel.$setViewValue(color.toHexString());
+                    });
+                }
+            }, scope.$eval(attrs.options));
+            
+            ngModel.$render = function() {
+              input.spectrum('set', ngModel.$viewValue || '');
+            };
+            
+            input.spectrum(options);
+        }
+    };
+});
 
 function projectNo(i){
 	this.index=i;
