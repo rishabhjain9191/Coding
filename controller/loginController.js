@@ -7,13 +7,32 @@
  * @license    All rights reserved.
  */
  
- app.controller('loginCtrl',['$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader',
-function($scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader){
+ app.controller('loginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader',
+function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader){
+	console.log("On Login Page");
 	preloader.hideLoading();
 	$scope.alert_message="Username and Password cannot be left blank!";
+	$scope.showLogin=false;
 	$scope.modalShown = false;
 	$scope.keepLoggedIn='false';	
 	$scope.message="";
+	
+	if(!viewManager.loggedOut){
+		preloader.showLoading();
+		loginUtils.tryLoginFromConfig()
+		.then(function(res){
+		console.log("tryLoginFromConfig"+res);
+		switch(res){
+			case 100:$scope.showLogin=true;preloader.hideLoading();return
+			case 200:preloader.hideLoading();viewManager.userLoggedIn();return;
+		}
+		})
+	}
+	else{
+		$scope.showLogin=true;
+		preloader.hideLoading();
+	}
+	
 	$scope.login=function(){
 		if($scope.user && $scope.user.email!="" && $scope.user.password!=""){	
 			preloader.showLoading();
@@ -36,7 +55,7 @@ function($scope, $rootScope, $location, $http,Config, Constants, loginUtils,prel
 					});
 					//Config.updateConfig();
 					$rootScope.LoggedInItems=true;
-					$location.path('projects');
+					viewManager.userLoggedIn();
 				}
 			},function(error){
 				preloader.hideLoading();

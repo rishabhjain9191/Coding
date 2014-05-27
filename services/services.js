@@ -107,12 +107,12 @@ services.factory('Constants',function(){
 			
 		constants.APP_NAME=new CSInterface().hostEnvironment.appName;
 		constants.EXTENSION_ID=new CSInterface().getExtensionID();
-		deferred.resolve(1);
+		
 		
 	
-	}	
+		
 	
-	constants.updateFromConfig=function(configData){
+	constants.update=function(configData){
 		if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
 		if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
 		if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
@@ -130,6 +130,49 @@ services.factory('Constants',function(){
 		
 	return constants;
 });
+
+services.factory('viewManager', ['$location','$route', function($location,$route){
+	var utils={};
+	
+	utils.loggedOut=false;
+	
+	utils.initializationDone=function(){
+		console.log("Initialized");
+		$location.path('update');
+	}
+	utils.updateDone=function(updateType){
+		if(updateType==100){
+			console.log("Checking for the update again");
+			$route.reload();
+		}
+		else{
+			console.log('update done');
+			$location.path('loadConfig');
+		}
+	};
+	utils.configloaded=function(){
+		console.log("Config Loaded");
+		$location.path('login');
+		$route.reload();
+	};
+	utils.userLoggedIn=function(){
+		this.loggedOut=false;
+		console.log('user Logged in');
+		$location.path('projects');
+	};
+	
+	utils.userLoggedOut=function(){
+		this.loggedOut=true;
+		$location.path('login');
+	};
+	
+	return utils;
+	
+}]);
+
+
+
+
 
 services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$http,$q){
 	var utils={};
@@ -259,55 +302,37 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 	var utils={};
 	utils.loginResult='aa';
 	utils.tryLoginFromConfig=function(){
-		new CSInterface().evalScript('$._extXML.readConfig()', function(data){
-			if(data != "false"){
-				Config.data=JSON.parse(data);
-				Constants.update(Config.data);
-				Config.username=Config.data.username;
-				Config.password=Config.data.password;
-				Config.keepMeLoggedIn=Config.data.keepMeLoggedIn;
-				Config.firstname=Config.data.firstname;
-				Config.userid=Config.data.userid;
-				
-				debuggerUtils.updateLogs("==============");
-				debuggerUtils.updateLogs("[LocalStorage]: readConfig()");
-				debuggerUtils.updateLogs("Time : " + Config.data.timeInterval);
-				debuggerUtils.updateLogs("Service Address: " + Config.data.serviceAddress);
-				debuggerUtils.updateLogs("Check Online Interval: " + Config.data.checkOnlineTimeInterval);
-				debuggerUtils.updateLogs("Image Time Interval: " + Config.data.imageTimeInterval);
-				debuggerUtils.updateLogs("Batch Size: " + Config.data.batchSize);
-				debuggerUtils.updateLogs("Threshold Count: " + Config.data.thresholdCount);
-				debuggerUtils.updateLogs("Username: " + Config.data.username);
-				debuggerUtils.updateLogs("Password: " + Config.data.password);
-				debuggerUtils.updateLogs("Logging Enabled: " /*todo*/);
-				debuggerUtils.updateLogs("==============");
-				
-				if(Config.keepMeLoggedIn=="false"){	
-					$location.path('login');
+		var deferred=$q.defer();
+		if(Config.keepMeLoggedIn=="false"){	
+			/*
+				Fresh Login Required, 100-Fresh Login
+			*/
+			deferred.resolve(100);
+		}
+		else if(Config.keepMeLoggedIn=="true"){
+			utils.login(Config.username, Config.password)
+			.then(function(data){
+				console.log(data);
+				if(data.Msg=="Error: Authentication failed"){
+					deferred.resolve(100);
 				}
-				else if(Config.keepMeLoggedIn=="true"){
-					utils.login(Config.username, Config.password)
-					.then(function(data){
-						console.log(data);
-						if(data.Msg=="Error: Authentication failed"){
-							$location.path('login');
-						}
-						else{
-							//User Authenticated
-							console.log("User Authenticaed");
-							$rootScope.canEdit=canEdit(data[0].oid, data[0].usertype);
-							$rootScope.LoggedInItems=true;
-							$location.path('projects');
-						}
-					},function(error){
-						$location.path('login');
-					});
+				else{
+					//User Authenticated
+					console.log("User Authenticaed");
+					$rootScope.canEdit=canEdit(data[0].oid, data[0].usertype);
+					$rootScope.LoggedInItems=true;
+					deferred.resolve(200);
 				}
-				else{			
-					$location.path('login');
-				}
-			}
-		});	
+			},function(error){
+				deferred.resolve(100);
+			});
+		}
+		else{			
+			deferred.resolve(100);
+		}
+		
+		return deferred.promise;
+			
 	};
 	
 	utils.login=function(username, password){
@@ -467,6 +492,8 @@ function($rootScope, Constants, Config, $http, $q){
 			}
 		});		
 	};	
+	
+	
 	return utils;
 }]);
 

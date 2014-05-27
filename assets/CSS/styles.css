@@ -366,6 +366,18 @@ li{
 	margin-right: 5px;
 }
 
+/**** Update ****/
+
+.updateContainer{
+	position: absolute;
+	top: 50%;
+	height: 10em;
+	width:100%;
+	margin-top: -10em;
+	text-align: center;
+	color: rgb(88, 88, 88);
+}
+
 
 /**** Header ****/
 
@@ -594,4 +606,32 @@ body .ui-tooltip {
 	padding: 10px;
 	padding-bottom: 293px;
 	margin-bottom: -288px;
+}
+
+
+progress {
+	width: 100%;
+	padding: 0 16px;
+	height: 17px;
+	margin: 22px auto;
+	display: block;
+	-webkit-appearance: none;
+	border: none;
+}
+
+
+progress::-webkit-progress-bar {
+	background: #bbb;
+	border-radius: 10px;
+	padding: 2px;
+	box-shadow: 0 1px 0px 0 rgba(255, 255, 255, 0.2);
+}
+
+
+progress::-webkit-progress-value {
+	border-radius: 10px;
+	box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+	background-color: #999;
+	background-size: 25px 14px, 100% 100%, 100% 100%;
+	-webkit-animation: move 10s linear 0 infinite;
 }

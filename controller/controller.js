@@ -80,12 +80,16 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'updateCtrl',
 			templateUrl:'./views/update.html'
 		})
+		.when('/loadConfig',{
+			controller:'configLoader',
+			templateUrl:'./views/loadConfig.html'
+		})
 		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
 }]);
 
 
-app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http', 'Config', 'Constants', 'loginUtils', 'preloader','debuggerUtils', 'AppWatcher','projectUtils','$window','updateUtils',
-function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, preloader, debuggerUtils, AppWatcher, projectUtils,$window, updateUtils){	
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route',
+function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route){	
 	// Initialize $rootScope variables
 	$rootScope.modalShown=false;
 	$rootScope.showFlyout=false;
@@ -95,32 +99,9 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 	$rootScope.LoggedInItems=false;
 	$rootScope.projectProperties=new Array();
 	
-	
-	
-	
-	//Check for Updates
-		updateUtils.checkForUpdate()
-		.then(function(updateReq){
-			if(updateReq){
-			switch(updateReq){
-				case 100:$location.path('update');return;
-				case 200:$location.path('update');return;
-				case 300||-1:loginUtils.tryLoginFromConfig();return;
-				
-				
-			}
-		}
-		})
-		
-		//console.log(updateReq);
-	
-	
 	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
 	}	
-	
-
-	
 	
 	$rootScope.toggleFlyout=function(){
 		$rootScope.showFlyout = !$rootScope.showFlyout;
@@ -133,8 +114,6 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		});
 	}; 
 			
-	
-	
 	$rootScope.create=function(){
 		$rootScope.showFlyout = false;
 		$location.path('createNew');
@@ -145,31 +124,36 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		$location.path('editProject');
 	};
 	
-	
-	$rootScope.asgnPrjFldr=function(){
-		$rootScope.showFlyout = false;
+		$rootScope.asgnPrjFldr=function(){
+	 	$rootScope.showFlyout = false;
 		//1. Check the Current Document is saved or not
 		//If no project is selected, alert-No Project Selected
 		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
-			$rootScope.alert_message = "Assign Project requires an open document that has already been saved.";
-			$rootScope.modalShown=true;
+		$scope.apply(function(){
+			$scope.alert_message = "Assign Project requires an open document that has already been saved.";
+			$scope.modalShown=true;
+			});
 		}
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
 		else{
 			new CSInterface().evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
 				if(data == "false"){
-					$rootScope.alert_message="Assign Project requires an open document that has already been saved.";
-					$rootScope.modalShown=true;
+					$scope.apply(function(){
+						$scope.alert_message="Assign Project requires an open document that has already been saved.";
+						$scope.modalShown=true;
+					});
 				}else{
-					$rootScope.alert_message="The current project has been assigned to the current folder.";
-					$rootScope.modalShown=true;
+				$scope.apply(function(){
+					$scope.alert_message="The current project has been assigned to the current folder.";
+					$scope.modalShown=true;
+				});
 				}
 			});
-		}
+		} 
 	};
 	
 	$rootScope.logout=function(){
-		$rootScope.showFlyout = false;
+		 $rootScope.showFlyout = false;
 		AppWatcher.removeEventListeners();
 		projectUtils.reset();
 		$rootScope.projectProperties=new Array();
@@ -177,7 +161,7 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 			$rootScope.projectProperties.push(new projectNo(i));
 		}
 		$rootScope.LoggedInItems=false;		
-		$location.path("login");
+		viewManager.userLoggedOut();
 	};
 	
 	$rootScope.feedback=function(){
@@ -195,6 +179,13 @@ function($rootScope, $scope, $location,$http,Config, Constants, loginUtils, prel
 		//preloader.hideLoading();
 		console.log($rootScope);
 	};
+	$rootScope.checkUpdate=function(){
+		$location.path('update');
+		if($location.path()=='/update')
+			$route.reload();
+	}
+	
+	viewManager.initializationDone();
 }]);
 
 

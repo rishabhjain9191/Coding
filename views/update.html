@@ -1,3 +1,14 @@
-<div>
-	<button ng-click="done()">Done</button>
+<div class="updateContainer">
+	<div ng-show="downloading">New Extension available...</div>
+	<div ng-hide="downloading" style="min-height: 40px;"></div>
+	<div><progress value="{{progressBarValue}}" max="100" ng-show="downloading"></progress></div>
+	
+	<div style="margin: 20px;"><pre style="font-family:Verdana;">{{message}}</pre></div>
+	
+	<div style="padding-bottom: 20px;" ng-show="downloading">Extension also Available at:<br><br><span style="text-decoration: underline;" ng-click="openUpdateSite()">www.CreativeWorx.com<span></div>
+	
+	<div>
+	<button style="width:auto;" class="lightBtn"  ng-click="download()" ng-disabled="disableUpdateBtn">{{updateMessage}}</button>
+	<button style="width:auto;" class="lightBtn" ng-click="done()" ng-show="canReturn">Return</button>
+	</div>
 <div>
