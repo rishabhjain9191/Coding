@@ -6,7 +6,10 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
+ if (ExternalObject.AdobeXMPScript == undefined) {
+			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
+		}
+		
  $._ext_ILST_XMP={
 	
 	/*
@@ -14,9 +17,7 @@
 	*/
 	getProjectDetails : function(){
 		var value;
-		if (ExternalObject.AdobeXMPScript == undefined) {
-			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
-		}
+		
 		try {
 			var myDocument=app.activeDocument;
 			if (myDocument) {
@@ -35,9 +36,7 @@
 	
 	getProjectID : function(){
 		var value;
-		if (ExternalObject.AdobeXMPScript == undefined) {
-			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
-		}
+		
 		try{
 			var myDocument=app.activeDocument;
 			if (myDocument) {
@@ -55,9 +54,7 @@
 	},
 	
 	removeXMP:function(){
-		if (ExternalObject.AdobeXMPScript == undefined) {
-			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
-		}
+		
 		var myDocument=app.activeDocument;
 		var xmp=new XMPMeta(myDocument.XMPString);
         xmp.setProperty(XMPConst.NS_XMP, "ProjectID", " ");
@@ -66,9 +63,7 @@
 	},
 	
 	insertXMP:function(value){
-		if (ExternalObject.AdobeXMPScript == undefined) {
-			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
-		}
+		
 		var myDocument=app.activeDocument;
 		var xmp=new XMPMeta(myDocument.XMPString);
         xmp.setProperty(XMPConst.NS_XMP, "ProjectID", value);
@@ -106,9 +101,7 @@
 	
 	getInstanceID:function(){
 		var value;		
-		if (ExternalObject.AdobeXMPScript == undefined) {
-			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
-		}
+		
 		try{
 			var myDocument=app.activeDocument;
 			if (myDocument) {
@@ -127,9 +120,7 @@
 	
 	getOriginalID:function(){
 		var value;
-		if (ExternalObject.AdobeXMPScript == undefined) {
-			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
-		}
+		
 		try {
 			var myDocument=app.activeDocument;
 			if (myDocument) {
@@ -149,9 +140,7 @@
 	
 	getDocumentID:function(){
 		var value;
-		if (ExternalObject.AdobeXMPScript == undefined) {
-			ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
-		}
+		
 		try{
 			var myDocument=app.activeDocument;
 			if (myDocument) {

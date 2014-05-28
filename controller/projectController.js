@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
  
- app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader','debuggerUtils',
-function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher, preloader,debuggerUtils){
+ app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader','debuggerUtils','CSInterface',
+function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher, preloader,debuggerUtils,CSInterface){
 	console.log("Projects view loaded");
 	preloader.showLoading();
 	$scope.modalShown = false;
@@ -17,7 +17,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	$scope.noProjectsMessage="You have no projects.";
 	AppWatcher.addEventListeners();
 	var prev_index=-1;
-	
+	$rootScope.userLoggedState=1;
 	$rootScope.refreshProjects=function(){
 		debuggerUtils.updateLogs("Project request attempt for [" +Config.username+ "]");
 		projectUtils.getProjects(Config.username, Config.password, Config.userid)
@@ -25,7 +25,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			var event=new CSEvent("onCreationComplete", "APPLICATION");
 			event.type="onCreationComplete";
 			event.data="<onCreationComplete />";
-			new CSInterface().dispatchEvent(event);
+			CSInterface.dispatchEvent(event);
 			$scope.projects=data;	// all the project details are saved in $scope.projects
 			console.log("Projects Lenght  : "+data.length);
 			projectUtils.selectProject();
@@ -39,12 +39,12 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	var deselectProject=function(){
 		//Remove XMP data of Project;
 		console.log("Deselecting Project");
-		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.removeXMP()',function(){
+		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.removeXMP()',function(){
 			projectUtils.setCurrentProjectId(0);
 			var event=new CSEvent("projectSelected", "APPLICATION");
 			event.type="projectSelected";
 			event.data="<projectSelected />";
-			new CSInterface().dispatchEvent(event);
+			CSInterface.dispatchEvent(event);
 			//Change Style on Project Deselect
 		});
 		
@@ -52,13 +52,13 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	var selectProject=function(){
 		//Modify XMP data of the project.
 		console.log("Selecting Project");
-		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
+		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
 			console.log("XMP Inserted");
 			projectUtils.setCurrentProjectId(projectUtils.getSelectedProjectId());
 			var event=new CSEvent("projectSelected", "APPLICATION");
 			event.type="projectSelected";
 			event.data="<projectSelected />";
-			new CSInterface().dispatchEvent(event);
+			CSInterface.dispatchEvent(event);
 		});
 		//Change Style on Project Select
 		if(prev_index>=0){
@@ -77,7 +77,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	};
 	var checkDocXMP=function(){
 		//Get the Project Id from XMP of the Document, if doesn't exists return 0.
-		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
+		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
 			if(data==""){
 				projectUtils.setCurrentProjectId(0);
 			}
@@ -88,7 +88,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	$rootScope.refreshProjects();
 	
 	$scope.processProjectClick=function(projectId, index){
-		new CSInterface().evalScript('$._extcommon.checkDocLength()',function(data){
+		CSInterface.evalScript('$._extcommon.checkDocLength()',function(data){
 			if(parseInt(data)){
 				processProject(projectId,index)
 			}else{
@@ -126,8 +126,8 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 		}
 		projectUtils.setSelectedProjectId(projectId);
 		
-		var csInterface=new CSInterface();
-		csInterface.evalScript('$._ext.getCurrentDoc()', function(data){
+		
+		CSInterface.evalScript('$._ext.getCurrentDoc()', function(data){
 			if(data=='1'){
 				checkDocXMP();
 			}
@@ -136,7 +136,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	
 	
 	$scope.openHomePage=function(projectId){
-		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE);
+		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE);
 	};
 	
 	$scope.checkSelected=function(projectId){

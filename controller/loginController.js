@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
  
- app.controller('loginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader){
+ app.controller('loginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface',
+function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface){
 	console.log("On Login Page");
 	preloader.hideLoading();
 	$scope.alert_message="Username and Password cannot be left blank!";
@@ -51,7 +51,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 					Config.keepMeLoggedIn=$scope.checked;
 					Config.userid=Config.data.userid;
 					Config.firstname=Config.data.firstname;
-					new CSInterface().evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 					});
 					//Config.updateConfig();
 					$rootScope.LoggedInItems=true;
@@ -68,10 +68,10 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	};
 	
 	$scope.signup=function(){
-		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_SIGNUP);
+		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_SIGNUP);
 	};
 	
 	$scope.forgetLogin=function(){
-		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_FORGOT_LOGIN);
+		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_FORGOT_LOGIN);
 	};
 }]);

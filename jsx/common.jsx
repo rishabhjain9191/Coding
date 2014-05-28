@@ -31,7 +31,7 @@ $._extcommon={
 			
 			downloadFilePath=configFile.parent.fsName+"\\downloads\\timetracker\\"+extensionName;
 			this.createDownloadFolder(downloadFilePath);
-			file.write("C:/Windows/System32/bitsadmin /transfer ZXPDownlaodJob  /download /priority normal "+downloadURL+" \""+downloadFilePath+"\"");
+			file.write("C:/Windows/System32/bitsadmin /transfer ZXPDownlaodJob  /download /priority high "+downloadURL+" \""+downloadFilePath+"\"");
 			file.close();
 			
 			

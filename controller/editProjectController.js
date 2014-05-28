@@ -81,6 +81,7 @@
 		$scope.name = p.name;
 		$scope.colorBtnStyle.background=p.colorcode;
 		$scope.colorPreviewStyle.background=p.colorcode;
+		$scope.targetColor=p.colorcode;
 	},
 	
 	$scope.showColorBox=function(){

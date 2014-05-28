@@ -511,7 +511,7 @@ li{
 
 /**** Loading Spinner ****/
 
-@-webkit-keyframes loading-spinner {
+ @-webkit-keyframes loading-spinner {
   0% {
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
@@ -547,7 +547,7 @@ li{
   text-indent: -9999px;
   width: 32px;
   height: 32px;
-}
+} 
 
 /***** tooltip ****/
 

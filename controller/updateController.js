@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
  
-app.controller('updateCtrl',['viewManager','$scope', '$rootScope','$http','Constants','preloader', 'updateUtils','$interval','$timeout',
-function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUtils,$interval, $timeout){
+app.controller('updateCtrl',['viewManager','$scope', '$rootScope','$http','Constants','preloader', 'updateUtils','$interval','$timeout','CSInterface',
+function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUtils,$interval, $timeout, CSInterface){
 		
 		var updateType;
 		updateUtils.checkForUpdate()
@@ -62,14 +62,14 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 		//$scope.message="Extention Download Complete\n";
 		$scope.message="Extension Manager will launch after download. After installing, quit and restart this application.";
 		
-		new CSInterface().evalScript('$._extcommon.createDowloadFileProcess()',function(paths){
+		CSInterface.evalScript('$._extcommon.createDowloadFileProcess()',function(paths){
 			downloadFilePaths=JSON.parse(paths.split('\\').join('\\\\'));
 			console.log(downloadFilePaths);
 			result =window.cep.process.createProcess(downloadFilePaths.tmpFilePath);
 			downloaded=false;
 			
-			promise_downloadComplete= $interval(checkProcessRunning,2*1000,15); //Will check whether the download is completed for 2 minutes.
-			promise_checkDownloaded=$timeout(checkDownloaded,2*15*1000+1000);
+			promise_downloadComplete= $interval(checkProcessRunning,2*1000,30); //Will check whether the download is completed for 2 minutes.
+			promise_checkDownloaded=$timeout(checkDownloaded,2*30*1000+1000);
 		
 		});
 		
@@ -93,7 +93,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	};
 	
 	$scope.openUpdateSite=function(){
-		new CSInterface().openURLInDefaultBrowser(Constants.URL_UPDATE+Constants.URL_DOWNLOAD);
+		CSInterface.openURLInDefaultBrowser(Constants.URL_UPDATE+Constants.URL_DOWNLOAD);
 	}
 	
 	var checkDownloaded=function(downloaded){
@@ -116,7 +116,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	};
 	
 	var deleteTempFile=function (){
-		new CSInterface().evalScript('$._extcommon.deleteTemp()');	
+		CSInterface.evalScript('$._extcommon.deleteTemp()');	
 	}
 		
 }]);

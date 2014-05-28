@@ -88,16 +88,16 @@ app.config(['$routeProvider', function($routeProvider){
 }]);
 
 
-app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route',
-function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route){	
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route','Config','CSInterface',
+function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface){	
 	// Initialize $rootScope variables
-	$rootScope.modalShown=false;
 	$rootScope.showFlyout=false;
 	$rootScope.logs="";
 	$rootScope.loading=false;
 	$rootScope.opaqueStyle={};
 	$rootScope.LoggedInItems=false;
 	$rootScope.projectProperties=new Array();
+	$rootScope.userLoggedState=1;
 	
 	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
@@ -129,21 +129,23 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		//1. Check the Current Document is saved or not
 		//If no project is selected, alert-No Project Selected
 		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
-		$scope.apply(function(){
+		//$rootScope.apply(function(){
 			$scope.alert_message = "Assign Project requires an open document that has already been saved.";
 			$scope.modalShown=true;
-			});
+			//});
 		}
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
 		else{
-			new CSInterface().evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
+			CSInterface.evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
+				console.log($rootScope);
+				console.log($scope);
 				if(data == "false"){
-					$scope.apply(function(){
+					$scope.$apply(function(){
 						$scope.alert_message="Assign Project requires an open document that has already been saved.";
 						$scope.modalShown=true;
 					});
 				}else{
-				$scope.apply(function(){
+				$scope.$apply(function(){
 					$scope.alert_message="The current project has been assigned to the current folder.";
 					$scope.modalShown=true;
 				});
@@ -151,6 +153,14 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 			});
 		} 
 	};
+	
+	$rootScope.$on("$routeChangeStart", function(event, next, current) {
+		if(!$rootScope.userLoggedState){
+			$location.path('login');
+			//$route.reload();
+		}	
+			
+	});
 	
 	$rootScope.logout=function(){
 		 $rootScope.showFlyout = false;
@@ -161,12 +171,13 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 			$rootScope.projectProperties.push(new projectNo(i));
 		}
 		$rootScope.LoggedInItems=false;		
+		$rootScope.userLoggedState=0;
 		viewManager.userLoggedOut();
 	};
 	
 	$rootScope.feedback=function(){
 		$rootScope.showFlyout = false;
-		new CSInterface().openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_BETA_FEEDBACK);
+		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_BETA_FEEDBACK);
 	};
 	$rootScope.about=function(){
 		$rootScope.showFlyout = false;

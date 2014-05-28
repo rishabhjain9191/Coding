@@ -9,7 +9,7 @@
  
 var services=angular.module('TTServices',[]);
 
-services.factory('Constants',function(){
+services.factory('Constants',['CSInterface',function(CSInterface){
 	
 	var constants={};
 	
@@ -105,8 +105,8 @@ services.factory('Constants',function(){
 		constants.URL_ZIP_DOWNLOAD = "/downloads/timetracker/TimeTracker.zip";
 		constants.URL_VERSION = "/downloads/timetracker/TimeTrackerUpdate.xml";
 			
-		constants.APP_NAME=new CSInterface().hostEnvironment.appName;
-		constants.EXTENSION_ID=new CSInterface().getExtensionID();
+		constants.APP_NAME=CSInterface.hostEnvironment.appName;
+		constants.EXTENSION_ID=CSInterface.getExtensionID();
 		
 		
 	
@@ -129,7 +129,13 @@ services.factory('Constants',function(){
 	};
 		
 	return constants;
-});
+}]);
+
+services.factory('CSInterface',[function(){
+	var cs=new CSInterface();
+	return cs;
+}]);
+
 
 services.factory('viewManager', ['$location','$route', function($location,$route){
 	var utils={};
@@ -148,6 +154,7 @@ services.factory('viewManager', ['$location','$route', function($location,$route
 		else{
 			console.log('update done');
 			$location.path('loadConfig');
+			$route.reload();
 		}
 	};
 	utils.configloaded=function(){
@@ -357,8 +364,8 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 	return utils;
 }]);
 
-services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q',
-function($rootScope, Constants, Config, $http, $q){
+services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q','CSInterface',
+function($rootScope, Constants, Config, $http, $q, CSInterface){
 	$rootScope.projectProperties=new Array();
 	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
@@ -464,7 +471,7 @@ function($rootScope, Constants, Config, $http, $q){
 	
 	utils.selectProject=function(){
 		//Check the current document's XMP
-		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
+		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
 			if(data==""||!utils.projectIndexes.hasOwnProperty(parseInt(data))){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
@@ -503,32 +510,32 @@ function($rootScope, Constants, Config, $http, $q){
 /********** App Watcher *********/
 /********************************/
 
-services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'WatcherPhotoshop', function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, watcherPS ){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'WatcherPhotoshop','CSInterface', function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, watcherPS, CSInterface){
 	var utils={};
 	utils.removeEventListeners=function(){
-		new CSInterface().removeEventListener('documentAfterActivate',onDocumentAfterActivate);
-		new CSInterface().removeEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
-		new CSInterface().removeEventListener('documentAfterSave', onDocumentAfterSave);
-		new CSInterface().removeEventListener('applicationActivate',onApplicationActivate);
-		new CSInterface().removeEventListener('applicationBeforeQuit',onApplicationBeforeQuit);
+		CSInterface.removeEventListener('documentAfterActivate',onDocumentAfterActivate);
+		CSInterface.removeEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
+		CSInterface.removeEventListener('documentAfterSave', onDocumentAfterSave);
+		CSInterface.removeEventListener('applicationActivate',onApplicationActivate);
+		CSInterface.removeEventListener('applicationBeforeQuit',onApplicationBeforeQuit);
 		watcherPS.remove();
 	};	
 	
 	utils.addEventListeners=function(){
 		//Define Event Listeners
-		new CSInterface().addEventListener('documentAfterActivate', onDocumentAfterActivate);
-		new CSInterface().addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
-		new CSInterface().addEventListener('documentAfterSave', onDocumentAfterSave);
-		new CSInterface().addEventListener('applicationActivate', onApplicationActivate);
-		new CSInterface().addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
-		new CSInterface().addEventListener('projectSelected', onProjectSelected);
-		new CSInterface().addEventListener('onCreationComplete', onCreationComplete);
+		CSInterface.addEventListener('documentAfterActivate', onDocumentAfterActivate);
+		CSInterface.addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
+		CSInterface.addEventListener('documentAfterSave', onDocumentAfterSave);
+		CSInterface.addEventListener('applicationActivate', onApplicationActivate);
+		CSInterface.addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
+		CSInterface.addEventListener('projectSelected', onProjectSelected);
+		CSInterface.addEventListener('onCreationComplete', onCreationComplete);
 		watcherPS.init();
 	};
 	 
 	function onDocumentAfterDeactivate(event){
 		console.log(event.type);
-		new CSInterface().evalScript('$._extcommon.checkDocLength()',function(data){
+		CSInterface.evalScript('$._extcommon.checkDocLength()',function(data){
 			if(parseInt(data)==0){
 				projectUtils.selectProject();
 			}
@@ -551,18 +558,18 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		console.log(event);
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
 		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworxproject file recursively, and get project Id, else get 0.
-		new CSInterface().evalScript('$._extCWFile.getProjectID()', function(pid){
+		CSInterface.evalScript('$._extCWFile.getProjectID()', function(pid){
 			console.log("project id from .creativeworx file"+pid);
 			if(pid!=""){
 				//Assign that project id to the current document
-				new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+pid+'\')',function(data){
+				CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+pid+'\')',function(data){
 					console.log("XMP Inserted");
 					projectUtils.setCurrentProjectId(pid);
 					projectUtils.selectProject();
 					var event=new CSEvent("projectSelected", "APPLICATION");
 					event.type="projectSelected";
 					event.data="<projectSelected />";
-					new CSInterface().dispatchEvent(event);
+					CSInterface.dispatchEvent(event);
 					Logger.log("documentAfterSave");
 				});
 			}
@@ -586,7 +593,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 }]);
 
 
-services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$interval',function(Constants, Logger, debuggerUtils, $interval){
+services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$interval','CSInterface',function(Constants, Logger, debuggerUtils, $interval, CSInterface){
 	
 	var prevHistoryState="";
 	var promise_logUserActiveStatus="";
@@ -594,11 +601,11 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	event.extensionId = Constants.EXTENSION_ID;  
 	console.log(event);
 	event.data = PSEvent.CUT+","+PSEvent.COPY+","+PSEvent.PASTE;
-	new CSInterface().dispatchEvent(event);
+	CSInterface.dispatchEvent(event);
 	
 	var activityTimerHandler = function(){
 		//app.activeDocument.hostObjectDelegate
-		new CSInterface().evalScript("app.activeDocument.activeHistoryState.name", function(data){
+		CSInterface.evalScript("app.activeDocument.activeHistoryState.name", function(data){
 			if(prevHistoryState!=data){
 				console.log("Event trigerred: userActive");
 				Logger.log("userActive");
@@ -615,11 +622,11 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 	var pswatcher={};
 	pswatcher.init=function(){
-		new CSInterface().addEventListener("PhotoshopCallback", documentChanged);
+		CSInterface.addEventListener("PhotoshopCallback", documentChanged);
 		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*60*1000);
 	};
 	pswatcher.remove=function(){
-		new CSInterface().removeEventListener('PhotoshopCallback', documentChanged);
+		CSInterface.removeEventListener('PhotoshopCallback', documentChanged);
 		$interval.cancel(promise_logUserActiveStatus);
 	};
 	
@@ -627,7 +634,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 }]);
 
 
-services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function(Constants,Config ,DBHelper, AppModel){
+services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInterface',function(Constants,Config ,DBHelper, AppModel, CSInterface){
 	/* Get the Data from App Model*/
 	/* Collate items to log like form JSON*/
 	/* Call DB function to log*/
@@ -635,7 +642,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	console.log("In Logger...");
 	utils.log=function(event){
 		console.log("Updating App Model...");
-		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
+		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
 			AppModel.updateModel(JSON.parse(data));
 			event=eventIdToName(event);
 			createLoggingData(event);
@@ -700,7 +707,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel',function
 	return utils;
 }]);
 
-services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants){
+services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Config, Constants, CSInterface){
 	var utils={};
 		 utils.defaultDocumentID = ""; //Used No where      
 		 utils.userID = "";
@@ -723,7 +730,7 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 	/* Call JSX functions to get the required parameters for the document*/
 	utils.updateModel=function(data){
 		this.hostName=getHostName();
-		this.hostVers=new CSInterface().hostEnvironment.appVersion;
+		this.hostVers=CSInterface.hostEnvironment.appVersion;
 		this.projectID=data.projectID;
 		this.instanceID=data.instanceID;
 		this.originalID=data.originalID;
@@ -749,19 +756,19 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 		}
 	};
 	getProjectID=function(){
-		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectID()', function(data){console.log(data);return data;});
+		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectID()', function(data){console.log(data);return data;});
 	};
 	getInstanceID=function(){
-		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getInstanceID()', function(data){console.log(data);return data});
+		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getInstanceID()', function(data){console.log(data);return data});
 	};
 	getOriginalID=function(){
-		new CSInterface().evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getOriginalID()', function(data){console.log(data);return data});
+		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getOriginalID()', function(data){console.log(data);return data});
 	};
 	getDocumentName=function(){
-		new CSInterface().evalScript('app.activeDocument.name', function(data){console.log(data);return data});
+		CSInterface.evalScript('app.activeDocument.name', function(data){console.log(data);return data});
 	};
 	getDocumentPath=function(){
-		new CSInterface().evalScript('app.activeDocument.filePath', function(data){console.log(data);return data});
+		CSInterface.evalScript('app.activeDocument.filePath', function(data){console.log(data);return data});
 	};
 	
 	return utils;
@@ -769,15 +776,15 @@ services.factory('AppModel',  ['Config','Constants' ,function(Config, Constants)
 }]);
 
 
-services.factory('DBHelper',['$http','$interval','Constants','Config','debuggerUtils',
-function($http,$interval,Constants,Config, debuggerUtils){
+services.factory('DBHelper',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface',
+function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 	
 	//Open/Create the Log file(for unsent records)
-	new CSInterface().evalScript('$._extFile.openFile()');
+	CSInterface.evalScript('$._extFile.openFile()');
 	
 	var sendLoggedRecords=function(){
 		debuggerUtils.updateLogs("[syncRecordsTimerHandler]: Record are being fetched from local file and sending to server");
-		new CSInterface().evalScript('$._extFile.readAndSend()',function(data){
+		CSInterface.evalScript('$._extFile.readAndSend()',function(data){
 			processAndSend(data);
 		});
 	};
@@ -844,7 +851,7 @@ function($http,$interval,Constants,Config, debuggerUtils){
 			record=JSON.stringify(records[i]);
 			record=record.replace('jsonEventPackage":"','jsonEventPackage":');
 			record=record.replace('}}"}','}}}');
-			new CSInterface().evalScript('$._extFile.writeObj(\''+record+'\')');
+			CSInterface.evalScript('$._extFile.writeObj(\''+record+'\')');
 		}
 	};
 	

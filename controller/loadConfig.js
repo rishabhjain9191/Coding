@@ -7,9 +7,9 @@
  * @license    All rights reserved.
  */
  
-app.controller('configLoader',['viewManager','$scope', '$rootScope', 'Constants','preloader', 'Config','debuggerUtils',
-function(viewManager, $scope, $rootScope, Constants, preloader, Config, debuggerUtils){
-	new CSInterface().evalScript('$._extXML.readConfig()', function(data){
+app.controller('configLoader',['viewManager','$scope', '$rootScope', 'Constants','preloader', 'Config','debuggerUtils','CSInterface',
+function(viewManager, $scope, $rootScope, Constants, preloader, Config, debuggerUtils,CSInterface){
+	CSInterface.evalScript('$._extXML.readConfig()', function(data){
 			if(data != "false"){
 				Config.data=JSON.parse(data);
 				Constants.update(Config.data);
