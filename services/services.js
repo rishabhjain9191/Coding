@@ -595,7 +595,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 
 services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$interval','CSInterface',function(Constants, Logger, debuggerUtils, $interval, CSInterface){
 	
-	var prevHistoryState="";
+	var prevHistoryState={};
 	var promise_logUserActiveStatus="";
 	var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");  
 	event.extensionId = Constants.EXTENSION_ID;  
@@ -605,12 +605,33 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 	var activityTimerHandler = function(){
 		//app.activeDocument.hostObjectDelegate
-		CSInterface.evalScript("app.activeDocument.activeHistoryState.name", function(data){
-			if(prevHistoryState!=data){
+		CSInterface.evalScript("$._ext_PHXS_XMP.getHistoryStates()", function(historyStatesArray){
+			currentHistoryState=JSON.parse(historyStatesArray);
+			currentDocument=Object.keys(currentHistoryState)[0];
+			//Check if the document already exists in the previous State
+			if(prevHistoryState.hasOwnProperty(currentDocument)){
+				//Compare the arrays
+				var docPrevHistoryState=prevHistoryState[currentDocument];
+				if(!match(docPrevHistoryState, currentHistoryState[currentDocument])){
+					console.log("Event trigerred: userActive");
+					//Save Current State in Previous State.
+					prevHistoryState[currentDocument]=currentHistoryState[currentDocument];
+					//Log UserActive Event.
+					Logger.log("userActive");
+				}
+				else{
+					console.log("User Not Active");
+				}				
+			}
+			//else, Log it as new entry and send user active event.
+			else{
+				prevHistoryState[currentDocument]=currentHistoryState[currentDocument];
 				console.log("Event trigerred: userActive");
 				Logger.log("userActive");
-				prevHistoryState=data;
 			}
+			
+			console.log(prevHistoryState);
+			
 		}); 
 	};
 	
@@ -623,7 +644,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	var pswatcher={};
 	pswatcher.init=function(){
 		CSInterface.addEventListener("PhotoshopCallback", documentChanged);
-		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*60*1000);
+		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*1000);
 	};
 	pswatcher.remove=function(){
 		CSInterface.removeEventListener('PhotoshopCallback', documentChanged);
@@ -893,6 +914,20 @@ function(Constants,$rootScope){
 	};
 	return utils;
 }]);
+
+function match(ary1, ary2){
+	if(ary1.length!=ary2.length){
+		return false;
+	}
+	else{
+		for(var i=0;i<ary1.length;i++){
+			if(ary1[i]!=ary2[i]){
+				return false
+			}
+		}
+		return true;
+	}
+}
 
 function loadJSX() {
     var csInterface = new CSInterface();
