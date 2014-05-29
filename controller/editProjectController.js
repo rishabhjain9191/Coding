@@ -32,7 +32,9 @@
 	.then(function(data){
 		//color:index; colorcode:hex code
 		$scope.projects=data;
-		$scope.project=$scope.projects[0];
+		var selectedProjectIndex=projectUtils.getSelectedProjectIndex();
+		if(selectedProjectIndex !=- 1) $scope.project=$scope.projects[selectedProjectIndex];
+		else $scope.project=$scope.projects[0];
 		$scope.name=$scope.project.name;
 		$scope.colorBtnStyle={};
 		$scope.colorPreviewStyle={};

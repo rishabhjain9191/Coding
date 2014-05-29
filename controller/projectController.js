@@ -136,7 +136,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	
 	
 	$scope.openHomePage=function(projectId){
-		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE);
+		CSInterface.openURLInDefaultBrowser(Constants.URL_SERVICE);
 	};
 	
 	$scope.checkSelected=function(projectId){

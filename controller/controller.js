@@ -218,7 +218,7 @@ app.directive('modalDialog', function() {
 				scope.show = false;
 			};
 		},
-		template: "<div class='ng-modal' ng-show='show'><div class='ng-modal-overlay' ng-click='hideModal()'></div><div class='ng-modal-dialog' ng-style='dialogStyle'><div class='ng-modal-dialog-content' ng-transclude></div><button class='lightBtn' style='width: 71px;' ng-click='hideModal()'>OK</button></div></div>"
+		template: "<div class='ng-modal' ng-show='show'><div class='ng-modal-overlay'></div><div class='ng-modal-dialog' ng-style='dialogStyle'><div class='ng-modal-dialog-content' ng-transclude></div><button class='lightBtn' style='width: 71px;' ng-click='hideModal()'>I got it</button></div></div>"
 	};
 });
 
@@ -263,5 +263,3 @@ function canEdit(oid, usertype){
 		return true;
 	}
 }
-
-

@@ -7,9 +7,12 @@
  * @license    All rights reserved.
  */
  
-app.controller('aboutCtrl',['$scope', '$location', 'Constants', '$window','CSInterface',
-function($scope, $location, Constants, $window, CSInterface){
+app.controller('aboutCtrl',['$scope', '$location', 'Constants', '$window','CSInterface','Config',
+function($scope, $location, Constants, $window, CSInterface, Config){
 	$scope.app_version_no = Constants.EXTENSION_VERSION_NUMBER;	
+	if(Config.username && Config.username!=""){
+		$scope.message="Logged in as: "+Config.username;
+	}
 	$scope.return1=function(){
 		$window.history.back();
 	};
@@ -24,5 +27,9 @@ function($scope, $location, Constants, $window, CSInterface){
 	
 	$scope.showLog=function(){
 		$location.path('log');
+	};
+	
+	$scope.openURL=function(){
+		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE);
 	};
 }]);
