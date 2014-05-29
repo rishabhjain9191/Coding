@@ -605,7 +605,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 	var activityTimerHandler = function(){
 		//app.activeDocument.hostObjectDelegate
-		CSInterface.evalScript("$._ext_PHXS_XMP.getHistoryStates()", function(historyStatesArray){
+		CSInterface.evalScript("$._ext_PHXS_Utils.getHistoryStates()", function(historyStatesArray){
 			currentHistoryState=JSON.parse(historyStatesArray);
 			currentDocument=Object.keys(currentHistoryState)[0];
 			//Check if the document already exists in the previous State
@@ -617,7 +617,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 					//Save Current State in Previous State.
 					prevHistoryState[currentDocument]=currentHistoryState[currentDocument];
 					//Log UserActive Event.
-					Logger.log("userActive");
+					//Logger.log("userActive");
 				}
 				else{
 					console.log("User Not Active");
@@ -627,7 +627,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 			else{
 				prevHistoryState[currentDocument]=currentHistoryState[currentDocument];
 				console.log("Event trigerred: userActive");
-				Logger.log("userActive");
+				//Logger.log("userActive");
 			}
 			
 			console.log(prevHistoryState);
@@ -903,13 +903,14 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 }]);
 
 
-services.factory('debuggerUtils',['Constants','$rootScope',
-function(Constants,$rootScope){
+services.factory('debuggerUtils',['Constants','$rootScope','CSInterface',
+function(Constants,$rootScope,CSInterface){
 	var utils={};
 	$rootScope.logs="";
 	utils.updateLogs = function(statusText){
 		//$rootScope.$apply(function(){
 			$rootScope.logs=statusText+'\n'+$rootScope.logs;
+			CSInterface.evalScript('$._extcommon.logToDebugFile(\''+statusText+'\')',function(){});
 		//});
 	};
 	return utils;

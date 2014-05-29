@@ -6,7 +6,10 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
+var debugFile=new File(pathToDebugFile);
+if(debugFile){
+	debugFile.open("e","TEXT","????");
+}
 $._extcommon={
 	
 	file:"abc",
@@ -63,6 +66,27 @@ $._extcommon={
 	deleteTemp:function(){
 		file.remove();
 		
+	},
+	
+	//Debug File Functions
+	logToDebugFile:function(statusText){
+		debugFile.writeln(statusText);
+	},
+	
+	closeDebugFile:function(){
+		debugFile.close();
+	},
+	
+	checkDebugFileSize:function(){
+		if(debugFile){
+			var size=debugFile.length; // size in bytes
+			if(size/(1000*1000)>20){
+				debugFile.close();
+				debugFile.open("w","TEXT","????");
+				debugFile.close();
+				debugFile.open("e","TEXT","????");
+			}
+		}
 	}
 	
 	
