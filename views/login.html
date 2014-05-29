@@ -2,15 +2,15 @@
 	<div id="logo">
 		<img src="./assets/images/creativeworx_logo.png">
 	</div>
-	<div class="message" ng-show='message'>{{message}}</div>
+	<div class="message">{{message}}</div>
 	<form name='loginUser' id="loginForm">
 		<div>	
-			<input class="text stretch" type='text' placeholder='User Name' ng-model='user.email' />
-			<input class="stretch text" type='password' placeholder='Password' ng-model='user.password' />
+			<input ng-click="message=''"  class="text stretch" type='text' placeholder='Email' ng-model='user.email' />
+			<input ng-click="message=''"  class="stretch text" type='password' placeholder='Password' ng-model='user.password' />
 		</div>	
 		<div class="stretch attr">
 			<div style="float: left; ">
-				<input type='checkbox'  ng-model='checked' ng-init="checked=true"> Keep me logged in</input>
+				<input type='checkbox' ng-model='checked' ng-init="checked=true"> Keep me logged in</input>
 			</div>
 			<div style="float: right; ">
 				<span class="link" ng-click='forgetLogin()'>Forgot login?</span>
