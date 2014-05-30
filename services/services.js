@@ -1,4 +1,4 @@
- * services.js
+ /* services.js
  *
  * @category   CreativeWorx
  * @package    Extension
