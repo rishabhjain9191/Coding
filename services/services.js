@@ -1,4 +1,3 @@
-/**
  * services.js
  *
  * @category   CreativeWorx
@@ -245,7 +244,7 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 				Return Codes :
 				100 : Update Must 
 				200 : Update Optional 
-				300 : No Update Required
+				300 : User has the latest version or can't be updated right now
 			*/
 			console.log(utils.minVersion);
 			if(isNewerVersion(utils.minVersion))deferred.resolve(100);
@@ -266,6 +265,8 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants, $q, debuggerUtils){
 	var config={};
 	config.data='';
+	
+	
 	config.serviceAddress = Constants.URL_SERVICE;
 	config.siteAddress = Constants.URL_SITE;
 	config.updateAddress = Constants.URL_UPDATE;
@@ -281,10 +282,20 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.logEnabled = Constants.LOG_ENABLE;
 	config.configversion = 1;
 	
+	config.username="";
+	config.password="";
+	config.userid="";
+	config.firstname="";
+	
 	/*
 		Read from the config file and update config values
 	*/
-
+	config.clearUserDetails=function(){
+		this.username="";
+		this.password="";
+		this.userid="";
+		this.firstname="";
+	};
 	return config;
 }]);
 
@@ -606,6 +617,9 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	var activityTimerHandler = function(){
 		//app.activeDocument.hostObjectDelegate
 		CSInterface.evalScript("$._ext_PHXS_Utils.getHistoryStates()", function(historyStatesArray){
+			if(historyStatesArray.length<=0){
+				return ;
+			}
 			currentHistoryState=JSON.parse(historyStatesArray);
 			currentDocument=Object.keys(currentHistoryState)[0];
 			//Check if the document already exists in the previous State
@@ -644,7 +658,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	var pswatcher={};
 	pswatcher.init=function(){
 		CSInterface.addEventListener("PhotoshopCallback", documentChanged);
-		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*1000);
+		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*60*1000);
 	};
 	pswatcher.remove=function(){
 		CSInterface.removeEventListener('PhotoshopCallback', documentChanged);

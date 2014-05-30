@@ -154,13 +154,13 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		} 
 	};
 	
-	$rootScope.$on("$routeChangeStart", function(event, next, current) {
+	/* $rootScope.$on("$routeChangeStart", function(event, next, current) {
 		if(!$rootScope.userLoggedState){
 			$location.path('login');
 			//$route.reload();
 		}	
 			
-	});
+	}); */
 	
 	$rootScope.logout=function(){
 		 $rootScope.showFlyout = false;
@@ -172,6 +172,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		}
 		$rootScope.LoggedInItems=false;		
 		$rootScope.userLoggedState=0;
+		Config.clearUserDetails();
 		viewManager.userLoggedOut();
 	};
 	

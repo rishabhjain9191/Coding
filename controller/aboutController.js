@@ -13,6 +13,9 @@ function($scope, $location, Constants, $window, CSInterface, Config){
 	if(Config.username && Config.username!=""){
 		$scope.message="Logged in as: "+Config.username;
 	}
+	else{
+		$scope.message="Currently not logged in";
+	}
 	$scope.return1=function(){
 		$window.history.back();
 	};

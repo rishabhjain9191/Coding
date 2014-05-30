@@ -141,12 +141,17 @@
  $._ext_PHXS_Utils={
 	
 	getHistoryStates:function(){
-		var hs=app.activeDocument.historyStates;
-		var str='{"'+hs[0].name+'":[';
-		for(var i=1;i<hs.length-1;i++){
-			str=str+'"'+hs[i].name+'"'+',';
+		try{
+			var hs=app.activeDocument.historyStates;
+			var str='{"'+hs[0].name+'":[';
+			for(var i=1;i<hs.length-1;i++){
+				str=str+'"'+hs[i].name+'"'+',';
+			}
+			str=str+'"'+hs[i].name+'"'+']}';
+			return str;
 		}
-		str=str+'"'+hs[i].name+'"'+']}';
-		return str;
-	}
+		catch(e){
+			return "";
+		}
+		
  };
