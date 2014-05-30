@@ -34,7 +34,13 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			if(!data.length){
 				$scope.showNoProjectsMessage = true;
 			}
-		}, function(data){console.log("Refresh Projects Failed : "+data);});
+		}, function(data){
+			//On network Failure, show previous copy of projects
+			$scope.projects=projectUtils.projectsCopy;
+			console.log($scope.projects);
+			preloader.hideLoading();
+			
+		});
 	};
 	var deselectProject=function(){
 		//Remove XMP data of Project;

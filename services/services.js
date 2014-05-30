@@ -130,6 +130,12 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 	return constants;
 }]);
 
+services.factory('Messages',[function(){
+	var messages={};
+	messages.networkError="Cannot Connect to Internet. Please Check your internet connection."
+	return messages;
+}]);
+
 services.factory('CSInterface',[function(){
 	var cs=new CSInterface();
 	return cs;
@@ -386,6 +392,8 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 	utils.selectedProjectIndex=-1;		//Project Clicked(Selected) Index
 	utils.currentProjectId=-1;			//Previously Selected(current) project
 	
+	utils.projectsCopy={};				//Stores latest retrieved projects list
+	
 	utils.reset=function(){
 		this.selectedProjectId=0;
 		this.selectedProjectIndex=-1;
@@ -435,6 +443,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 		$http.post(url,params)
 		.success(function(data){
 			utils.projectIndexes={};
+			utils.projectsCopy=data;				//Save the freshly retrieved project list 
 			for(var i=0;i<data.length;i++){
 				var pid=data[i].pid;
 				utils.projectIndexes[pid]=i;
@@ -444,7 +453,10 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 			console.log(utils.projectIndexes);
 			deferred.resolve(data);
 		})
-		.error(function(data){deferred.reject(data);})
+		.error(function(data){
+			//In Case of error, send back the last retrieved copy
+			deferred.reject(utils.projectsCopy);
+		})
 		return deferred.promise;
 	};
 	
@@ -476,7 +488,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 		params['colorindex']=colorindex;
 		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
 		.success(function(data){deferred.resolve(data);})
-		.error(function(data){debuggerUtils.updateLogs("[LoginResult]: Try/Catch Failed: "+data/*todo*/);deferred.reject(data);})
+		.error(function(data){deferred.reject(data);})
 		return deferred.promise;
 	};
 	

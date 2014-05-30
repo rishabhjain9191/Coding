@@ -7,7 +7,7 @@
  * @license    All rights reserved.
  */
  
- app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants', function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants){
+ app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants','Messages',function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants,Messages){
 	preloader.hideLoading();
 	
 	//Todo: check for the colorbox version here
@@ -56,10 +56,13 @@
 						$location.path('projects');
 					}
 					else{
-						debuggerUtils.updateLogs("[EditProjectResult]: data.result returned 'Error:'"+data.Msg);
+						debuggerUtils.updateLogs("[NewProjectResult]: data.result returned 'Error:'"+data.Msg);
 						$scope.message=data.Msg;
 					}
-				}, function(data){preloader.hideLoading();$scope.message=data.Msg});
+				}, function(data){
+					preloader.hideLoading();
+					(data)?$scope.message=data.Msg:$scope.message=Messages.networkError;
+				});
 			}
 		}
 		else{

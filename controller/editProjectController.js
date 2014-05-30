@@ -7,7 +7,7 @@
  * @license    All rights reserved.
  */
  
- app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants){
+ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants', 'Messages',function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants, Messages){
 
 	 preloader.hideLoading();
 	 
@@ -31,6 +31,10 @@
 	 projectUtils.getProjects(Config.data.username, Config.data.confirmpassword, Config.data.userid)
 	.then(function(data){
 		//color:index; colorcode:hex code
+		setSelectedProject(data);
+	}, function(data){setSelectedProject(data)});
+	
+	var setSelectedProject=function(data){
 		$scope.projects=data;
 		var selectedProjectIndex=projectUtils.getSelectedProjectIndex();
 		if(selectedProjectIndex !=- 1) $scope.project=$scope.projects[selectedProjectIndex];
@@ -41,11 +45,10 @@
 		$scope.targetColor=$scope.project.colorcode;
 		$scope.colorBtnStyle.background=$scope.project.colorcode;
 		$scope.colorPreviewStyle.background=$scope.project.colorcode;
-	}, function(data){});
-	
+	};
 	var newName, newJobId, newColorCode, newBudget;
 	$scope.save=function(){
-		if($scope.name && $scope.name.length>3){
+		if($scope.name && $scope.name.length>=3){
 			debuggerUtils.updateLogs("Saving updated project information for: " + $scope.name + " " + $scope.project.projectid);
 			preloader.showLoading();
 			var projectId=$scope.project.projectid;
@@ -57,6 +60,7 @@
 			projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode, newColorIndex)
 			.then(function(data){
 				preloader.hideLoading();
+				console.log(data);
 				if(data.IsSuccess){
 					debuggerUtils.updateLogs("[EditProjectResult]: Successfully edited the project.");
 					$location.path('projects');
@@ -66,8 +70,9 @@
 					$scope.message=data.Msg;
 				}
 			}, function(data){
+				debuggerUtils.updateLogs("[EditProject]: Edit Failed: "+data/*todo*/);
 				preloader.hideLoading();
-				$scope.message=data.Msg;
+				$scope.message=Messages.networkError;
 			});
 		}
 		else{
