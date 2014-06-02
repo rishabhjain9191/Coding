@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 	
 	
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "1.0.17";
+		constants.EXTENSION_VERSION_NUMBER = "2.0.0.0";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 		
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -537,6 +537,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	var utils={};
 	utils.removeEventListeners=function(){
 		CSInterface.removeEventListener('documentAfterActivate',onDocumentAfterActivate);
+		CSInterface.removeEventListener('documentAfterActivate',onDocumentAfterActivate);
 		CSInterface.removeEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
 		CSInterface.removeEventListener('documentAfterSave', onDocumentAfterSave);
 		CSInterface.removeEventListener('applicationActivate',onApplicationActivate);
@@ -939,6 +940,8 @@ function(Constants,$rootScope,CSInterface){
 			CSInterface.evalScript('$._extcommon.logToDebugFile(\''+statusText+'\')',function(){});
 		//});
 	};
+	
+	
 	return utils;
 }]);
 

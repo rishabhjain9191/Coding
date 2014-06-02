@@ -99,6 +99,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 	$rootScope.projectProperties=new Array();
 	$rootScope.userLoggedState=1;
 	
+	
 	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
 	}	

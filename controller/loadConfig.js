@@ -18,6 +18,8 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 				Config.keepMeLoggedIn=Config.data.keepMeLoggedIn;
 				Config.firstname=Config.data.firstname;
 				Config.userid=Config.data.userid;
+				debuggerUtils.updateLogs("Build : "+Constants.EXTENSION_VERSION_NUMBER);
+				console.log("Build : "+Constants.EXTENSION_VERSION_NUMBER);
 				debuggerUtils.updateLogs("==============");
 				debuggerUtils.updateLogs("[LocalStorage]: readConfig()");
 				debuggerUtils.updateLogs("Time : " + Config.data.timeInterval);

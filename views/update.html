@@ -1,4 +1,4 @@
-<div class="updateContainer">
+<div class="updateContainer" ng-hide="showUpdateView">
 	<div ng-show="downloading">New Extension available...</div>
 	<div ng-hide="downloading" style="min-height: 40px;"></div>
 	<div><progress value="{{progressBarValue}}" max="100" ng-show="downloading"></progress></div>

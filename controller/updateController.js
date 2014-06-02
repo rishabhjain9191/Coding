@@ -28,6 +28,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	console.log("In Update View");
 	$scope.updateMessage="Update";
 	$scope.downloading=false;
+	$scope.showUpdateView=true;
 	$scope.ttDownloadLocation=Constants.URL_UPDATE+Constants.URL_ZXP_DOWNLOAD;
 	$scope.progressBarValue=0;
 	var downloadFilePaths;
@@ -39,11 +40,13 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	var promise_checkDownloaded;
 	
 	var updateNecessary=function(){
+		$scope.showUpdateView=false;
 		$scope.message="New Version available! \n\nUpdate required.";
 		$scope.canReturn=false;
 	};
 	
 	var updateOptional=function(){
+		$scope.showUpdateView=false;
 		$scope.message="New Version Available.";
 		$scope.canReturn=true;
 	};
