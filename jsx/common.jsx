@@ -87,7 +87,38 @@ $._extcommon={
 				debugFile.open("e","TEXT","????");
 			}
 		}
-	}
+	},
+	
+	getAppForegroundColor_ID:function(){
+		var color1="";
+		try{
+			app.strokeFillProxySettings.fillColor.space = ColorSpace.RGB;
+			var color=app.strokeFillProxySettings.fillColor.colorValue;
+			app.strokeFillProxySettings.fillColor.space = ColorSpace.CMYK;
+			var arr = color.toString().split(",");
+			var color1 = this.rgbToHex(arr[0],arr[1],arr[2]);
+		}
+		catch(e){
+		}
+		return color1+'';
+	},
+	
+	getAppForegroundColor_PS:function(){
+		var color = app.foregroundColor.rgb.hexValue;
+		return color;
+	},
+	
+	rgbToHex:function(R,G,B){
+		return "#"+this.toHex(R)+this.toHex(G)+this.toHex(B)
+	},
+	
+	toHex:function(n){
+		n = parseInt(n,10);
+		if (isNaN(n)) return "00";
+		n = Math.max(0,Math.min(n,255));
+		return "0123456789ABCDEF".charAt((n-n%16)/16)
+			+ "0123456789ABCDEF".charAt(n%16);
+	}	
 	
 	
 	

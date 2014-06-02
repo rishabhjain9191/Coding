@@ -234,6 +234,7 @@ app.directive('uiColorpicker', function() {
             var input = element.find('input');
             var options = angular.extend({
                 color: ngModel.$viewValue,
+				showInput: true,
                 change: function(color) {
                     scope.$apply(function() {
                       ngModel.$setViewValue(color.toHexString());

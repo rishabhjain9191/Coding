@@ -138,5 +138,19 @@
 		$scope.project.color=$scope.colors[index].colorindex;
 		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
 	}
-	
 }]);
+
+function getAppForegroundColor(){
+	if(new CSInterface().hostEnvironment.appName == "IDSN")
+		script = "$._extcommon.getAppForegroundColor_ID()";
+	else if(new CSInterface().hostEnvironment.appName == "PHXS")
+		script = "$._extcommon.getAppForegroundColor_PS()";
+	
+	new CSInterface().evalScript(script, function(data){
+		if(data != ""){
+			$(".userForegroundContainerIcon")[$(".sp-input").length-1].style.backgroundColor = "#"+data;
+			$(".sp-input")[$(".sp-input").length-1].value ="#"+data;
+			$(".input-small").spectrum('setFromTextInput');
+		}
+	});
+}

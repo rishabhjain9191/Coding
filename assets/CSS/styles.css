@@ -597,6 +597,11 @@ body .ui-tooltip {
 
 /******** spectrum- jQuery colorpicker *******/
 
+.sp-container{
+	font-family: "Arial";
+	font-size: 10px;	
+}
+
 .sp-dd {
 	height: 10px;
 	line-height: 9px;
@@ -632,6 +637,55 @@ body .ui-tooltip {
 	margin-bottom: -288px;
 }
 
+.sp-input {
+	padding: 2px 3px;
+	margin: 0;
+	width: 100px;
+	border-radius: 0px;
+	color: #222;
+}
+
+.sp-input-container span{
+	font-family: Arial;
+	font-size: 12px;
+	font-weight: bold;
+	color: rgb(111, 111, 111);
+}
+
+.userForegroundContainer{
+	padding-bottom: 9px;
+}
+
+.userForegroundContainerIcon{
+	float: left;
+	width: 11px;
+	height: 11px;
+	background-color: black;
+	margin-top: 1px;
+	margin-right: 8px;
+}
+
+.userForegroundContainerIcon {
+    border: 1px solid rgb(117, 117, 117);
+    position: relative;
+}
+.userForegroundContainerIcon:before {
+    position: absolute; display: block; content: '';
+    border: 1px solid white;
+    height: 100%; width: 100%;
+    box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
+}
+
+.userForegroundContainerText{
+	cursor: pointer;
+}
+
+.userForegroundContainerText:hover{
+	text-decoration: underline;
+}
+
+
+/********/
 
 progress {
 	width: 100%;
