@@ -43,7 +43,7 @@ $._extcommon={
 		else if(Folder.fs == "Macintosh"){
 			file=new File(configFile.parent+"/tmp.sh");
 			file.open("w", "TEXT");
-			downloadFilePath=configFile.parent.fsName+"/"+extensionName;
+			downloadFilePath=configFile.parent.fsName+"/downloads/timetracker/"+extensionName;
 			this.createDownloadFolder(downloadFilePath);		
 			file.write("curl "+downloadURL+" -o \""+downloadFilePath+"\"");
 			file.close();

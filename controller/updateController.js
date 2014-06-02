@@ -68,7 +68,12 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 		CSInterface.evalScript('$._extcommon.createDowloadFileProcess()',function(paths){
 			downloadFilePaths=JSON.parse(paths.split('\\').join('\\\\'));
 			console.log(downloadFilePaths);
+			if(Constants.OS=="Windows"){
 			result =window.cep.process.createProcess(downloadFilePaths.tmpFilePath);
+			}
+			else if(Constants.OS=="Macintosh"){
+				result =window.cep.process.createProcess("/bin/sh",downloadFilePaths.tmpFilePath);
+			}
 			downloaded=false;
 			
 			promise_downloadComplete= $interval(checkProcessRunning,2*1000,30); //Will check whether the download is completed for 2 minutes.

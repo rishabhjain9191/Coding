@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 	
 	
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.0.0";
+		constants.EXTENSION_VERSION_NUMBER = "0.1.1.0";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 		
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -58,7 +58,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.TIMEINTERVAL = 1000*60*4; 	// Default send data time interval of 4 minutes
 		constants.TIMEINTERVAL_MIN = 1000; 		// Minimum time inteval 1 second in milliseconds
 		constants.TIMEINTERVAL_MAX = 1000*60*60;// Maximum time interval1 hour in milliseconds
-		constants.BATCH_SIZE = 5; 				// Default number of events to send to server 
+		constants.BATCH_SIZE = 2; 				// Default number of events to send to server 
 		constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
 		constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
 		constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
@@ -126,6 +126,17 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		if(configData.logEnabled) this.LOG_ENABLE=configData.logEnabled;
 		//(configData.configversion)?this.URL_SERVICE=configData.configversion;
 	};
+	
+	var OSVersion=CSInterface.getOSInformation();
+	if (OSVersion.indexOf("Windows") >= 0)
+    {
+      constants.OS="Windows";
+    }
+    else if (OSVersion.indexOf("Mac") >= 0)
+    {
+      constants.OS="Macintosh";
+    }
+	
 		
 	return constants;
 }]);
