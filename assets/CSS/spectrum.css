@@ -257,7 +257,9 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 }
 .sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue, .sp-clear
 {
-    font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+	/* Sahil */
+    /*font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;*/
+    font: normal 10px "Arial";
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
@@ -283,7 +285,8 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 }
 .sp-input {
    font-size: 12px !important;
-   border: 1px inset;
+   /*border: 1px inset;*/
+   border: 1px solid rgb(187, 187, 187);
    padding: 4px 5px;
    margin: 0;
    width: 100%;
@@ -292,7 +295,8 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
    color: #222;
 }
 .sp-input:focus  {
-    border: 1px solid orange;
+	/* Sahil */
+    /*border: 1px solid orange;*/
 }
 .sp-input.sp-validation-error
 {
@@ -358,7 +362,8 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 
 /* Buttons */
 .sp-button-container {
-    float: right;
+	/* Sahil */
+    /*float: right;*/
 }
 
 /* Replacer (the little preview div that shows up instead of the <input>) */
@@ -475,7 +480,8 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 .sp-cancel:hover
 {
     color: #d93f3f !important;
-    text-decoration: underline;
+	/** Sahil **/
+    /*text-decoration: underline;*/
 }
 
 
