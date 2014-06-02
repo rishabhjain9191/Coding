@@ -148,8 +148,8 @@ function getAppForegroundColor(){
 	
 	new CSInterface().evalScript(script, function(data){
 		if(data != ""){
-			$(".userForegroundContainerIcon")[$(".sp-input").length-1].style.backgroundColor = "#"+data;
-			$(".sp-input")[$(".sp-input").length-1].value ="#"+data;
+			$(".userForegroundContainerIcon")[$(".sp-input").length-1].style.backgroundColor =data;
+			$(".sp-input")[$(".sp-input").length-1].value =data;
 			$(".input-small").spectrum('setFromTextInput');
 		}
 	});

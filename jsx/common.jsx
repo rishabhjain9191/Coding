@@ -105,7 +105,7 @@ $._extcommon={
 	
 	getAppForegroundColor_PS:function(){
 		var color = app.foregroundColor.rgb.hexValue;
-		return color;
+		return '#'+color;
 	},
 	
 	rgbToHex:function(R,G,B){
