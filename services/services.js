@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 	
 	
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "0.1.1.0";
+		constants.EXTENSION_VERSION_NUMBER = "2.0.0.0";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 		
 		constants.CW_NAMESPACE_NAME = "creativeworx";

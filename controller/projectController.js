@@ -141,7 +141,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 	};
 	
 	
-	$scope.openHomePage=function(projectId){
+	$rootScope.openHomePage=function(projectId){
 		CSInterface.openURLInDefaultBrowser(Constants.URL_SERVICE);
 	};
 	

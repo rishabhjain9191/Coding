@@ -413,7 +413,7 @@ li{
 	width: 100%;
 	margin: 0;
 	text-align: right;
-	background-color: #b6b6b6;
+	background-color: rgb(83,85,92);
 	height: 14px;
 }
 
@@ -458,7 +458,7 @@ li{
 .menu_item{
 	cursor: pointer;
 	padding: 4px 10px 4px 10px;
-	font-size: 10px;
+	font-size: 11px;
 	font-family: arial;
 }
 
@@ -587,10 +587,8 @@ li{
 	padding: 4px;
 	position: absolute;
 	z-index: 9999;
-	max-width: 100px;
-	text-overflow:ellipsis;
-	white-space:nowrap;
-	overflow:hidden;
+	max-width: 200px;
+	word-wrap: break-word;
 	
 	/*box-shadow: 0 0 5px #aaa;*/
 }
