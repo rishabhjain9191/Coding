@@ -13,12 +13,13 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 		var updateType;
 		updateUtils.checkForUpdate()
 		.then(function(updateReq){
+			console.log(updateReq);
 			if(updateReq){
 			updateType=updateReq;
 			switch(updateReq){
-				case 100:updateNecessary();return;
-				case 200:updateOptional();return;
-				case 300||-1:viewManager.updateDone();return;
+				case 100:updateNecessary();break;
+				case 200:updateOptional();break;
+				default:viewManager.updateDone();break;
 				
 				
 			}
@@ -41,13 +42,13 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	
 	var updateNecessary=function(){
 		$scope.showUpdateView=false;
-		$scope.message="New Version available! \n\nUpdate required.";
+		$scope.message="New version available! \n\nUpdate required.";
 		$scope.canReturn=false;
 	};
 	
 	var updateOptional=function(){
 		$scope.showUpdateView=false;
-		$scope.message="New Version Available.";
+		$scope.message="New version available";
 		$scope.canReturn=true;
 	};
 	

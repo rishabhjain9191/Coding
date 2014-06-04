@@ -258,11 +258,17 @@ function projectNo(i){
 	this.message="";
 };
 
-function canEdit(oid, usertype){
-	if(oid&&usertype=='normal'){
-		return false;
+function canEdit(oid, orgSetting){
+	console.log(oid+" "+orgSetting);
+	if(!oid){
+		console.log("Oid not present");
+		return true;
+	}
+	else if(oid && orgSetting && orgSetting.user_add_projects){
+		console.log("oid and user can add project");
+		return true;
 	}
 	else{
-		return true;
+		return false;
 	}
 }

@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 	
 	
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.0.0";
+		constants.EXTENSION_VERSION_NUMBER = "1.0.17.123";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 		
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -27,6 +27,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
 		constants.IMAGE_STATUS_NOIMAGE = "NONE"
 		constants.IMAGE_STATUS_ERROR = "ERROR";
+		constants.COLOR_MODE = "preselected";
 		constants.PROJECT_COLORS= [
 			"#888888", //0
 			"#FFF772", //1
@@ -58,7 +59,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.TIMEINTERVAL = 1000*60*4; 	// Default send data time interval of 4 minutes
 		constants.TIMEINTERVAL_MIN = 1000; 		// Minimum time inteval 1 second in milliseconds
 		constants.TIMEINTERVAL_MAX = 1000*60*60;// Maximum time interval1 hour in milliseconds
-		constants.BATCH_SIZE = 2; 				// Default number of events to send to server 
+		constants.BATCH_SIZE = 5; 				// Default number of events to send to server 
 		constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
 		constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
 		constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
@@ -161,6 +162,7 @@ services.factory('viewManager', ['$location','$route', function($location,$route
 	utils.initializationDone=function(){
 		console.log("Initialized");
 		$location.path('update');
+		//this.updateDone();
 	}
 	utils.updateDone=function(updateType){
 		if(updateType==100){
@@ -205,13 +207,20 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 	var updateParamsUpdate=function(){
 		var deferred=$q.defer();
 		var url=Constants.URL_UPDATE + Constants.URL_VERSION + "?" + Constants.EXTENSION_VERSION_NUMBER;
+		//var url="ini.xml";
 		$http.get(url)
 		.success(function(data,status){
 			var x2js = new X2JS();
 			var jsonObj = x2js.xml_str2json(data);
 			console.log(jsonObj);
-			utils.minVersion=jsonObj.ExtensionUpdateInformation.minversion;
-			utils.version=jsonObj.ExtensionUpdateInformation.version;
+			if(jsonObj.ExtensionUpdateInformation.color_mode){
+			Constants.COLOR_MODE=jsonObj.ExtensionUpdateInformation.color_mode;
+			}
+			if(jsonObj.ExtensionUpdateInformation.minversion_html)
+			utils.minVersion=jsonObj.ExtensionUpdateInformation.minversion_html;
+			if(jsonObj.ExtensionUpdateInformation.version_html)
+			utils.version=jsonObj.ExtensionUpdateInformation.version_html;
+			if(jsonObj.ExtensionUpdateInformation.download)
 			utils.downloadPath=jsonObj.ExtensionUpdateInformation.download;
 			deferred.resolve(1);
 		})
@@ -264,7 +273,8 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 				300 : User has the latest version or can't be updated right now
 			*/
 			console.log(utils.minVersion);
-			if(isNewerVersion(utils.minVersion))deferred.resolve(100);
+			if(!utils.minVersion||!utils.version||!utils.downloadPath)deferred.resolve(-1);
+			else if(isNewerVersion(utils.minVersion))deferred.resolve(100);
 			else if(isNewerVersion(utils.version))deferred.resolve(200);
 			else deferred.resolve(300);
 		},function(result){
@@ -354,7 +364,8 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 				else{
 					//User Authenticated
 					console.log("User Authenticaed");
-					$rootScope.canEdit=canEdit(data[0].oid, data[0].usertype);
+					
+					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
 					$rootScope.LoggedInItems=true;
 					deferred.resolve(200);
 				}
@@ -380,11 +391,15 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 		params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
 
 		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
+		
+		
 		$http.post(url,params)
 			.success(function(data,status){
+				console.log(data);
 				deferred.resolve(data);
 			})
 			.error(function(data,status){
+				console.log(data);
 				deferred.reject(data);
 			})
 			return deferred.promise;
@@ -861,16 +876,32 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 			if(Records.length>=Constants.BATCH_SIZE){
 				for(var i=0;i<Constants.BATCH_SIZE;i++){
 					rec.push((Records.splice(0,1))[0]);
+					//Decode documentName and documentPath and hostName
+					rec[i].jsonEventPackage.event.documentName=atob(rec[i].jsonEventPackage.event.documentName);
+					rec[i].jsonEventPackage.event.documentPath=atob(rec[i].jsonEventPackage.event.documentPath);
+					rec[i].jsonEventPackage.event.hostName=atob(rec[i].jsonEventPackage.event.hostName);
+					//Done Decoding
 					rec[i].jsonEventPackage=JSON.stringify(rec[i].jsonEventPackage);
+					
 				}
-				console.log(JSON.stringify(rec));
 				send(JSON.stringify(rec));
+				console.log("send records\n");
+				console.log(JSON.stringify(rec));
 				rec=[];
 			}
 			for(var i =0;i<Records.length;i++){
+				//Decode documentName and documentPath and hostName
+				Records[i].jsonEventPackage.event.documentName=atob(Records[i].jsonEventPackage.event.documentName);
+				Records[i].jsonEventPackage.event.documentPath=atob(Records[i].jsonEventPackage.event.documentPath);
+				Records[i].jsonEventPackage.event.hostName=atob(Records[i].jsonEventPackage.event.hostName);
+				//Done Decoding
 				Records[i].jsonEventPackage=JSON.stringify(Records[i].jsonEventPackage);
 			}
-			send(JSON.stringify(Records));
+			if(Records.length>0){
+				send(JSON.stringify(Records));
+				console.log("send records\n");
+				console.log(JSON.stringify(Records));
+			}
 		}
 	};
 	
@@ -907,9 +938,17 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 		var records=JSON.parse(buffer);
 		var record;
 		for(var i=0;i<records.length;i++){
+			records[i].jsonEventPackage=JSON.parse(records[i].jsonEventPackage);
+			//Encode documentName and documentPath and hostName
+			records[i].jsonEventPackage.event.documentName=btoa(records[i].jsonEventPackage.event.documentName);
+			records[i].jsonEventPackage.event.documentPath=btoa(records[i].jsonEventPackage.event.documentPath);
+			records[i].jsonEventPackage.event.hostName=btoa(records[i].jsonEventPackage.event.hostName);
+			//Done Encoding
+			records[i].jsonEventPackage=JSON.stringify(records[i].jsonEventPackage);
 			record=JSON.stringify(records[i]);
 			record=record.replace('jsonEventPackage":"','jsonEventPackage":');
 			record=record.replace('}}"}','}}}');
+			console.log("Logged Records \n "+record);
 			CSInterface.evalScript('$._extFile.writeObj(\''+record+'\')');
 		}
 	};

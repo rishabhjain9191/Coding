@@ -10,11 +10,8 @@
  app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants','Messages',function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants,Messages){
 	preloader.hideLoading();
 	
-	//Todo: check for the colorbox version here
-	if(true)
-		$scope.showAllColors=false;
-	else
-		$scope.showAllColors=true;
+	
+	(constants.COLOR_MODE=="user_selectable")?$scope.showAllColors=true:$scope.showAllColors=false;
 		
 	$scope.project={};
 	$scope.colorBtnStyle={};
@@ -129,8 +126,9 @@ function getAppForegroundColor(){
 	
 	new CSInterface().evalScript(script, function(data){
 		if(data != ""){
-			$(".sp-input")[0].value ="#"+data;
-			$(".input-small").spectrum('setFromTextInput',false);
+			$(".userForegroundContainerIcon")[$(".sp-input").length-1].style.backgroundColor =data;
+			$(".sp-input")[$(".sp-input").length-1].value =data;
+			$(".input-small").spectrum('setFromTextInput');
 		}
 	});
 }
