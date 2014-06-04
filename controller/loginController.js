@@ -46,7 +46,8 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
 				else{
 					//User Authenticated
-					$rootScope.canEdit=canEdit(data[0].oid, data[0].usertype);
+					
+					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
 					Config.data=data[0];
 					Config.keepMeLoggedIn=$scope.checked;
 					Config.userid=Config.data.userid;

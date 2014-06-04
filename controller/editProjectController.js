@@ -11,13 +11,11 @@
 
 	 preloader.hideLoading();
 	 
-	 //Todo: check for the colorbox version here
-	if(true)
-		$scope.showAllColors=true;
-	else
-		$scope.showAllColors=false;
 	 
-	 $scope.showColorPanel=false;
+	(constants.COLOR_MODE=="user_selectable")?$scope.showAllColors=true:$scope.showAllColors=false;
+	
+	 
+	 
 	 // creating the colors array for the colorbox
 	 $scope.colors=[];
 	 var projectColors = constants.PROJECT_COLORS;

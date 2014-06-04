@@ -1,0 +1,15 @@
+[
+    {
+        "_id": "5314e96ab0e6df5b17c0a67c",
+        "dept": "Tech",
+        "email": "dtorres@creativeworx.com",
+        "firstname": "David",
+        "lastname": "Torres",
+        
+        "role": "Developer",
+        "userid": 931,
+        "username": "dtorres@creativeworx.com",
+        "usertype": "orgadmin"
+        
+    }
+]
