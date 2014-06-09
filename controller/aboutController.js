@@ -9,7 +9,15 @@
  
 app.controller('aboutCtrl',['$scope', '$location', 'Constants', '$window','CSInterface','Config',
 function($scope, $location, Constants, $window, CSInterface, Config){
-	$scope.app_version_no = Constants.EXTENSION_VERSION_NUMBER;	
+	
+	//Removing build from version number
+	var res=Constants.EXTENSION_VERSION_NUMBER.split('.');
+	var str="";
+	for(var i=0;i<3;i++){
+		str =str + res[i]+'.';
+	}
+	$scope.app_version_no=str.substring(0,str.length-1);
+	
 	if(Config.username && Config.username!=""){
 		$scope.message="Logged in as: "+Config.username;
 	}

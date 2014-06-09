@@ -9,9 +9,7 @@
         "role": "Developer",
         "userid": 931,
         "username": "dtorres@creativeworx.com",
-        "usertype": "orgadmin",
-        "org_settings": {
-            "user_add_projects": false
-        }
+        "usertype": "orgadmin"
+        
     }
 ]

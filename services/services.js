@@ -27,7 +27,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
 		constants.IMAGE_STATUS_NOIMAGE = "NONE"
 		constants.IMAGE_STATUS_ERROR = "ERROR";
-		constants.COLOR_MODE = "preselected";
+		constants.COLOR_MODE = "user_selectable";
 		constants.PROJECT_COLORS= [
 			"#888888", //0
 			"#FFF772", //1
@@ -161,9 +161,16 @@ services.factory('viewManager', ['$location','$route', function($location,$route
 	
 	utils.initializationDone=function(){
 		console.log("Initialized");
-		$location.path('update');
+		console.log($location.path());
+		$location.path('checkForFlashVersion');
+		$route.reload();
 		//this.updateDone();
-	}
+	};
+	
+	utils.checkForFlashVersionDone=function(){
+		console.log("Checked for falsh version");
+		$location.path('update');
+	};
 	utils.updateDone=function(updateType){
 		if(updateType==100){
 			console.log("Checking for the update again");
@@ -221,7 +228,7 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 			if(jsonObj.ExtensionUpdateInformation.version_html)
 			utils.version=jsonObj.ExtensionUpdateInformation.version_html;
 			if(jsonObj.ExtensionUpdateInformation.download)
-			utils.downloadPath=jsonObj.ExtensionUpdateInformation.download;
+			utils.downloadPath=jsonObj.ExtensionUpdateInformation.download_html;
 			deferred.resolve(1);
 		})
 		.error(function(){deferred.reject(0);})
@@ -391,7 +398,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 		params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
 
 		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
-		
+		//var url="userDetails.json";
 		
 		$http.post(url,params)
 			.success(function(data,status){
@@ -466,6 +473,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 		params['password']=password;
 		params['userid']=userid;
 		var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS;
+		//var url='getprojectlist.json';
 		$http.post(url,params)
 		.success(function(data){
 			utils.projectIndexes={};
@@ -917,7 +925,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 		
 		$http.post(url,details)
 		.success(function(data){
-			console.log(data);
+			//console.log(data);
 			if(data=="Invalid event details."){
 				debuggerUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
 				logit(batchedRecords);
@@ -987,7 +995,9 @@ function(Constants,$rootScope,CSInterface){
 	utils.updateLogs = function(statusText){
 		//$rootScope.$apply(function(){
 			$rootScope.logs=statusText+'\n'+$rootScope.logs;
-			CSInterface.evalScript('$._extcommon.logToDebugFile(\''+statusText+'\')',function(){});
+			var now=new Date();
+			var str=now.toLocaleString()+" ";
+			CSInterface.evalScript('$._extcommon.logToDebugFile(\''+str+statusText+'\')',function(){});
 		//});
 	};
 	

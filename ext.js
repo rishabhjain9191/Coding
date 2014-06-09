@@ -162,17 +162,3 @@ function loadJSX() {
     var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/";
     csInterface.evalScript('$._ext.evalFiles("' + extensionRoot + '")');
 }
-
-function evalScript(script, callback) {
-    new CSInterface().evalScript(script, callback);
-}
-
-function onClickButton(ppid) {
-    if(ppid == "FLPR"){
-    	var jsfl = 'fl.createDocument(); fl.getDocumentDOM().addNewText({left:100, top:100, right:300, bottom:300} , "Hello Flash!" ); ';
-    	evalScript(jsfl);
-    } else {
-    	var extScript = "$._ext_" + ppid + ".run()";
-		evalScript(extScript);
-	}
-}

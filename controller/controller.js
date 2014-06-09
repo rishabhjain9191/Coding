@@ -84,6 +84,10 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'configLoader',
 			templateUrl:'./views/loadConfig.html'
 		})
+		.when('/checkForFlashVersion',{
+			controller:'flashVersionChecker',
+			templateUrl:'./views/flashVersionCheck.html'
+		})
 		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
 }]);
 
@@ -197,8 +201,10 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		if($location.path()=='/update')
 			$route.reload();
 	}
+	CSInterface.evalScript('$._extcommon.createDebugFile()',function(){
+		viewManager.initializationDone();
+	});
 	
-	viewManager.initializationDone();
 }]);
 
 
@@ -271,4 +277,27 @@ function canEdit(oid, orgSetting){
 	else{
 		return false;
 	}
+}
+
+function getAppForegroundColor(setColor){
+	
+	if(new CSInterface().hostEnvironment.appName == "IDSN")
+		script = "$._extcommon.getAppForegroundColor_ID()";
+	else if(new CSInterface().hostEnvironment.appName == "PHXS")
+		script = "$._extcommon.getAppForegroundColor_PS()";
+	
+	else if(new CSInterface().hostEnvironment.appName == "ILST")
+		script = "$._extcommon.getAppForegroundColor_IL()";
+	
+	new CSInterface().evalScript(script, function(data){
+		
+		if(data != ""){
+			
+			$(".userForegroundContainerIcon")[$(".sp-input").length-1].style.backgroundColor =data;
+			if(setColor){
+				$(".sp-input")[$(".sp-input").length-1].value =data;
+				$(".input-small").spectrum('setFromTextInput');
+			}
+		}
+	});
 }

@@ -7,9 +7,10 @@
  * @license    All rights reserved.
  */
 var debugFile=new File(pathToDebugFile);
-if(debugFile){
-	debugFile.open("e","TEXT","????");
-}
+	
+	
+	
+
 $._extcommon={
 	
 	file:"abc",
@@ -70,23 +71,32 @@ $._extcommon={
 	
 	//Debug File Functions
 	logToDebugFile:function(statusText){
+		debugFile.seek(0,2);
 		debugFile.writeln(statusText);
 	},
 	
 	closeDebugFile:function(){
 		debugFile.close();
 	},
-	
+	createDebugFile:function(){
+		if(!this.checkDebugFileSize()){
+			debugFile.open("e","TEXT","????");
+		}
+	},
 	checkDebugFileSize:function(){
-		if(debugFile){
+		if(debugFile.exists){
 			var size=debugFile.length; // size in bytes
-			if(size/(1000*1000)>20){
+			
+			if(size/(1024*1024)>20){
+				
 				debugFile.close();
 				debugFile.open("w","TEXT","????");
 				debugFile.close();
 				debugFile.open("e","TEXT","????");
-			}
+				return true;
+			}		
 		}
+		return false;
 	},
 	
 	getAppForegroundColor_ID:function(){
@@ -96,11 +106,26 @@ $._extcommon={
 			var color=app.strokeFillProxySettings.fillColor.colorValue;
 			app.strokeFillProxySettings.fillColor.space = ColorSpace.CMYK;
 			var arr = color.toString().split(",");
-			var color1 = this.rgbToHex(arr[0],arr[1],arr[2]);
+			color1 = this.rgbToHex(arr[0],arr[1],arr[2]);
 		}
 		catch(e){
 		}
 		return color1+'';
+	},
+	getAppForegroundColor_IL:function(){
+		var color="";
+		try{
+			var src=app.activeDocument.defaultFillColor;
+			var cmyk=new Array();
+			for(var i in src){
+				cmyk.push(src[i]);
+			}
+			var arr=app.convertSampleColor(ImageColorSpace.CMYK,cmyk,ImageColorSpace.RGB,ColorConvertPurpose.dummypurpose);
+			color = this.rgbToHex(arr[0],arr[1],arr[2]);
+		}
+		catch(e){
+		}
+		return color+'';
 	},
 	
 	getAppForegroundColor_PS:function(){
@@ -118,9 +143,11 @@ $._extcommon={
 		n = Math.max(0,Math.min(n,255));
 		return "0123456789ABCDEF".charAt((n-n%16)/16)
 			+ "0123456789ABCDEF".charAt(n%16);
-	}	
+	}
 	
 	
 	
 };
+
+
 
