@@ -217,7 +217,10 @@ input[type="checkbox"]{
 
 .pName{
 	text-transform: uppercase;
-	width: 65%;
+	/*width: 65%;*/
+	position: absolute;
+	left: 15px;
+	right: 70px;
 	overflow: hidden;
 	float: left;
 	height: 11px;
@@ -414,40 +417,34 @@ li{
 	width: 100%;
 	margin: 0;
 	text-align: right;
-	background-color: rgb(83,85,92);
-	height: 14px;
+	/*background-color: rgb(83,85,92);*/
+	background-color: rgb(71, 71, 71);
+	/*height: 14px;*/
+	height: 17px;
 }
 
 .navContainer{
 	position: absolute;
 	right: 0;
-	padding: 2px;
-}
-
-.navContainer:hover{
-	/*border: solid 1px rgb(0, 0, 0);*/
-	background: rgb(148, 148, 148);
 }
 
 .nav{
-	height: 1px;
-	width: 11px;
-	border-top: 5px double rgb(112, 112, 112);
-	border-bottom: 2px solid rgb(112, 112, 112);
-	font-size: 0;
+	background: url("../../assets/Images/wheel_off.png") no-repeat center;
+	height: 16px; 
+	width: 20px;
 	cursor: pointer;
-	/*margin-top: 2.4px;*/
-	/*margin-right: 1px;*/
+	background-size: 14px 14px;
 }
 
 .nav:hover{
-	border-top: 5px double rgb(0, 0, 0);
-	border-bottom: 2px solid rgb(0, 0, 0);
+	background: url("../../assets/Images/wheel_on.png") no-repeat center;
+	background-size: 14px 14px;
 }
+
 
 .flyout{
 	position: fixed;
-	top:13px;
+	top:16.5px;
 	right:0px;
 	background-color: white;
 	/*padding: 5px 0 5px 0;*/
@@ -505,7 +502,7 @@ li{
 .ng-modal-dialog {
   z-index: 10000;
 	position: fixed;
-	width: 100%;
+	width: 189px;
 	top: 50%;
 	left: 50%;
 	Unknown property name.transform: translate(-50%, -50%);
@@ -539,7 +536,18 @@ li{
 
 /**** Loading Spinner ****/
 
- @-webkit-keyframes loading-spinner {
+.loading-spinner{
+	background: url("../../assets/Images/preloader.gif") no-repeat center;
+	background-size: 14px 14px;
+	height: 30px;
+	width: 30px;
+	background-size: 30px 30px;
+	position: fixed;
+	left: 45%;
+	top: 45%;
+}
+
+/*  @-webkit-keyframes loading-spinner {
   0% {
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
@@ -576,7 +584,7 @@ li{
   width: 32px;
   height: 32px;
 } 
-
+ */
 /***** tooltip ****/
 
 .ui-tooltip {

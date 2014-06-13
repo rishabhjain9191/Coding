@@ -27,7 +27,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
 		constants.IMAGE_STATUS_NOIMAGE = "NONE"
 		constants.IMAGE_STATUS_ERROR = "ERROR";
-		constants.COLOR_MODE = "user_selectable";
+		constants.COLOR_MODE = "preselected";
 		constants.PROJECT_COLORS= [
 			"#888888", //0
 			"#FFF772", //1
@@ -160,7 +160,8 @@ services.factory('viewManager', ['$location','$route', function($location,$route
 	utils.loggedOut=false;
 	
 	utils.initializationDone=function(){
-		console.log("Initialized");
+		
+		console.log("initializationDone  "+(new Date()).getTime());
 		console.log($location.path());
 		$location.path('checkForFlashVersion');
 		$route.reload();
@@ -168,10 +169,12 @@ services.factory('viewManager', ['$location','$route', function($location,$route
 	};
 	
 	utils.checkForFlashVersionDone=function(){
-		console.log("Checked for falsh version");
+		
+		console.log("Checked for falsh version  "+(new Date()).getTime());
 		$location.path('update');
 	};
 	utils.updateDone=function(updateType){
+		console.log("Checked for update  "+(new Date()).getTime());
 		if(updateType==100){
 			console.log("Checking for the update again");
 			$route.reload();
@@ -183,11 +186,12 @@ services.factory('viewManager', ['$location','$route', function($location,$route
 		}
 	};
 	utils.configloaded=function(){
-		console.log("Config Loaded");
+		console.log("Config Loaded  "+(new Date()).getTime());
 		$location.path('login');
 		$route.reload();
 	};
 	utils.userLoggedIn=function(){
+		console.log("user logged in  "+(new Date()).getTime());
 		this.loggedOut=false;
 		console.log('user Logged in');
 		$location.path('projects');
@@ -341,11 +345,11 @@ services.factory('preloader',['$rootScope',
 function($rootScope){
 	var utils={};
 	utils.showLoading=function(username, password){
-		//$rootScope.loading=true;
+		$rootScope.loading=true;
 		$rootScope.opaqueStyle.opacity="0.2";
 	};
 	utils.hideLoading=function(username, password){
-		//$rootScope.loading=false;
+		$rootScope.loading=false;
 		$rootScope.opaqueStyle.opacity="1.0";
 	};
 	return utils;
@@ -402,8 +406,11 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
 		//var url="userDetails.json";
 		
-		$http.post(url,params)
+		var t1 = (new Date()).getTime();
+		$http.get(url+"?username="+username+"&password="+password+"&clientversion="+Constants.EXTENSION_VERSION_NUMBER)
 			.success(function(data,status){
+				var t2 = (new Date()).getTime();
+				console.log("Login request is taking time: "+(t2-t1)/1000);
 				console.log(data);
 				deferred.resolve(data);
 			})
@@ -657,12 +664,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 	var prevHistoryState={};
 	var promise_logUserActiveStatus="";
-	var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");  
-	event.extensionId = Constants.EXTENSION_ID;  
-	console.log(event);
-	event.data = PSEvent.CUT+","+PSEvent.COPY+","+PSEvent.PASTE;
-	CSInterface.dispatchEvent(event);
-	
+	var previousDoc="";
 	var activityTimerHandler = function(){
 		//app.activeDocument.hostObjectDelegate
 		CSInterface.evalScript("$._ext_PHXS_Utils.getHistoryStates()", function(historyStatesArray){
@@ -706,16 +708,106 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 	var pswatcher={};
 	pswatcher.init=function(){
-		CSInterface.addEventListener("PhotoshopCallback", documentChanged);
 		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*60*1000);
+		
+		unregisterPrevEvents();
+		
+		CSInterface.evalScript('app.activeDocument.historyStates[0].name',function(currentDoc){
+			previousDoc=currentDoc;
+		});
+		var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");
+		// Set Event properties: extension id
+		event.extensionId = "com.example.testPrj.extension1";
+		//1935767141-save
+		//1332768288-open
+		//1131180832-close
+		//1936483188-select
+		//1298866208-make
+		event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";
+		// Dispatch the Event
+		CSInterface.dispatchEvent(event);
+		// Attach a callback
+		CSInterface.addEventListener("PhotoshopCallback", PSCallback);
 	};
 	pswatcher.remove=function(){
-		CSInterface.removeEventListener('PhotoshopCallback', documentChanged);
+		unregisterPrevEvents();
 		$interval.cancel(promise_logUserActiveStatus);
 	};
 	
+	var PSCallback=function(csEvent) {
+        var dataArray = csEvent.data.split(",");
+		console.log(csEvent);
+        var eventID=dataArray[0];
+		console.log(eventID);
+		switch(eventID){
+			case "1935767141":dispatchEvent('documentAfterSave');break;
+			case "1131180832":
+				console.log("document closed");
+				CSInterface.evalScript('app.documents.length',function(length){
+					console.log("In CsInterface");
+					if(length==0){
+						dispatchEvent('documentAfterDeactivate');
+					}
+					else{
+						dispatchEvent('documentAfterActivate');
+				}});
+				break;
+			
+			case "1332768288":console.log("Document Opened");dispatchEvent('documentAfterActivate');break;
+			case "1298866208":console.log("new document");dispatchEvent('documentAfterActivate');break;
+			case "1936483188":
+				console.log('Document Switched');
+				CSInterface.evalScript('app.activeDocument.historyStates[0].name',function(currentDoc){
+				console.log(currentDoc);
+				if(currentDoc!=previousDoc){
+					previousDoc=currentDoc;
+					dispatchEvent('documentAfterActivate');
+				}
+				
+				});
+			default:break;
+			
+		}
+        
+    };
+	
 	return pswatcher;
 }]);
+
+
+
+	
+
+	
+function dispatchEvent(type){
+	console.log("Dispatching event"+type);
+	var event=new CSEvent(type, "APPLICATION", "PHXS", "com.example.testPrj.extension1");
+	event.data="<"+type+" />";
+	new CSInterface().dispatchEvent(event);
+}
+
+function documentSelected(){
+	console.log("In Document Selected");
+	new CSInterface().evalScript('app.activeDocument.historyStates[0].name',function(currentDoc){
+		console.log(currentDoc);
+		if(currentDoc!=previousDoc){
+		previousDoc=currentDoc;
+		return 1;
+		
+	}
+	else return 0;
+	});
+	
+}
+
+function unregisterPrevEvents(){
+	var event = new CSEvent("com.adobe.PhotoshopUnRegisterEvent", "APPLICATION");
+	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";	
+	event.extensionId = "com.example.testPrj.extension1";
+	new CSInterface().dispatchEvent(event);
+	console.log("Unregistering events");
+}
+
 
 
 services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInterface',function(Constants,Config ,DBHelper, AppModel, CSInterface){

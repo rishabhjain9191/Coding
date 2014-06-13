@@ -73,6 +73,6 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	};
 	
 	$scope.forgetLogin=function(){
-		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_FORGOT_LOGIN);
+		CSInterface.openURLInDefaultBrowser(Constants.URL_SERVICE + Constants.URL_FORGOT_LOGIN);
 	};
 }]);

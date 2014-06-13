@@ -88,7 +88,7 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'flashVersionChecker',
 			templateUrl:'./views/flashVersionCheck.html'
 		})
-		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="false"></div>'});
+		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
 }]);
 
 
@@ -191,7 +191,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 	};
 	$rootScope.refreshProjects1=function(){
 		$rootScope.showFlyout = false;
-		preloader.showLoading();
+		//preloader.showLoading();
 		$rootScope.refreshProjects();
 		//preloader.hideLoading();
 		console.log($rootScope);
