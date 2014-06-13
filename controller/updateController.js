@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
  
-app.controller('updateCtrl',['viewManager','$scope', '$rootScope','$http','Constants','preloader', 'updateUtils','$interval','$timeout','CSInterface',
-function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUtils,$interval, $timeout, CSInterface){
+app.controller('updateCtrl',['viewManager','$scope', '$rootScope','$http','Constants','preloader', 'updateUtils','$interval','$timeout','CSInterface','$rootScope',
+function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUtils,$interval, $timeout, CSInterface,$rootScope){
 		
 		var updateType;
 		updateUtils.checkForUpdate()
@@ -19,6 +19,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 			switch(updateReq){
 				case 100:updateNecessary();break;
 				case 200:updateOptional();break;
+				case 300:noUpdateRequired();break;
 				default:viewManager.updateDone();break;
 				
 				
@@ -32,6 +33,8 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	$scope.showUpdateView=true;
 	$scope.ttDownloadLocation=Constants.URL_UPDATE+Constants.URL_ZXP_DOWNLOAD;
 	$scope.progressBarValue=0;
+	$scope.updateBtn=true;
+	$scope.returnMessage='Not Now';
 	var downloadFilePaths;
 	
 	var promise_downloadComplete;
@@ -42,14 +45,27 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	
 	var updateNecessary=function(){
 		$scope.showUpdateView=false;
-		$scope.message="New version available! \n\nUpdate required.";
+		$scope.message="A newer extension is available. \n\nUpdate required.";
 		$scope.canReturn=false;
 	};
 	
 	var updateOptional=function(){
 		$scope.showUpdateView=false;
-		$scope.message="New version available";
+		$scope.message="A newer extension is available.\n\nWould you like to update now?";
 		$scope.canReturn=true;
+	};
+	
+	var noUpdateRequired=function(){
+		if($rootScope.checkUpdateFromMenuClick==1){
+			$scope.showUpdateView=false;
+			$scope.message="This Extension is up-to-date";
+			$scope.canReturn=true;
+			$scope.updateBtn=false;
+			$scope.returnMessage="Return";
+		}
+		else{
+			viewManager.updateDone(updateType);
+		}
 	};
 	
 	$scope.done=function(){

@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 	
 	
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "1.0.17.123";
+		constants.EXTENSION_VERSION_NUMBER = "2.0.0.3";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 		
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -213,8 +213,9 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 	utils.downloadPath="";
 	var updateParamsUpdate=function(){
 		var deferred=$q.defer();
-		var url=Constants.URL_UPDATE + Constants.URL_VERSION + "?" + Constants.EXTENSION_VERSION_NUMBER;
+		var url=Constants.URL_UPDATE + Constants.URL_VERSION;// + "?" + Constants.EXTENSION_VERSION_NUMBER;
 		//var url="ini.xml";
+		console.log(url);
 		$http.get(url)
 		.success(function(data,status){
 			var x2js = new X2JS();
@@ -223,15 +224,16 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 			if(jsonObj.ExtensionUpdateInformation.color_mode){
 			Constants.COLOR_MODE=jsonObj.ExtensionUpdateInformation.color_mode;
 			}
-			if(jsonObj.ExtensionUpdateInformation.minversion_html)
-			utils.minVersion=jsonObj.ExtensionUpdateInformation.minversion_html;
-			if(jsonObj.ExtensionUpdateInformation.version_html)
-			utils.version=jsonObj.ExtensionUpdateInformation.version_html;
+			if(jsonObj.ExtensionUpdateInformation.minversion)
+			utils.minVersion=jsonObj.ExtensionUpdateInformation.minversion;
+			if(jsonObj.ExtensionUpdateInformation.version)
+			utils.version=jsonObj.ExtensionUpdateInformation.version;
 			if(jsonObj.ExtensionUpdateInformation.download)
-			utils.downloadPath=jsonObj.ExtensionUpdateInformation.download_html;
+			utils.downloadPath=jsonObj.ExtensionUpdateInformation.download;
 			deferred.resolve(1);
+			
 		})
-		.error(function(){deferred.reject(0);})
+		.error(function(data){console.log(data);deferred.reject(0);})
 		
 		return deferred.promise;
 	};
@@ -339,11 +341,11 @@ services.factory('preloader',['$rootScope',
 function($rootScope){
 	var utils={};
 	utils.showLoading=function(username, password){
-		$rootScope.loading=true;
+		//$rootScope.loading=true;
 		$rootScope.opaqueStyle.opacity="0.2";
 	};
 	utils.hideLoading=function(username, password){
-		$rootScope.loading=false;
+		//$rootScope.loading=false;
 		$rootScope.opaqueStyle.opacity="1.0";
 	};
 	return utils;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ExtensionManifest Version="4.0" ExtensionBundleId="com.creativeworx.tthtml" ExtensionBundleVersion="2.0.0.0"
+<ExtensionManifest Version="4.0" ExtensionBundleId="com.creativeworx.tthtml" ExtensionBundleVersion="2.0.0"
 		ExtensionBundleName="tthtml5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 		
 		<Author>
@@ -149,7 +149,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
 				</Lifecycle>
 				<UI>
 					<Type>Panel</Type>
-					<Menu>TimeTracker Test II</Menu>
+					<Menu>TimeTracker</Menu>
 					<Geometry>
 						<Size>
 							<Height>310</Height>

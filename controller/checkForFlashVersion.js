@@ -10,13 +10,13 @@
  app.controller('flashVersionChecker',['viewManager','$scope', '$location', 'preloader', 'debuggerUtils', 'Constants','CSInterface',function(viewManager, $scope, $location,preloader,debuggerUtils, Constants, CSInterface){
 	console.log('checking for flashversion');
 	$scope.flashVersionExists=false;
-	$scope.message="An Older Version Exists....Please Uninstall it";
+	$scope.message="An older version exists, please uninstall it";
 	var id=[];
 	var res=CSInterface.getExtensions();
 	for(var i =0;i<res.length;i++){
 		id=res[i].id.split('.');
-		if(id[1]=='adobe'){
-			if(id[2]=='exchange')
+		if(id[1]=='creativeworx'){
+			if(id[2]=='timetracker')
 				$scope.flashVersionExists=true;
 		}
 	}

@@ -88,7 +88,7 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'flashVersionChecker',
 			templateUrl:'./views/flashVersionCheck.html'
 		})
-		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
+		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="false"></div>'});
 }]);
 
 
@@ -102,7 +102,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 	$rootScope.LoggedInItems=false;
 	$rootScope.projectProperties=new Array();
 	$rootScope.userLoggedState=1;
-	
+	$rootScope.checkUpdateFromMenuClick=0;
 	
 	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
@@ -198,6 +198,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 	};
 	$rootScope.checkUpdate=function(){
 		$location.path('update');
+		$rootScope.checkUpdateFromMenuClick=1;
 		if($location.path()=='/update')
 			$route.reload();
 	}

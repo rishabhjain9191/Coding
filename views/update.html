@@ -8,7 +8,7 @@
 	<div style="padding-bottom: 20px;" ng-show="downloading">Extension also Available at:<br><br><span style="text-decoration: underline;" ng-click="openUpdateSite()">www.CreativeWorx.com<span></div>
 	
 	<div>
-	<button style="width:auto;" class="lightBtn"  ng-click="download()" ng-disabled="disableUpdateBtn">{{updateMessage}}</button>
-	<button style="width:auto;" class="lightBtn" ng-click="done()" ng-show="canReturn">Not Now</button>
+	<button style="width:auto;" class="lightBtn" ng-show='updateBtn'  ng-click="download()" ng-disabled="disableUpdateBtn">{{updateMessage}}</button>
+	<button style="width:auto;" class="lightBtn" ng-click="done()" ng-show="canReturn">{{returnMessage}}</button>
 	</div>
 <div>
