@@ -407,7 +407,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 		//var url="userDetails.json";
 		
 		var t1 = (new Date()).getTime();
-		$http.get(url+"?username="+username+"&password="+password+"&clientversion="+Constants.EXTENSION_VERSION_NUMBER)
+		$http.post(url, params)
 			.success(function(data,status){
 				var t2 = (new Date()).getTime();
 				console.log("Login request is taking time: "+(t2-t1)/1000);
@@ -717,7 +717,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 		});
 		var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");
 		// Set Event properties: extension id
-		event.extensionId = "com.example.testPrj.extension1";
+		event.extensionId = "TimeTracker.extension1";
 		//1935767141-save
 		//1332768288-open
 		//1131180832-close
@@ -781,7 +781,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 function dispatchEvent(type){
 	console.log("Dispatching event"+type);
-	var event=new CSEvent(type, "APPLICATION", "PHXS", "com.example.testPrj.extension1");
+	var event=new CSEvent(type, "APPLICATION", "PHXS", "TimeTracker.extension1");
 	event.data="<"+type+" />";
 	new CSInterface().dispatchEvent(event);
 }
@@ -803,7 +803,7 @@ function documentSelected(){
 function unregisterPrevEvents(){
 	var event = new CSEvent("com.adobe.PhotoshopUnRegisterEvent", "APPLICATION");
 	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";	
-	event.extensionId = "com.example.testPrj.extension1";
+	event.extensionId = "TimeTracker.extension1";
 	new CSInterface().dispatchEvent(event);
 	console.log("Unregistering events");
 }
