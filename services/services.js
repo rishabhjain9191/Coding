@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 	
 	
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.0.3";
+		constants.EXTENSION_VERSION_NUMBER = "2.0.1.0";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 		
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -576,7 +576,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 /********** App Watcher *********/
 /********************************/
 
-services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'WatcherPhotoshop','CSInterface', function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, watcherPS, CSInterface){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'WatcherPhotoshop','CSInterface', 'Config',function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, watcherPS, CSInterface, Config){
 	var utils={};
 	utils.removeEventListeners=function(){
 		CSInterface.removeEventListener('documentAfterActivate',onDocumentAfterActivate);
@@ -625,7 +625,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		console.log(event);
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
 		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworxproject file recursively, and get project Id, else get 0.
-		CSInterface.evalScript('$._extCWFile.getProjectID()', function(pid){
+		CSInterface.evalScript('$._extCWFile.getProjectID(\"'+Config.userid+'\")', function(pid){
 			console.log("project id from .creativeworx file"+pid);
 			if(pid!=""){
 				//Assign that project id to the current document
@@ -664,7 +664,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 	var prevHistoryState={};
 	var promise_logUserActiveStatus="";
-	var previousDoc="";
+	var previousDocName="";
 	var activityTimerHandler = function(){
 		//app.activeDocument.hostObjectDelegate
 		CSInterface.evalScript("$._ext_PHXS_Utils.getHistoryStates()", function(historyStatesArray){
@@ -717,7 +717,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 		});
 		var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");
 		// Set Event properties: extension id
-		event.extensionId = "TimeTracker.extension1";
+		event.extensionId = "TimeTracker_.extension1";
 		//1935767141-save
 		//1332768288-open
 		//1131180832-close
@@ -740,7 +740,11 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
         var eventID=dataArray[0];
 		console.log(eventID);
 		switch(eventID){
-			case "1935767141":dispatchEvent('documentAfterSave');break;
+			case "1935767141":dispatchEvent('documentAfterSave');
+				CSInterface.evalScript('app.activeDocument.fullName',function(name){
+					previousDocName=name;
+				});
+			break;
 			case "1131180832":
 				console.log("document closed");
 				CSInterface.evalScript('app.documents.length',function(length){
@@ -753,18 +757,54 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 				}});
 				break;
 			
-			case "1332768288":console.log("Document Opened");dispatchEvent('documentAfterActivate');break;
-			case "1298866208":console.log("new document");dispatchEvent('documentAfterActivate');break;
+			case "1332768288":
+				console.log("Document Opened");
+				CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentName()',function(name){
+					previousDocName=name;
+					dispatchEvent('documentAfterActivate');
+				});
+				/* CSInterface.evalScript('$._ext_PHXS_XMP.stampCurrentDoc()',function(){
+					dispatchEvent('documentAfterActivate');
+					previousDocTS=(new Date()).getTime().toString();
+				}); */
+				
+				
+				break;
+			case "1298866208":
+				console.log("new document");
+				CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentName()',function(name){
+					previousDocName=name;
+					dispatchEvent('documentAfterActivate');
+				});
+				/* CSInterface.evalScript('$._ext_PHXS_XMP.stampCurrentDoc()',function(){
+					dispatchEvent('documentAfterActivate');
+					previousDocTS=(new Date()).getTime().toString();
+				}); */
+				break;
 			case "1936483188":
 				console.log('Document Switched');
-				CSInterface.evalScript('app.activeDocument.historyStates[0].name',function(currentDoc){
+				/* CSInterface.evalScript('app.activeDocument.historyStates[0].name',function(currentDoc){
 				console.log(currentDoc);
 				if(currentDoc!=previousDoc){
 					previousDoc=currentDoc;
 					dispatchEvent('documentAfterActivate');
 				}
+				}); */
 				
+				/* CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentTimeStamp()',function(currentDocTS){
+				if(currentDocTS!=previousDocTS){
+					previousDocTS=currentDocTS;
+					dispatchEvent('documentAfterActivate');
+				}
+				});  */
+				
+				CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentName()',function(currentDocName){
+					if(currentDocName!=previousDocName){
+						previousDocName=currentDocName;
+						dispatchEvent('documentAfterActivate');
+					}
 				});
+				
 			default:break;
 			
 		}
@@ -781,7 +821,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 	
 function dispatchEvent(type){
 	console.log("Dispatching event"+type);
-	var event=new CSEvent(type, "APPLICATION", "PHXS", "TimeTracker.extension1");
+	var event=new CSEvent(type, "APPLICATION", "PHXS", "TimeTracker_.extension1");
 	event.data="<"+type+" />";
 	new CSInterface().dispatchEvent(event);
 }
@@ -803,7 +843,7 @@ function documentSelected(){
 function unregisterPrevEvents(){
 	var event = new CSEvent("com.adobe.PhotoshopUnRegisterEvent", "APPLICATION");
 	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";	
-	event.extensionId = "TimeTracker.extension1";
+	event.extensionId = "TimeTracker_.extension1";
 	new CSInterface().dispatchEvent(event);
 	console.log("Unregistering events");
 }

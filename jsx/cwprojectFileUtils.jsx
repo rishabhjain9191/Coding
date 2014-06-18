@@ -78,13 +78,18 @@
 		}
 	},
 	
-	getProjectID : function() {
+	getProjectID : function(userid) {
 		myFile = app.activeDocument.fullName;
 		parentFolder = myFile.parent;
 		var file = this.checkIfFileExistsRecursively(parentFolder);
 		if(file){
+			var tagUserid = this.getTagValue(file, "userid");
+				//If the user id in .creativeworx file and user requesting the project id from .creatoveworx file are not same, do not assign any project id.
+				if(tagUserid!=userid){
+					return "";
+				}
 			var tagValue = this.getTagValue(file, "projectuid");
-			if(tagValue!=""){
+				if(tagValue!=""){
 				return tagValue+'';
 			}else{
 				return "";

@@ -44,6 +44,42 @@
 		activeDocument.xmpMetadata.rawData = xmp.serialize();  
 	},
 	
+	stampCurrentDoc:function(){
+		var activeDocument=app.activeDocument;
+		value=new Date();
+		value=value.getTime().toString();
+		var xmp = new XMPMeta( activeDocument.xmpMetadata.rawData);  
+		xmp.setProperty(XMPConst.NS_XMP, "timeStamp", value); 
+		activeDocument.xmpMetadata.rawData = xmp.serialize();  
+	
+	},
+	getCurrentDocumentName:function(){
+		var name;
+		try{
+			name=app.activeDocument.fullName;
+		}
+		catch(e){
+			name=app.activeDocument.name;
+		}
+		return name;
+	},
+	
+	
+	
+	getCurrentDocumentTimeStamp:function(){
+		var value='';
+		try{
+			var document=app.activeDocument;
+			var xmp = new XMPMeta( document.xmpMetadata.rawData);  
+			var value = xmp.getProperty(XMPConst.NS_XMP_MM, "timeStamp"); 
+			
+        }
+		catch(e){
+		
+		}
+		return value;
+	},
+	
 	getDetails:function(){
 		try{
 			document = app.activeDocument.name;
