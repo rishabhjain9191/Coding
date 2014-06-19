@@ -217,8 +217,8 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 	utils.downloadPath="";
 	var updateParamsUpdate=function(){
 		var deferred=$q.defer();
-		//var url=Constants.URL_UPDATE + Constants.URL_VERSION;// + "?" + Constants.EXTENSION_VERSION_NUMBER;
-		var url="ini.xml";
+		var url=Constants.URL_UPDATE + Constants.URL_VERSION;// + "?" + Constants.EXTENSION_VERSION_NUMBER;
+		//var url="ini.xml";
 		console.log(url);
 		$http.get(url)
 		.success(function(data,status){
