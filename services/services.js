@@ -217,8 +217,8 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 	utils.downloadPath="";
 	var updateParamsUpdate=function(){
 		var deferred=$q.defer();
-		var url=Constants.URL_UPDATE + Constants.URL_VERSION;// + "?" + Constants.EXTENSION_VERSION_NUMBER;
-		//var url="ini.xml";
+		//var url=Constants.URL_UPDATE + Constants.URL_VERSION;// + "?" + Constants.EXTENSION_VERSION_NUMBER;
+		var url="ini.xml";
 		console.log(url);
 		$http.get(url)
 		.success(function(data,status){
@@ -576,10 +576,9 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 /********** App Watcher *********/
 /********************************/
 
-services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'WatcherPhotoshop','CSInterface', 'Config',function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, watcherPS, CSInterface, Config){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'CSInterface', 'Config', 'WatcherPhotoshop',function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, CSInterface, Config, watcherPS){
 	var utils={};
 	utils.removeEventListeners=function(){
-		CSInterface.removeEventListener('documentAfterActivate',onDocumentAfterActivate);
 		CSInterface.removeEventListener('documentAfterActivate',onDocumentAfterActivate);
 		CSInterface.removeEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
 		CSInterface.removeEventListener('documentAfterSave', onDocumentAfterSave);
@@ -661,7 +660,6 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 
 
 services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$interval','CSInterface',function(Constants, Logger, debuggerUtils, $interval, CSInterface){
-	
 	var prevHistoryState={};
 	var promise_logUserActiveStatus="";
 	var previousDocName="";

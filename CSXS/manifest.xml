@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ExtensionManifest Version="4.0" ExtensionBundleId="TimeTracker_" ExtensionBundleVersion="2.0.1"
+<ExtensionManifest Version="4.0" ExtensionBundleId="TimeTracker" ExtensionBundleVersion="2.0.1"
 		ExtensionBundleName="tthtml5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 		
 		<Author>
@@ -126,8 +126,8 @@ If you have any questions about this Privacy Policy, please contact us at privac
 		<HostList>
 			<Host Name="IDSN" Version="[9.1,10.0]" />
 			<Host Name="ILST" Version="[17.0,17.9]" />
-			<Host Name="PHXS" Version="[14.0,14.9]" />
-			<Host Name="PHSP" Version="[14.0,14.9]" />
+			<Host Name="PHXS" Version="[14.0,100.0]" />
+			<Host Name="PHSP" Version="[14.0,100.0]" />
 		</HostList>
 		<LocaleList>
 			<Locale Code="All" />

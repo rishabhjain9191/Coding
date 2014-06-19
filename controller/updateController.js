@@ -93,8 +93,8 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 			}
 			downloaded=false;
 			
-			promise_downloadComplete= $interval(checkProcessRunning,2*1000,30); //Will check whether the download is completed for 2 minutes.
-			promise_checkDownloaded=$timeout(checkDownloaded,2*30*1000+1000);
+			promise_downloadComplete= $interval(checkProcessRunning,2*1000,45); //Will check whether the download is completed for 2 minutes.
+			promise_checkDownloaded=$timeout(checkDownloaded,2*45*1000+1000);
 		
 		});
 		
@@ -104,6 +104,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	var checkProcessRunning=function(){
 		var isRunning=window.cep.process.isRunning(result.data);
 		console.log("checkProcessRunning");
+		console.log(isRunning);
 		if(!isRunning.data){
 			$scope.progressBarValue=100;
 			$scope.message="";
@@ -134,9 +135,10 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	};
 		
 	var launchEM=function(){
+		
 		var specifier = "exman";
 		new Vulcan().launchApp(specifier, false, ' /install "'+downloadFilePaths.zxpFilePath+'"');
-		deleteTempFile();
+		//deleteTempFile();
 			
 	};
 	
