@@ -66,6 +66,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_TIMEINTERVAL = 50000;
 		constants.THRESHOLD_COUNT = 100;
 		constants.APP_EVENT_POLL = 5000; 		// How frequently to check for events in the app
+		constants.REFRESH_PROJECT_INTERVAL = 5*60*1000;
 		
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
 			
@@ -154,7 +155,7 @@ services.factory('CSInterface',[function(){
 }]);
 
 
-services.factory('viewManager', ['$location','$route', function($location,$route){
+services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher', function($location,$route, CSInterface, AppWatcher){
 	var utils={};
 	
 	utils.loggedOut=false;
@@ -192,6 +193,13 @@ services.factory('viewManager', ['$location','$route', function($location,$route
 	};
 	utils.userLoggedIn=function(){
 		console.log("user logged in  "+(new Date()).getTime());
+		//Add Event Listeners		
+		AppWatcher.addEventListeners();
+		//Trigger OnCreationComplete Event
+		var event=new CSEvent("onCreationComplete", "APPLICATION");
+		event.type="onCreationComplete";
+		event.data="<onCreationComplete />";
+		CSInterface.dispatchEvent(event);
 		this.loggedOut=false;
 		console.log('user Logged in');
 		$location.path('projects');
@@ -997,6 +1005,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 	CSInterface.evalScript('$._extFile.openFile()');
 	
 	var sendLoggedRecords=function(){
+		console.log("[syncRecordsTimerHandler]: Record are being fetched from local file and sending to server");
 		debuggerUtils.updateLogs("[syncRecordsTimerHandler]: Record are being fetched from local file and sending to server");
 		CSInterface.evalScript('$._extFile.readAndSend()',function(data){
 			processAndSend(data);
@@ -1004,7 +1013,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 	};
 	
 	//Setup Interval to read the unsend record file and try to send them.
-	var promise_sendLoggedRecords= $interval(sendLoggedRecords,0.5*60*1000);
+	var promise_sendLoggedRecords= $interval(sendLoggedRecords,5*60*1000);
 	
 	
 	//Get the records, batch them if if size>batch size and then send them to server

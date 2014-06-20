@@ -7,25 +7,21 @@
  * @license    All rights reserved.
  */
  
- app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q', 'AppWatcher', 'preloader','debuggerUtils','CSInterface',
-function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppWatcher, preloader,debuggerUtils,CSInterface){
+ app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q',  'preloader','debuggerUtils','CSInterface','$interval',
+function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  preloader,debuggerUtils,CSInterface,$interval){
 	console.log("Projects view loaded");
 	preloader.showLoading();
 	$scope.modalShown = false;
 	$scope.firstname = Config.firstname;
 	$scope.showNoProjectsMessage = false;
 	$scope.noProjectsMessage="You have no projects.";
-	AppWatcher.addEventListeners();
 	var prev_index=-1;
 	$rootScope.userLoggedState=1;
 	$rootScope.refreshProjects=function(){
 		debuggerUtils.updateLogs("Project request attempt for [" +Config.username+ "]");
 		projectUtils.getProjects(Config.username, Config.password, Config.userid)
 		.then(function(data){
-			var event=new CSEvent("onCreationComplete", "APPLICATION");
-			event.type="onCreationComplete";
-			event.data="<onCreationComplete />";
-			CSInterface.dispatchEvent(event);
+			
 			$scope.projects=data;	// all the project details are saved in $scope.projects
 			console.log("Projects Lenght  : "+data.length);
 			projectUtils.selectProject();
@@ -42,6 +38,9 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q, AppW
 			
 		});
 	};
+	//Setup Interval to read the unsend record file and try to send them.
+	var promise_refreshProjects= $interval($rootScope.refreshProjects,Constants.REFRESH_PROJECT_INTERVAL);
+	
 	var deselectProject=function(){
 		//Remove XMP data of Project;
 		console.log("Deselecting Project");
