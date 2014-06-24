@@ -723,3 +723,9 @@ progress::-webkit-progress-value {
 	background-size: 25px 14px, 100% 100%, 100% 100%;
 	-webkit-animation: move 10s linear 0 infinite;
 }
+
+
+
+input::-webkit-input-placeholder {
+    color: #bbb;
+}
