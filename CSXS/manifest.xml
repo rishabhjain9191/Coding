@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ExtensionManifest Version="4.0" ExtensionBundleId="TimeTracker_" ExtensionBundleVersion="2.0.1"
+<ExtensionManifest Version="4.0" ExtensionBundleId="TimeTrackerCC" ExtensionBundleVersion="2.0.2"
 		ExtensionBundleName="tthtml5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-		
+
 		<Author>
 		<![CDATA[CreativeWorx Corp.]]>
 	</Author>	<Contact mailto="support@creativeworx.com"/>	<Legal href="http://www.creativeworx.com/terms.php">
@@ -117,17 +117,17 @@ If you have any questions about this Privacy Policy, please contact us at privac
 	</Legal>	<Abstract href="http://www.creativeworx.com/">
 		<![CDATA[CreativeWorx TimeTracker solves a major problem for creative professionals who track their time for billing purposes. This virtually automated solution will help you record, clean up and submit how you spent your time, eliminating many of the challenges of timesheet submission. It can be additive to existing financial systems to provide an elegant and truly efficient solution.]]>
 	</Abstract>
-		
-		
+
+
 	<ExtensionList>
-		<Extension Id="TimeTracker_.extension1" Version="2.0.0" />
+		<Extension Id="TimeTrackerCC.extension1" Version="2.0.2" />
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
-			<Host Name="IDSN" Version="[9.1,11.9]" />
-			<Host Name="ILST" Version="[17.0,19.9]" />
-			<Host Name="PHXS" Version="[14.0,16.9]" />
-			<Host Name="PHSP" Version="[14.0,16.9]" />
+			<Host Name="IDSN" Version="[9.1,10.9]" />
+			<Host Name="ILST" Version="[17.0,18.9]" />
+			<Host Name="PHXS" Version="[14.0,15.9]" />
+			<Host Name="PHSP" Version="[14.0,15.9]" />
 		</HostList>
 		<LocaleList>
 			<Locale Code="All" />
@@ -138,7 +138,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
 		</RequiredRuntimeList>
 	</ExecutionEnvironment>
 	<DispatchInfoList>
-		<Extension Id="TimeTracker_.extension1">
+		<Extension Id="TimeTrackerCC.extension1">
 			<DispatchInfo >
 				<Resources>
 				<MainPath>./index.html</MainPath>

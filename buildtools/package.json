@@ -1,0 +1,23 @@
+{
+  "name": "TimeTrackerHTML5CSExtBuildTool",
+  "version": "0.0.0",
+  "description": "CLI build tool for TimeTracker HTML5 CS Extension.",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [
+    "timetracker",
+    "creativeworx",
+    "csextension",
+    "cli"
+  ],
+  "author": "Tom Wrenn",
+  "license": "ISC",
+  "dependencies": {
+    "inquirer": "^0.5.1",
+    "liftoff": "^0.11.3",
+    "minimist": "^0.1.0",
+    "node-ffi": "^0.5.7",
+    "node-persist": "0.0.2",
+    "prompt": "^0.2.13"
+  }
+}

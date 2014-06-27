@@ -1,0 +1,5 @@
+node_modules
+buildtools/builds
+buildtools/cert
+buildtools/ZXPSignCmd
+buildtools/temp
