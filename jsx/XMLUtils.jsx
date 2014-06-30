@@ -72,9 +72,9 @@
 		var myRootXmlObj = new XML (xmlStr);
 		return myRootXmlObj.child(tag);
     },
-	
+
 	setTagValue : function(tag, value) {
-        if(!this.isExists){
+        if(!this.isExists()){
            return false;
 		}
 		else{

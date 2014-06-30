@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.2.0";
+		constants.EXTENSION_VERSION_NUMBER = "2.0.3.1";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -384,7 +384,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 				}
 				else{
 					//User Authenticated
-					console.log("User Authenticaed");
+					console.log("User Authenticated");
 
 					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
 					$rootScope.LoggedInItems=true;
