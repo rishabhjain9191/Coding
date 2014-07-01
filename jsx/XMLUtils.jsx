@@ -25,7 +25,7 @@
 		if(!this.isExists()){
 			return "false";
 		}
-		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval","serviceAddress","checkOnlineTimeInterval","imageTimeInterval","batchSize","thresholdCount","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled", "configversion"];
+		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval","serviceAddress","checkOnlineTimeInterval","imageTimeInterval","batchSize","thresholdCount","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled", "configversion", "companyEmail", "companyName"];
 		var obj = new Object();
 		var str="{";
 		for(var i=0;i<tags.length;i++){
@@ -60,6 +60,10 @@
 					this.setTagValue('firstname', config[c]);
 				if(c == "userid")
 					this.setTagValue('userid', config[c]);
+				if(c == "companyEmail")
+					this.setTagValue('companyEmail', config[c]);
+				if(c == "companyName")
+					this.setTagValue('companyName', config[c]);
 			}		
 			return "file updated successfully";
 		}
@@ -70,7 +74,12 @@
 		configFile.open("r");
 		var xmlStr = configFile.read();
 		var myRootXmlObj = new XML (xmlStr);
-		return myRootXmlObj.child(tag);
+		try{
+			return myRootXmlObj.child(tag);
+		}
+		catch(e){
+			return "";
+		}
     },
 	
 	setTagValue : function(tag, value) {

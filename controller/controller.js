@@ -88,6 +88,14 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'flashVersionChecker',
 			templateUrl:'./views/flashVersionCheck.html'
 		})
+		.when('/configureLDAP',{
+			controller:'configureLDAPCtrl',
+			templateUrl:'./views/configureLDAP.html'
+		})
+		.when('/LDAPLogin',{
+			controller:'LDAPloginCtrl',
+			templateUrl:'./views/LDAPLogin.html'
+		})
 		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
 }]);
 
@@ -179,6 +187,11 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		$rootScope.userLoggedState=0;
 		Config.clearUserDetails();
 		viewManager.userLoggedOut();
+	};
+	
+	$rootScope.configureLDAP=function(){
+		$rootScope.showFlyout = false;
+		viewManager.configureLDAP();
 	};
 	
 	$rootScope.feedback=function(){

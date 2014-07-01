@@ -27,7 +27,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
 		constants.IMAGE_STATUS_NOIMAGE = "NONE"
 		constants.IMAGE_STATUS_ERROR = "ERROR";
-		constants.COLOR_MODE = "preselected";
+		constants.COLOR_MODE = "user_selectable";
 		constants.PROJECT_COLORS= [
 			"#888888", //0
 			"#FFF772", //1
@@ -77,6 +77,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.PROJECT_RETRIEVE_ADDRESS = "/service/getprojectlist";
 		constants.CHECK_USER_DETAILS_ADDRESS = "/service/userdetails";
 		constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject";
+		constants.VALIDATE_LDAP_EMAIL = "/service/validate-ldap-email";
 			
 		constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
 		constants.IMAGES_FOLDER_NAME = "/images";
@@ -155,10 +156,12 @@ services.factory('CSInterface',[function(){
 }]);
 
 
-services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher', function($location,$route, CSInterface, AppWatcher){
+services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher','Config', function($location,$route, CSInterface, AppWatcher, Config){
 	var utils={};
 	
 	utils.loggedOut=false;
+	utils.previousView="";
+	utils.loginView="";
 	
 	utils.initializationDone=function(){
 		
@@ -188,8 +191,14 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	};
 	utils.configloaded=function(){
 		console.log("Config Loaded  "+(new Date()).getTime());
-		$location.path('login');
 		$route.reload();
+		if(Config.companyEmail&&Config.companyEmail.length>0){
+			$location.path('LDAPLogin');
+		}
+		else{
+			$location.path('login');		
+		}
+		
 	};
 	utils.userLoggedIn=function(){
 		console.log("user logged in  "+(new Date()).getTime());
@@ -202,12 +211,34 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		CSInterface.dispatchEvent(event);
 		this.loggedOut=false;
 		console.log('user Logged in');
+		this.loginView=$location.path().substr(1);
 		$location.path('projects');
 	};
 	
 	utils.userLoggedOut=function(){
 		this.loggedOut=true;
-		$location.path('login');
+		$location.path(this.loginView);
+	};
+	
+	utils.configureLDAP=function(){
+		this.previousView=$location.path().substr(1);
+		$location.path('configureLDAP');
+	};
+	
+	utils.gotoPreviousView=function(){
+		$location.path(this.previousView);
+	};
+	
+	utils.LDAPConfigDone=function(){
+		$route.reload();
+		console.log(Config.companyEmail);
+		if(Config.companyEmail!==""){
+			$location.path('LDAPLogin');
+		}
+		else{
+			$location.path('login');
+		}
+		//$route.reload();
 	};
 	
 	return utils;
@@ -334,6 +365,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.password="";
 	config.userid="";
 	config.firstname="";
+	config.companyEmail="";
 	
 	/*
 		Read from the config file and update config values
@@ -376,7 +408,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 			deferred.resolve(100);
 		}
 		else if(Config.keepMeLoggedIn=="true"){
-			utils.login(Config.username, Config.password)
+			utils.login(Config.username, Config.password, Config.companyEmail)
 			.then(function(data){
 				console.log(data);
 				if(data.Msg=="Error: Authentication failed"){
@@ -402,13 +434,15 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 			
 	};
 	
-	utils.login=function(username, password){
+	utils.login=function(username, password, companyEmail){
 		var deferred=$q.defer();
 		if(username=='undefined'){username=Config.username;}
 		if(password=='undefined'){password=Config.password;}
+		if(companyEmail=='undefined'){companyEmail="";}
 		var params=[];
 		params['username']=username;
 		params['password']=password;
+		params['companyEmail']=companyEmail;
 		params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
 
 		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;

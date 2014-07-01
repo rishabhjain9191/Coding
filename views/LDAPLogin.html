@@ -1,0 +1,27 @@
+<div id="content" ng-show='showLogin'>
+	<div id="logo">
+		<img src="./assets/images/creativeworx_logo.png">
+	</div>
+	<div class="message">{{message}}</div>
+	<form name='loginUser' id="loginForm">
+		<div>	
+			<input ng-click="message=''"  class="text stretch" type='text' placeholder='Company Email' ng-model='user.email' />
+			<input ng-click="message=''"  class="stretch text" type='password' placeholder='Company Password' ng-model='user.password' />
+		</div>	
+		<div class="stretch attr" style="font-size:10px">
+			<div style="float: left; ">
+				<input type='checkbox' ng-model='checked' ng-init="checked=true" > Keep me logged in</input>
+			</div>
+			
+		</div>
+		<div class="stretch middle">
+			<button style="margin: auto;" class="darkBtn" ng-click='login()'>Login</button>
+		</div><br/>
+		<div style="width: 100%;text-align: center;">
+		<img src="{{ldap_message_image}}" height="10px" width="11px"/>{{ldap_message}}
+		<div>
+		
+		
+	</form>
+	<modal-dialog show='modalShown'><p>{{alert_message}}<p></modal-dialog>
+</div>
