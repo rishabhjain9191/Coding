@@ -781,6 +781,15 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 		unregisterPrevEvents();
 		$interval.cancel(promise_logUserActiveStatus);
 	};
+	
+	var unregisterPrevEvents= function(){
+	var event = new CSEvent("com.adobe.PhotoshopUnRegisterEvent", "APPLICATION");
+	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";
+	event.extensionId = Constants.EXTENSION_ID;
+	CSInterface.dispatchEvent(event);
+	console.log("Unregistering events");
+	};
+
 
 	var PSCallback=function(csEvent) {
         var dataArray = csEvent.data.split(",");
@@ -849,7 +858,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 				CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentName()',function(currentDocName){
 					if(currentDocName!=previousDocName){
 						previousDocName=currentDocName;
-						dispatchEvent('documentAfterActivate');
+						dispatchEvent('documentAfterActivate', Constants.EXTENSION_ID);
 					}
 				});
 
@@ -867,9 +876,9 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 
 
 
-function dispatchEvent(type){
+function dispatchEvent(type, extensionID){
 	console.log("Dispatching event"+type);
-	var event=new CSEvent(type, "APPLICATION", "PHXS", Constants.EXTENSION_ID);
+	var event=new CSEvent(type, "APPLICATION", "PHXS", extensionID);
 	event.data="<"+type+" />";
 	new CSInterface().dispatchEvent(event);
 }
@@ -888,13 +897,6 @@ function documentSelected(){
 
 }
 
-function unregisterPrevEvents(){
-	var event = new CSEvent("com.adobe.PhotoshopUnRegisterEvent", "APPLICATION");
-	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";
-	event.extensionId = Constants.EXTENSION_ID;
-	new CSInterface().dispatchEvent(event);
-	console.log("Unregistering events");
-}
 
 
 
