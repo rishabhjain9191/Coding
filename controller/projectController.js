@@ -23,7 +23,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 		.then(function(data){
 
 			$scope.projects=data;	// all the project details are saved in $scope.projects
-            debuggerUtils.updateLogs("[Project List]:\n"+ppProjectList($scope.projects));
+            debuggerUtils.updateLogs("[Project List]: "+ppProjectList($scope.projects).slice(0,-2));
 			projectUtils.selectProject();
 			preloader.hideLoading();
 			debuggerUtils.updateLogs("[ProjectResult]: Successfully fetched the projects for the user.");
@@ -33,7 +33,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 		}, function(data){
 			//On network Failure, show previous copy of projects
 			$scope.projects=projectUtils.projectsCopy;
-			debuggerUtils.updateLogs("[Cached Project List]:\n"+ppProjectList($scope.projects));
+			debuggerUtils.updateLogs("[Cached Project List]: "+ppProjectList($scope.projects).slice(0,-2));
             debuggerUtils.updateLogs("[ProjectResult]: Network failure, showing cached projects list.");
             // console.log($scope.projects);
 			preloader.hideLoading();
@@ -144,7 +144,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
     var ppProjectList=function(projList){
         return projList.reduce(
             function(prev, curr, index){
-                return prev+"["+(index+1)+"] "+curr.name+"\n";
+                return prev+"["+(index+1)+"] "+curr.name+", ";
             },
             ""
         );

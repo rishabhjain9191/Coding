@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
 
- app.controller('loginCtrl',['viewManager','$scope','$rootScope','$location','$http','Config','Constants','loginUtils','preloader','CSInterface',
-function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface){
+ app.controller('loginCtrl',['viewManager','$scope','$rootScope','$location','$http','Config','Constants','loginUtils','preloader','CSInterface','debuggerUtils',
+function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface, debuggerUtils){
 	console.log("On Login Page");
 	preloader.hideLoading();
 	$scope.alert_message="Unknown error. Please contact us at support@creativeworx.com.";
@@ -16,6 +16,9 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 	$scope.modalShown=false;
 	$scope.keepLoggedIn='false';
 	$scope.message="";
+	$scope.user={};
+	$scope.user.email="";
+	$scope.user.password="";
 
     if(!viewManager.loggedOut){
         preloader.showLoading();
@@ -34,7 +37,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 	}
 
 	$scope.login=function(){
-		if($scope.user && $scope.user.email!="" && $scope.user.password!=""){
+		if($scope.user.email!="" && $scope.user.password!=""){
             debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
 			preloader.showLoading();
 			var hashedPassword=MD5($scope.user.password);

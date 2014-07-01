@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.3.1";
+		constants.EXTENSION_VERSION_NUMBER = "2.0.3.2";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -27,7 +27,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
 		constants.IMAGE_STATUS_NOIMAGE = "NONE"
 		constants.IMAGE_STATUS_ERROR = "ERROR";
-		constants.COLOR_MODE = "preselected";
+		constants.COLOR_MODE = "user_selectable";
 		constants.PROJECT_COLORS= [
 			"#888888", //0
 			"#FFF772", //1
@@ -77,6 +77,9 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.PROJECT_RETRIEVE_ADDRESS = "/service/getprojectlist";
 		constants.CHECK_USER_DETAILS_ADDRESS = "/service/userdetails";
 		constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject";
+
+		constants.VALIDATE_LDAP_EMAIL = "/service/validate-ldap-email";
+			
 
 		constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
 		constants.IMAGES_FOLDER_NAME = "/images";
@@ -155,10 +158,14 @@ services.factory('CSInterface',[function(){
 }]);
 
 
-services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher', function($location,$route, CSInterface, AppWatcher){
+services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher','Config', function($location,$route, CSInterface, AppWatcher, Config){
 	var utils={};
 
 	utils.loggedOut=false;
+
+	utils.previousView="";
+	utils.loginView="";
+	
 
 	utils.initializationDone=function(){
 
@@ -188,8 +195,14 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	};
 	utils.configloaded=function(){
 		console.log("Config Loaded  "+(new Date()).getTime());
-		$location.path('login');
 		$route.reload();
+		if(Config.companyEmail&&Config.companyEmail.length>0){
+			$location.path('LDAPLogin');
+		}
+		else{
+			$location.path('login');		
+		}
+		
 	};
 	utils.userLoggedIn=function(){
 		console.log("user logged in  "+(new Date()).getTime());
@@ -202,12 +215,34 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		CSInterface.dispatchEvent(event);
 		this.loggedOut=false;
 		console.log('user Logged in');
+		this.loginView=$location.path().substr(1);
 		$location.path('projects');
 	};
 
 	utils.userLoggedOut=function(){
 		this.loggedOut=true;
-		$location.path('login');
+		$location.path(this.loginView);
+	};
+	
+	utils.configureLDAP=function(){
+		this.previousView=$location.path().substr(1);
+		$location.path('configureLDAP');
+	};
+	
+	utils.gotoPreviousView=function(){
+		$location.path(this.previousView);
+	};
+	
+	utils.LDAPConfigDone=function(){
+		$route.reload();
+		console.log(Config.companyEmail);
+		if(Config.companyEmail!==""){
+			$location.path('LDAPLogin');
+		}
+		else{
+			$location.path('login');
+		}
+		//$route.reload();
 	};
 
 	return utils;
@@ -335,6 +370,9 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.userid="";
 	config.firstname="";
 
+	config.companyEmail="";
+	
+
 	/*
 		Read from the config file and update config values
 	*/
@@ -376,7 +414,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 			deferred.resolve(100);
 		}
 		else if(Config.keepMeLoggedIn=="true"){
-			utils.login(Config.username, Config.password)
+			utils.login(Config.username, Config.password, Config.companyEmail)
 			.then(function(data){
 				console.log(data);
 				if(data.Msg=="Error: Authentication failed"){
@@ -402,13 +440,17 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 
 	};
 
-	utils.login=function(username, password){
+	
+	utils.login=function(username, password, companyEmail){
+
 		var deferred=$q.defer();
 		if(username=='undefined'){username=Config.username;}
 		if(password=='undefined'){password=Config.password;}
+		if(companyEmail=='undefined'){companyEmail="";}
 		var params=[];
 		params['username']=username;
 		params['password']=password;
+		params['companyEmail']=companyEmail;
 		params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
 
 		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
@@ -723,7 +765,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 		});
 		var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");
 		// Set Event properties: extension id
-		event.extensionId = "TimeTracker_.extension1";
+		event.extensionId = Constants.EXTENSION_ID;
 		//1935767141-save
 		//1332768288-open
 		//1131180832-close
@@ -739,6 +781,15 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 		unregisterPrevEvents();
 		$interval.cancel(promise_logUserActiveStatus);
 	};
+	
+	var unregisterPrevEvents= function(){
+	var event = new CSEvent("com.adobe.PhotoshopUnRegisterEvent", "APPLICATION");
+	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";
+	event.extensionId = Constants.EXTENSION_ID;
+	CSInterface.dispatchEvent(event);
+	console.log("Unregistering events");
+	};
+
 
 	var PSCallback=function(csEvent) {
         var dataArray = csEvent.data.split(",");
@@ -807,7 +858,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 				CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentName()',function(currentDocName){
 					if(currentDocName!=previousDocName){
 						previousDocName=currentDocName;
-						dispatchEvent('documentAfterActivate');
+						dispatchEvent('documentAfterActivate', Constants.EXTENSION_ID);
 					}
 				});
 
@@ -825,9 +876,9 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 
 
 
-function dispatchEvent(type){
+function dispatchEvent(type, extensionID){
 	console.log("Dispatching event"+type);
-	var event=new CSEvent(type, "APPLICATION", "PHXS", "TimeTracker_.extension1");
+	var event=new CSEvent(type, "APPLICATION", "PHXS", extensionID);
 	event.data="<"+type+" />";
 	new CSInterface().dispatchEvent(event);
 }
@@ -846,13 +897,6 @@ function documentSelected(){
 
 }
 
-function unregisterPrevEvents(){
-	var event = new CSEvent("com.adobe.PhotoshopUnRegisterEvent", "APPLICATION");
-	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";
-	event.extensionId = "TimeTracker_.extension1";
-	new CSInterface().dispatchEvent(event);
-	console.log("Unregistering events");
-}
 
 
 
