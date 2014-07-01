@@ -11,7 +11,7 @@
 function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface){
 	console.log("On Login Page");
 	preloader.hideLoading();
-	$scope.alert_message="Unknown error. Please contact us at support@creativeworx.com";
+	$scope.alert_message="Unknown error. Please contact us at support@creativeworx.com.";
 	$scope.showLogin=false;
 	$scope.modalShown=false;
 	$scope.keepLoggedIn='false';
