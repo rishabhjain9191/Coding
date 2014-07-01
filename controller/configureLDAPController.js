@@ -13,6 +13,11 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	preloader.hideLoading();
 	$scope.modalShown = false;
 	$scope.companyEmail="";
+	if(Config.companyEmail){
+		$scope.companyEmail=Config.companyEmail;
+	}
+	
+	
 	$scope.cancel=function(){
 		$scope.companyEmail="";
 		viewManager.gotoPreviousView();

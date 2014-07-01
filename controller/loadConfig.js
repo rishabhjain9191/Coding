@@ -6,10 +6,11 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
+
 app.controller('configLoader',['viewManager','$scope', '$rootScope', 'Constants','preloader', 'Config','debuggerUtils','CSInterface',
 function(viewManager, $scope, $rootScope, Constants, preloader, Config, debuggerUtils,CSInterface){
 	CSInterface.evalScript('$._extXML.readConfig()', function(data){
+
 			if(data != "false"){
 				Config.data=JSON.parse(data);
 				Constants.update(Config.data);

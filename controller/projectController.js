@@ -21,9 +21,9 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 		debuggerUtils.updateLogs("Project request attempt for [" +Config.username+ "]");
 		projectUtils.getProjects(Config.username, Config.password, Config.userid)
 		.then(function(data){
-			
+
 			$scope.projects=data;	// all the project details are saved in $scope.projects
-			console.log("Projects Lenght  : "+data.length);
+            debuggerUtils.updateLogs("[Project List]: "+ppProjectList($scope.projects).slice(0,-2));
 			projectUtils.selectProject();
 			preloader.hideLoading();
 			debuggerUtils.updateLogs("[ProjectResult]: Successfully fetched the projects for the user.");
@@ -33,14 +33,16 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 		}, function(data){
 			//On network Failure, show previous copy of projects
 			$scope.projects=projectUtils.projectsCopy;
-			console.log($scope.projects);
+			debuggerUtils.updateLogs("[Cached Project List]: "+ppProjectList($scope.projects).slice(0,-2));
+            debuggerUtils.updateLogs("[ProjectResult]: Network failure, showing cached projects list.");
+            // console.log($scope.projects);
 			preloader.hideLoading();
-			
+
 		});
 	};
-	//Setup Interval to read the unsend record file and try to send them.
+	//Setup Interval to read the unsend record file and try to send them. # Incorrect Documentation #
 	var promise_refreshProjects= $interval($rootScope.refreshProjects,Constants.REFRESH_PROJECT_INTERVAL);
-	
+
 	var deselectProject=function(){
 		//Remove XMP data of Project;
 		console.log("Deselecting Project");
@@ -138,12 +140,21 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			}
 		});
 	};
-	
-	
+
+    var ppProjectList=function(projList){
+        return projList.reduce(
+            function(prev, curr, index){
+                return prev+"["+(index+1)+"] "+curr.name+", ";
+            },
+            ""
+        );
+    };
+
+
 	$rootScope.openHomePage=function(projectId){
 		CSInterface.openURLInDefaultBrowser(Constants.URL_SERVICE);
 	};
-	
+
 	$scope.checkSelected=function(projectId){
 		if(projectId==projectUtils.getCurrentProjectId()){
 			return {'font-weight':'bold'};

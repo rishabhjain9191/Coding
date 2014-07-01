@@ -81,9 +81,9 @@
 			return "";
 		}
     },
-	
+
 	setTagValue : function(tag, value) {
-        if(!this.isExists){
+        if(!this.isExists()){
            return false;
 		}
 		else{

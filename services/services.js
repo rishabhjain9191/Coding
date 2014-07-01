@@ -5,21 +5,21 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
+
 var services=angular.module('TTServices',[]);
 
 services.factory('Constants',['CSInterface',function(CSInterface){
-	
+
 	var constants={};
-	
-	
+
+
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.1.0";
+		constants.EXTENSION_VERSION_NUMBER = "2.0.3.2";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
-		
+
 		constants.CW_NAMESPACE_NAME = "creativeworx";
 		constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
-			
+
 		constants.STATUS_NEW = "NEW";
 		constants.STATUS_ATTEMPTED = "ATTEMPTED";
 		constants.STATUS_TRANSFERRED = "TRANSFERRED";
@@ -55,11 +55,11 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 			"#5D5D5D", //23
 			"#999999"  //24
 		];
-			
+
 		constants.TIMEINTERVAL = 1000*60*4; 	// Default send data time interval of 4 minutes
 		constants.TIMEINTERVAL_MIN = 1000; 		// Minimum time inteval 1 second in milliseconds
 		constants.TIMEINTERVAL_MAX = 1000*60*60;// Maximum time interval1 hour in milliseconds
-		constants.BATCH_SIZE = 5; 				// Default number of events to send to server 
+		constants.BATCH_SIZE = 5; 				// Default number of events to send to server
 		constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
 		constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
 		constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
@@ -67,9 +67,9 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.THRESHOLD_COUNT = 100;
 		constants.APP_EVENT_POLL = 5000; 		// How frequently to check for events in the app
 		constants.REFRESH_PROJECT_INTERVAL = 5*60*1000;
-		
+
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
-			
+
 		constants.BATCHDATA_SEND_ADDRESS = "/service/log";
 		constants.CHECK_STATUS_ADDRESS = "/service/checkstatus";
 		constants.FILE_UPLOAD_ADDRESS = "/service/fileupload";
@@ -77,20 +77,22 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.PROJECT_RETRIEVE_ADDRESS = "/service/getprojectlist";
 		constants.CHECK_USER_DETAILS_ADDRESS = "/service/userdetails";
 		constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject";
+
 		constants.VALIDATE_LDAP_EMAIL = "/service/validate-ldap-email";
 			
+
 		constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
 		constants.IMAGES_FOLDER_NAME = "/images";
 		constants.DATABASE_FILE_NAME = "CreativeWorx.db";
-			
+
 		constants.LOG_ENABLE = true;
 		constants.USERNAME = "creativeworx";
 		constants.PASSWORD = "creativeworx";
-			
+
 		constants.EVENT_DOCUMENT_OPEN = "documentOpen";
 		constants.EVENT_DOCUMENT_CLOSE = "documentClose";
 		constants.EVENT_PROJECT_SELECTED = "projectedSelected";
-			
+
 		// URL for Links
 		constants.URL_SITE = "http://www.creativeworx.com";
 		constants.URL_TERMS_OF_SERVICE = "/terms.php";
@@ -98,22 +100,22 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.URL_SIGNUP = "/signup?plan=ext";
 		constants.URL_BETA_FEEDBACK = "/betaFeedback.php";
 		constants.URL_FORGOT_LOGIN = "/user/forgotpassword";
-		
+
 		constants.FILENAME_EXTENSION =   "TimeTracker.zxp";
-		
+
 		constants.URL_UPDATE = "http://www.creativeworx.com";
 		constants.URL_DOWNLOAD = "/downloads/timetracker/TimeTracker";
 		constants.URL_ZXP_DOWNLOAD = "/downloads/timetracker/" + constants.FILENAME_EXTENSION;
 		constants.URL_ZIP_DOWNLOAD = "/downloads/timetracker/TimeTracker.zip";
 		constants.URL_VERSION = "/downloads/timetracker/TimeTrackerUpdate.xml";
-			
+
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
-		
-		
-	
-		
-	
+
+
+
+
+
 	constants.update=function(configData){
 		if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
 		if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
@@ -129,7 +131,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		if(configData.logEnabled) this.LOG_ENABLE=configData.logEnabled;
 		//(configData.configversion)?this.URL_SERVICE=configData.configversion;
 	};
-	
+
 	var OSVersion=CSInterface.getOSInformation();
 	if (OSVersion.indexOf("Windows") >= 0)
     {
@@ -139,8 +141,8 @@ services.factory('Constants',['CSInterface',function(CSInterface){
     {
       constants.OS="Macintosh";
     }
-	
-		
+
+
 	return constants;
 }]);
 
@@ -158,22 +160,24 @@ services.factory('CSInterface',[function(){
 
 services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher','Config', function($location,$route, CSInterface, AppWatcher, Config){
 	var utils={};
-	
+
 	utils.loggedOut=false;
+
 	utils.previousView="";
 	utils.loginView="";
 	
+
 	utils.initializationDone=function(){
-		
+
 		console.log("initializationDone  "+(new Date()).getTime());
 		console.log($location.path());
 		$location.path('checkForFlashVersion');
 		$route.reload();
 		//this.updateDone();
 	};
-	
+
 	utils.checkForFlashVersionDone=function(){
-		
+
 		console.log("Checked for falsh version  "+(new Date()).getTime());
 		$location.path('update');
 	};
@@ -202,7 +206,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	};
 	utils.userLoggedIn=function(){
 		console.log("user logged in  "+(new Date()).getTime());
-		//Add Event Listeners		
+		//Add Event Listeners
 		AppWatcher.addEventListeners();
 		//Trigger OnCreationComplete Event
 		var event=new CSEvent("onCreationComplete", "APPLICATION");
@@ -214,7 +218,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		this.loginView=$location.path().substr(1);
 		$location.path('projects');
 	};
-	
+
 	utils.userLoggedOut=function(){
 		this.loggedOut=true;
 		$location.path(this.loginView);
@@ -240,9 +244,9 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		}
 		//$route.reload();
 	};
-	
+
 	return utils;
-	
+
 }]);
 
 
@@ -274,23 +278,23 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 			if(jsonObj.ExtensionUpdateInformation.download)
 			utils.downloadPath=jsonObj.ExtensionUpdateInformation.download;
 			deferred.resolve(1);
-			
+
 		})
 		.error(function(data){console.log(data);deferred.reject(0);})
-		
+
 		return deferred.promise;
 	};
-	
+
 	var isNewerVersion=function(candidateVersion){
 		var rtnBool = false;
-		
+
 		// Split the candidate version into number components
 		var candidateValues = candidateVersion.split(".");
 		var currentValues = Constants.EXTENSION_VERSION_NUMBER.split(".");
-		
+
 		// Validate candidate value, current value assumed to be correct
 		if (candidateValues.length >= 3) {
-			
+
 			if (  parseInt(candidateValues[0]) >  parseInt(currentValues[0]) ) {
 				rtnBool = true;
 			} else if (
@@ -306,22 +310,22 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 				( parseInt(candidateValues[0]) == parseInt(currentValues[0]) ) &&
 				( parseInt(candidateValues[1]) == parseInt(currentValues[1]) ) &&
 				( parseInt(candidateValues[2]) == parseInt(currentValues[2]) ) ) {
-				//TODO: check for various values like beta, final, test... What are the standards 
-				
+				//TODO: check for various values like beta, final, test... What are the standards
+
 			}
-		}	
-	
+		}
+
 	return rtnBool;
-	}	
-	
-	
+	}
+
+
 	utils.checkForUpdate=function(){
 		var deferred=$q.defer();
 		updateParamsUpdate().then(function(result){
 			/*Compare with Min. Version
 				Return Codes :
-				100 : Update Must 
-				200 : Update Optional 
+				100 : Update Must
+				200 : Update Optional
 				300 : User has the latest version or can't be updated right now
 			*/
 			console.log(utils.minVersion);
@@ -333,9 +337,9 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 			//If we failed to update the update parameters-Do Nothing (OR Recheck ??)
 			deferred.reject(-1);
 		});
-		
+
 		return deferred.promise;
-		
+
 	};
 	return utils;
 }]);
@@ -344,8 +348,8 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants, $q, debuggerUtils){
 	var config={};
 	config.data='';
-	
-	
+
+
 	config.serviceAddress = Constants.URL_SERVICE;
 	config.siteAddress = Constants.URL_SITE;
 	config.updateAddress = Constants.URL_UPDATE;
@@ -360,13 +364,15 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
 	config.logEnabled = Constants.LOG_ENABLE;
 	config.configversion = 1;
-	
+
 	config.username="";
 	config.password="";
 	config.userid="";
 	config.firstname="";
+
 	config.companyEmail="";
 	
+
 	/*
 		Read from the config file and update config values
 	*/
@@ -379,7 +385,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	return config;
 }]);
 
-	
+
 
 services.factory('preloader',['$rootScope',
 function($rootScope){
@@ -401,7 +407,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 	utils.loginResult='aa';
 	utils.tryLoginFromConfig=function(){
 		var deferred=$q.defer();
-		if(Config.keepMeLoggedIn=="false"){	
+		if(Config.keepMeLoggedIn=="false"){
 			/*
 				Fresh Login Required, 100-Fresh Login
 			*/
@@ -416,8 +422,8 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 				}
 				else{
 					//User Authenticated
-					console.log("User Authenticaed");
-					
+					console.log("User Authenticated");
+
 					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
 					$rootScope.LoggedInItems=true;
 					deferred.resolve(200);
@@ -426,15 +432,17 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 				deferred.resolve(100);
 			});
 		}
-		else{			
+		else{
 			deferred.resolve(100);
 		}
-		
+
 		return deferred.promise;
-			
+
 	};
+
 	
 	utils.login=function(username, password, companyEmail){
+
 		var deferred=$q.defer();
 		if(username=='undefined'){username=Config.username;}
 		if(password=='undefined'){password=Config.password;}
@@ -447,7 +455,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 
 		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
 		//var url="userDetails.json";
-		
+
 		var t1 = (new Date()).getTime();
 		$http.post(url, params)
 			.success(function(data,status){
@@ -475,13 +483,13 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 	utils.selectedProjectId=0;			//Project Clicked(Selected) Id
 	utils.selectedProjectIndex=-1;		//Project Clicked(Selected) Index
 	utils.currentProjectId=-1;			//Previously Selected(current) project
-	
+
 	utils.projectsCopy={};				//Stores latest retrieved projects list
-	
+
 	utils.reset=function(){
 		this.selectedProjectId=0;
 		this.selectedProjectIndex=-1;
-		this.currentProjectId=-1;	
+		this.currentProjectId=-1;
 	};
 	utils.changeStyleToSelected=function(index){
 		//Check if the project in XMP is not there in the user's project list
@@ -497,17 +505,17 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 		$rootScope.projectProperties[index].style.background="";
 		$rootScope.projectProperties[index].message="";
 	};
-	
+
 	utils.setCurrentProjectId=function(val){
 		this.currentProjectId=val;
 	};
 	utils.setSelectedProjectIndex=function(val){
 		this.selectedProjectIndex=val;
 	};
-	
+
 	utils.getSelectedProjectIndex=function(){
 		return (this.selectedProjectIndex);
-	};	
+	};
 	utils.getCurrentProjectId=function(){
 		return this.currentProjectId;
 	};
@@ -528,7 +536,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 		$http.post(url,params)
 		.success(function(data){
 			utils.projectIndexes={};
-			utils.projectsCopy=data;				//Save the freshly retrieved project list 
+			utils.projectsCopy=data;				//Save the freshly retrieved project list
 			for(var i=0;i<data.length;i++){
 				var pid=data[i].pid;
 				utils.projectIndexes[pid]=i;
@@ -544,7 +552,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 		})
 		return deferred.promise;
 	};
-	
+
 	utils.addProject=function(projectName, jobId, budgetHrs, color, colorindex){
 		var deferred=$q.defer();
 		var params=[];
@@ -554,13 +562,13 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 		params['budget']=budgetHrs;
 		params['color']=color;
 		params['colorindex']=colorindex;
-		
+
 		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
 		.success(function(data){deferred.resolve(data);})
 		.error(function(data){deferred.reject(data);})
 		return deferred.promise;
 	};
-	
+
 	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color, colorindex){
 		var deferred=$q.defer();
 		var params=[];
@@ -576,7 +584,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 		.error(function(data){deferred.reject(data);})
 		return deferred.promise;
 	};
-	
+
 	utils.selectProject=function(){
 		//Check the current document's XMP
 		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
@@ -595,7 +603,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 				$rootScope.$apply(function() {
 					if(utils.getSelectedProjectIndex()!=-1){
 						utils.changeStyleToDeselected(utils.getSelectedProjectIndex());
-						
+
 					}
 					if(data!=""/* ||data!="EvalScript error." */){
 						console.log("Data from project xmp : "+data);
@@ -603,12 +611,12 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 					}
 					utils.setSelectedProjectIndex(utils.projectIndexes[parseInt(data)]);
 					utils.setCurrentProjectId(parseInt(data));
-				});				
+				});
 			}
-		});		
-	};	
-	
-	
+		});
+	};
+
+
 	return utils;
 }]);
 
@@ -627,8 +635,8 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		CSInterface.removeEventListener('applicationActivate',onApplicationActivate);
 		CSInterface.removeEventListener('applicationBeforeQuit',onApplicationBeforeQuit);
 		watcherPS.remove();
-	};	
-	
+	};
+
 	utils.addEventListeners=function(){
 		//Define Event Listeners
 		CSInterface.addEventListener('documentAfterActivate', onDocumentAfterActivate);
@@ -640,7 +648,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		CSInterface.addEventListener('onCreationComplete', onCreationComplete);
 		watcherPS.init();
 	};
-	 
+
 	function onDocumentAfterDeactivate(event){
 		console.log(event.type);
 		CSInterface.evalScript('$._extcommon.checkDocLength()',function(data){
@@ -649,7 +657,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 			}
 		});
 	};
-	
+
 	function onProjectSelected(event){
 		Logger.log(event.type);
 	};
@@ -660,7 +668,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		console.log(event);
 		debuggerUtils.updateLogs(event.type);
 		projectUtils.selectProject();
-		Logger.log(event.type);		
+		Logger.log(event.type);
 	};
 	function onDocumentAfterSave(event){
 		console.log(event);
@@ -682,7 +690,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 				});
 			}
 		});
-			
+
 		}
 		if(projectUtils.getCurrentProjectId()!=0){
 			Logger.log(event.type);
@@ -694,8 +702,8 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	};
 	function onApplicationBeforeQuit(event){
 		Logger.log(event.type);
-	};  
-	
+	};
+
 	return utils;
 
 }]);
@@ -726,7 +734,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 				}
 				else{
 					console.log("User Not Active");
-				}				
+				}
 			}
 			//else, Log it as new entry and send user active event.
 			else{
@@ -734,30 +742,30 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 				console.log("Event trigerred: userActive");
 				//Logger.log("userActive");
 			}
-			
+
 			console.log(prevHistoryState);
-			
-		}); 
+
+		});
 	};
-	
+
 	//OnHold. For logging PS events: Make,Delete, Open, Close
 	var documentChanged = function(event){
 		console.log(event);
 		//Logger.log(event.type);
 	};
-	
+
 	var pswatcher={};
 	pswatcher.init=function(){
 		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*60*1000);
-		
+
 		unregisterPrevEvents();
-		
+
 		CSInterface.evalScript('app.activeDocument.historyStates[0].name',function(currentDoc){
 			previousDoc=currentDoc;
 		});
 		var event = new CSEvent("com.adobe.PhotoshopRegisterEvent", "APPLICATION");
 		// Set Event properties: extension id
-		event.extensionId = "TimeTracker_.extension1";
+		event.extensionId = Constants.EXTENSION_ID;
 		//1935767141-save
 		//1332768288-open
 		//1131180832-close
@@ -773,7 +781,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 		unregisterPrevEvents();
 		$interval.cancel(promise_logUserActiveStatus);
 	};
-	
+
 	var PSCallback=function(csEvent) {
         var dataArray = csEvent.data.split(",");
 		console.log(csEvent);
@@ -796,7 +804,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 						dispatchEvent('documentAfterActivate');
 				}});
 				break;
-			
+
 			case "1332768288":
 				console.log("Document Opened");
 				CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentName()',function(name){
@@ -807,8 +815,8 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 					dispatchEvent('documentAfterActivate');
 					previousDocTS=(new Date()).getTime().toString();
 				}); */
-				
-				
+
+
 				break;
 			case "1298866208":
 				console.log("new document");
@@ -830,38 +838,38 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 					dispatchEvent('documentAfterActivate');
 				}
 				}); */
-				
+
 				/* CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentTimeStamp()',function(currentDocTS){
 				if(currentDocTS!=previousDocTS){
 					previousDocTS=currentDocTS;
 					dispatchEvent('documentAfterActivate');
 				}
 				});  */
-				
+
 				CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentName()',function(currentDocName){
 					if(currentDocName!=previousDocName){
 						previousDocName=currentDocName;
 						dispatchEvent('documentAfterActivate');
 					}
 				});
-				
+
 			default:break;
-			
+
 		}
-        
+
     };
-	
+
 	return pswatcher;
 }]);
 
 
 
-	
 
-	
+
+
 function dispatchEvent(type){
 	console.log("Dispatching event"+type);
-	var event=new CSEvent(type, "APPLICATION", "PHXS", "TimeTracker_.extension1");
+	var event=new CSEvent(type, "APPLICATION", "PHXS", Constants.EXTENSION_ID);
 	event.data="<"+type+" />";
 	new CSInterface().dispatchEvent(event);
 }
@@ -873,17 +881,17 @@ function documentSelected(){
 		if(currentDoc!=previousDoc){
 		previousDoc=currentDoc;
 		return 1;
-		
+
 	}
 	else return 0;
 	});
-	
+
 }
 
 function unregisterPrevEvents(){
 	var event = new CSEvent("com.adobe.PhotoshopUnRegisterEvent", "APPLICATION");
-	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";	
-	event.extensionId = "TimeTracker_.extension1";
+	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";
+	event.extensionId = Constants.EXTENSION_ID;
 	new CSInterface().dispatchEvent(event);
 	console.log("Unregistering events");
 }
@@ -905,7 +913,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 		});
 
 	};
-	
+
 	var eventIdToName=function(event){
 		rtnString = event;
 		/*switch(eventType){
@@ -918,16 +926,16 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 			{
 				rtnString = Constants.EVENT_DOCUMENT_CLOSE; // "documentClose";
 				break;
-			}	
+			}
 			default:
 			{
 				break;
 			}
 		}
 		*/
-		return rtnString; 
+		return rtnString;
 	};
-	
+
 	var createLoggingData=function(eventType){
 		console.log("Creating Logging Data");
 		var addObj={};
@@ -958,14 +966,14 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 		};
 		addObj.jsonEventPackage=obj;
 		console.log(addObj);
-		DBHelper.addItemToEventLogTable(addObj);		
+		DBHelper.addItemToEventLogTable(addObj);
 	};
 	return utils;
 }]);
 
 services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Config, Constants, CSInterface){
 	var utils={};
-		 utils.defaultDocumentID = ""; //Used No where      
+		 utils.defaultDocumentID = ""; //Used No where
 		 utils.userID = "";
 		 utils.systemID = "";
 		 utils.projectID=0;
@@ -982,7 +990,7 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 		 utils.previewFile = null;
 		 utils.documentID="";
 
-	
+
 	/* Call JSX functions to get the required parameters for the document*/
 	utils.updateModel=function(data){
 		this.hostName=getHostName();
@@ -996,7 +1004,7 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 		this.userID=Config.data.userid;
 		this.eventStartTime = new Date();
 		this.eventEndTime = new Date();
-		
+
 	};
 	/* Return required parameters (getters)*/
 	getModel=function(){
@@ -1026,18 +1034,18 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 	getDocumentPath=function(){
 		CSInterface.evalScript('app.activeDocument.filePath', function(data){console.log(data);return data});
 	};
-	
+
 	return utils;
-	
+
 }]);
 
 
 services.factory('DBHelper',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface',
 function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
-	
+
 	//Open/Create the Log file(for unsent records)
 	CSInterface.evalScript('$._extFile.openFile()');
-	
+
 	var sendLoggedRecords=function(){
 		console.log("[syncRecordsTimerHandler]: Record are being fetched from local file and sending to server");
 		debuggerUtils.updateLogs("[syncRecordsTimerHandler]: Record are being fetched from local file and sending to server");
@@ -1045,11 +1053,11 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 			processAndSend(data);
 		});
 	};
-	
+
 	//Setup Interval to read the unsend record file and try to send them.
 	var promise_sendLoggedRecords= $interval(sendLoggedRecords,5*60*1000);
-	
-	
+
+
 	//Get the records, batch them if if size>batch size and then send them to server
 	var processAndSend=function(records){
 		//Check Record Size(if recordSize>batch size, break them into batches before sending)
@@ -1065,7 +1073,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 					rec[i].jsonEventPackage.event.hostName=atob(rec[i].jsonEventPackage.event.hostName);
 					//Done Decoding
 					rec[i].jsonEventPackage=JSON.stringify(rec[i].jsonEventPackage);
-					
+
 				}
 				send(JSON.stringify(rec));
 				console.log("send records\n");
@@ -1087,17 +1095,17 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 			}
 		}
 	};
-	
+
 	//Send the batched records to server, If records can't be sent, log them.
 	var send=function(batchedRecords){
 		//Send Batched Records to Server
 		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
 		var details={};
-		
+
 		details['data']=batchedRecords;
 		details['username']=Config.username;
 		details['password']=Config.password;
-		
+
 		$http.post(url,details)
 		.success(function(data){
 			//console.log(data);
@@ -1114,7 +1122,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 			logit(batchedRecords);
 		})
 	};
-	
+
 	//Log unsent events to the file
 	var logit=function(buffer){
 		debuggerUtils.updateLogs("Logging unsent events to local file");
@@ -1135,8 +1143,8 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 			CSInterface.evalScript('$._extFile.writeObj(\''+record+'\')');
 		}
 	};
-	
-	
+
+
 	dbhelper={};
 	var buffer=[];
 	//Buffer them till the buffer size and then sends them.
@@ -1146,7 +1154,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 			console.log(buffer);
 			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
 			buffer.push(obj);
-		}		
+		}
 		else{
 			//Send to server
 			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
@@ -1158,8 +1166,8 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 			//empty the buffer
 			buffer=[];
 		}
-	};			
-	return dbhelper;	
+	};
+	return dbhelper;
 }]);
 
 
@@ -1175,8 +1183,8 @@ function(Constants,$rootScope,CSInterface){
 			CSInterface.evalScript('$._extcommon.logToDebugFile(\''+str+statusText+'\')',function(){});
 		//});
 	};
-	
-	
+
+
 	return utils;
 }]);
 
@@ -1199,7 +1207,7 @@ function loadJSX() {
     var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/";
     csInterface.evalScript('$._ext.evalFiles("' + extensionRoot + '")');
 }
-	
+
 function evalScript(script, callback) {
 	new CSInterface().evalScript(script, callback);
 }

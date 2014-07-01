@@ -6,47 +6,51 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
- app.controller('loginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface){
+
+ app.controller('loginCtrl',['viewManager','$scope','$rootScope','$location','$http','Config','Constants','loginUtils','preloader','CSInterface','debuggerUtils',
+function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface, debuggerUtils){
 	console.log("On Login Page");
 	preloader.hideLoading();
-	$scope.alert_message="Username and Password cannot be left blank!";
+	$scope.alert_message="Unknown error. Please contact us at support@creativeworx.com";
 	$scope.showLogin=false;
-	$scope.modalShown = false;
-	$scope.keepLoggedIn='false';	
+	$scope.modalShown=false;
+	$scope.keepLoggedIn='false';
 	$scope.message="";
-	
-	if(!viewManager.loggedOut){
-		preloader.showLoading();
-		loginUtils.tryLoginFromConfig()
-		.then(function(res){
-		console.log("tryLoginFromConfig"+res);
-		switch(res){
-			case 100:$scope.showLogin=true;preloader.hideLoading();return
-			case 200:preloader.hideLoading();viewManager.userLoggedIn();return;
-		}
-		})
+	$scope.user={};
+	$scope.user.email="";
+	$scope.user.password="";
+
+    if(!viewManager.loggedOut){
+        preloader.showLoading();
+        loginUtils.tryLoginFromConfig()
+        .then(function(res){
+            console.log("tryLoginFromConfig"+res);
+            switch(res){
+                case 100:$scope.showLogin=true;preloader.hideLoading();return
+                case 200:preloader.hideLoading();viewManager.userLoggedIn();return;
+            }
+        })
 	}
 	else{
 		$scope.showLogin=true;
 		preloader.hideLoading();
 	}
-	
+
 	$scope.login=function(){
-		if($scope.user && $scope.user.email!="" && $scope.user.password!=""){	
+		if($scope.user.email!="" && $scope.user.password!=""){
+            debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
 			preloader.showLoading();
 			var hashedPassword=MD5($scope.user.password);
 			Config.username = $scope.user.email;
 			Config.password = hashedPassword;
-			
+
 			loginUtils.login($scope.user.email, hashedPassword)
 			.then(function(data){
 				preloader.hideLoading();
 				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
 				else{
 					//User Authenticated
-					
+
 					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
 					Config.data=data[0];
 					Config.keepMeLoggedIn=$scope.checked;
@@ -64,14 +68,15 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			});
 		}
 		else{
+            $scope.alert_message="Username and Password cannot be left blank!";
 			$scope.modalShown = true;
 		}
 	};
-	
+
 	$scope.signup=function(){
 		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_SIGNUP);
 	};
-	
+
 	$scope.forgetLogin=function(){
 		CSInterface.openURLInDefaultBrowser(Constants.URL_SERVICE + Constants.URL_FORGOT_LOGIN);
 	};
