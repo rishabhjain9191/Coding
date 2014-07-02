@@ -120,4 +120,49 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 	$scope.forgetLogin=function(){
 		CSInterface.openURLInDefaultBrowser(Constants.URL_SERVICE + Constants.URL_FORGOT_LOGIN);
 	};
+	
+	
+	
+		var exploreScope=function($scope){
+		console.log($scope);
+		console.log("1");
+		if(!$scope){
+			return;
+		}
+		if($scope.user){
+			console.log("parent User Found  " + $scope.user.email);
+			debuggerUtils.updateLogs("parent User Found  " + $scope.user.email);
+			
+		}
+		console.log("2");
+		if($scope.$$prevSibling){
+			var prevSibling=$scope.$$prevSibling
+			while(prevSibling){
+				console.log("prev");
+				if(prevSibling.user){
+					console.log("prev user Found  " + prevSibling.user.email);
+					debuggerUtils.updateLogs("prev user Found  " + prevSibling.user.email);
+				}
+				prevSibling=prevSibling.$$prevSibling;
+			}
+		}
+		console.log("3");
+		if($scope.$$nextSibling){
+			var nextSibling=$scope.$$nextSibling;
+			while(nextSibling!=null){
+			console.log("next");
+				if(nextSibling.user){
+					console.log("next user Found  " + nextSibling.user.email);
+					debuggerUtils.updateLogs("next user Found  " + nextSibling.user.email);
+				}
+				nextSibling=nextSibling.$$nextSibling;
+			}
+		}
+		if($scope.$parent)
+			exploreScope($scope.$parent);
+	};
+	
+	exploreScope($scope);
+	
+	
 }]);

@@ -18,7 +18,6 @@
 	$scope.project.jobId="JOB1";
 	$scope.project.budgetHrs="12";
 	
-	
 	$scope.colorBtnStyle={};
 	$scope.colorPreviewStyle={};
 	$scope.colorindex=0;
@@ -39,6 +38,10 @@
 	
 		
 	$scope.create=function(){
+		if($scope.project){
+			console.log("1 Project Found  " + $scope.project.name);
+		}
+		exploreScope($scope);
 		if($scope.project.name && $scope.project.name.length>=3){	
 			debuggerUtils.updateLogs("Creating new project: " + $scope.project.name);
 			preloader.showLoading();
@@ -121,4 +124,38 @@
 		$scope.colorindex=$scope.colors[index].colorindex;
 		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
 	}
+	
+	var exploreScope=function($scope){
+		console.log($scope);
+		console.log("1");
+		if(!$scope){
+			return;
+		}
+		if($scope.project){
+			console.log("parent Project Found  " + $scope.project.name);
+		}
+		console.log("2");
+		if($scope.$$prevSibling){
+			var prevSibling=$scope.$$prevSibling
+			while(prevSibling){
+				if(prevSibling.project){
+					console.log("prev Project Found  " + prevSibling.project.name);
+				}
+				prevSibling=prevSibling.$$prevSibling;
+			}
+		}
+		console.log("3");
+		if($scope.$$nextSibling){
+			var nextSibling=$scope.$$nextSibling;
+			while(nextSibling!=null){
+				if(nextSibling.project){
+					console.log("next Project Found  " + nextSibling.project.name);
+				}
+				nextSibling=nextSibling.$$nextSibling;
+			}
+		}
+		if($scope.$parent)
+			exploreScope($scope.$parent);
+	};
+	
 }]);
