@@ -11,7 +11,7 @@
 function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface, debuggerUtils){
 	console.log("On Login Page");
 	preloader.hideLoading();
-	$scope.alert_message="Unknown error. Please contact us at support@creativeworx.com";
+	$scope.alert_message="Unknown error. Please contact us at support@creativeworx.com.";
 	$scope.showLogin=false;
 	$scope.modalShown=false;
 	$scope.keepLoggedIn='false';
@@ -26,8 +26,8 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
         .then(function(res){
             console.log("tryLoginFromConfig"+res);
             switch(res){
-                case 100:$scope.showLogin=true;preloader.hideLoading();return
-                case 200:preloader.hideLoading();viewManager.userLoggedIn();return;
+                case 100:$scope.showLogin=true;preloader.hideLoading();break;
+                case 200:preloader.hideLoading();viewManager.userLoggedIn();break;
             }
         })
 	}
@@ -37,8 +37,13 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 	}
 
 	$scope.login=function(){
-		if($scope.user.email!="" && $scope.user.password!=""){
-            debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
+		console.log($scope);
+		console.log($scope.user.email);
+		debuggerUtils.updateLogs("Login Attempt With User: " + $scope.user.email);
+		console.log($scope.user.password);
+		debuggerUtils.updateLogs("Login Attempt With Password: " + $scope.user.password);
+		/*if($scope.user.email!="" && $scope.user.password!=""){
+		debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
 			preloader.showLoading();
 			var hashedPassword=MD5($scope.user.password);
 			Config.username = $scope.user.email;
@@ -66,7 +71,42 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 				preloader.hideLoading();
 				$scope.message="Unable to communicate with server";
 			});
+		}*/
+		var user_password=$('#user_password').val();
+		var user_email=$('#user_email').val();
+		
+		if(user_email!="" && user_password!=""){
+            debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
+			preloader.showLoading();
+			var hashedPassword=MD5(user_password);
+			Config.username = user_email;
+			Config.password = hashedPassword;
+
+			loginUtils.login(user_email, hashedPassword)
+			.then(function(data){
+				preloader.hideLoading();
+				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
+				else{
+					//User Authenticated
+
+					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
+					Config.data=data[0];
+					Config.keepMeLoggedIn=$scope.checked;
+					Config.userid=Config.data.userid;
+					Config.firstname=Config.data.firstname;
+					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+					});
+					//Config.updateConfig();
+					$rootScope.LoggedInItems=true;
+					viewManager.userLoggedIn();
+				}
+			},function(error){
+				preloader.hideLoading();
+				$scope.message="Unable to communicate with server";
+			});
 		}
+		
+		
 		else{
             $scope.alert_message="Username and Password cannot be left blank!";
 			$scope.modalShown = true;

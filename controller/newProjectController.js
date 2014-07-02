@@ -14,6 +14,11 @@
 	(constants.COLOR_MODE=="user_selectable")?$scope.showAllColors=true:$scope.showAllColors=false;
 		
 	$scope.project={};
+	$scope.project.name="New Project";
+	$scope.project.jobId="JOB1";
+	$scope.project.budgetHrs="12";
+	
+	
 	$scope.colorBtnStyle={};
 	$scope.colorPreviewStyle={};
 	$scope.colorindex=0;
