@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.3.2";
+		constants.EXTENSION_VERSION_NUMBER = "2.0.4.1";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -79,7 +79,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject";
 
 		constants.VALIDATE_LDAP_EMAIL = "/service/validate-ldap-email";
-			
+
 
 		constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
 		constants.IMAGES_FOLDER_NAME = "/images";
@@ -165,7 +165,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 
 	utils.previousView="";
 	utils.loginView="";
-	
+
 
 	utils.initializationDone=function(){
 
@@ -200,9 +200,9 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 			$location.path('LDAPLogin');
 		}
 		else{
-			$location.path('login');		
+			$location.path('login');
 		}
-		
+
 	};
 	utils.userLoggedIn=function(){
 		console.log("user logged in  "+(new Date()).getTime());
@@ -223,16 +223,16 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		this.loggedOut=true;
 		$location.path(this.loginView);
 	};
-	
+
 	utils.configureLDAP=function(){
 		this.previousView=$location.path().substr(1);
 		$location.path('configureLDAP');
 	};
-	
+
 	utils.gotoPreviousView=function(){
 		$location.path(this.previousView);
 	};
-	
+
 	utils.LDAPConfigDone=function(){
 		$route.reload();
 		console.log(Config.companyEmail);
@@ -371,7 +371,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.firstname="";
 
 	config.companyEmail="";
-	
+
 
 	/*
 		Read from the config file and update config values
@@ -440,7 +440,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 
 	};
 
-	
+
 	utils.login=function(username, password, companyEmail){
 
 		var deferred=$q.defer();
@@ -781,7 +781,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 		unregisterPrevEvents();
 		$interval.cancel(promise_logUserActiveStatus);
 	};
-	
+
 	var unregisterPrevEvents= function(){
 	var event = new CSEvent("com.adobe.PhotoshopUnRegisterEvent", "APPLICATION");
 	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";
