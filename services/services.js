@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.4.2";
+		constants.EXTENSION_VERSION_NUMBER = "2.0.6.1";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -25,7 +25,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.STATUS_TRANSFERRED = "TRANSFERRED";
 		constants.IMAGE_STATUS_NEW = "NEW";
 		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
-		constants.IMAGE_STATUS_NOIMAGE = "NONE"
+		constants.IMAGE_STATUS_NOIMAGE = "NONE";
 		constants.IMAGE_STATUS_ERROR = "ERROR";
 		constants.COLOR_MODE = "user_selectable";
 		constants.PROJECT_COLORS= [
