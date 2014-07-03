@@ -13,7 +13,10 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	preloader.hideLoading();
 	$scope.modalShown = false;
 	$scope.companyEmail="";
-	if(Config.companyEmail){
+	
+	
+	if(Config.companyEmail&&Config.companyEmail!='0'){
+		
 		$scope.companyEmail=Config.companyEmail;
 	}
 	
@@ -27,8 +30,57 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		$scope.companyEmail="";
 	};
 	
+	
+	/* JQ Save function*/
 	$scope.saveCompanyEmail=function(){
 		preloader.showLoading();
+		var companyEmail=$('#LDAPcompanyEmail').val();
+		if(companyEmail==""){
+			Config.companyEmail="";
+			CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+				resultWrittentoConfig();
+				});
+		}
+		else{
+		
+			var deferred=$q.defer();
+			var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
+			
+			var params=[];
+			params['email']=companyEmail;
+			$http.post(url,params)
+			.success(function(data){
+				if(data.success){
+					Config.companyEmail=companyEmail;
+					Config.companyName=data.success;
+					
+				}
+				else{
+					Config.companyEmail=0;
+					
+				}
+				
+				CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+					resultWrittentoConfig();
+					
+				});
+				
+				
+			})
+			.error(function(data){
+				preloader.hideLoading();
+				console.log(data);
+				$scope.alert_message="Server Offline."
+				$scope.modalShown=true;
+			})
+			return deferred.promise;
+		}
+	}
+	
+	/* Angular Save function
+	$scope.saveCompanyEmail=function(){
+		preloader.showLoading();
+		
 		if($scope.companyEmail==""){
 			Config.companyEmail="";
 			CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
@@ -70,6 +122,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			return deferred.promise;
 		}
 	};
+	*/
 	
 	var resultWrittentoConfig=function(){
 		console.log("Result written in config");

@@ -52,6 +52,55 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		preloader.hideLoading();
 	}
 	
+	
+	
+	/* JQ Implementation*/
+	$scope.login=function(){
+		
+		var company_password=$('#company_password').val();
+		var company_email=$('#company_email').val();
+		var keepMeLoggedIn=$('#keepMeLoggedIn').prop('checked');
+		
+		if(company_email!="" && company_password!=""){	
+			preloader.showLoading();
+			var hashedPassword=MD5(company_password);
+			Config.username = company_email;
+			Config.password = hashedPassword;
+				
+			loginUtils.login(company_email, hashedPassword, Config.companyEmail)
+			.then(function(data){
+				preloader.hideLoading();
+				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
+				else{
+					//User Authenticated
+					
+					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
+					Config.data=data[0];
+					Config.keepMeLoggedIn=$scope.checked;
+					Config.userid=Config.data.userid;
+					Config.firstname=Config.data.firstname;
+					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+					});
+					//Config.updateConfig();
+					$rootScope.LoggedInItems=true;
+					viewManager.userLoggedIn();
+				}
+			},function(error){
+				preloader.hideLoading();
+				$scope.message="Unable to communicate with server";
+			});
+		}
+		else{
+			$scope.modalShown = true;
+		}
+	};
+	
+	
+	
+	
+	
+	
+	/* Angular Implementation
 	$scope.login=function(){
 		if($scope.user && $scope.user.email!="" && $scope.user.password!=""){	
 			preloader.showLoading();
@@ -86,6 +135,8 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			$scope.modalShown = true;
 		}
 	};
+	*/
+	
 	
 	
 }]);

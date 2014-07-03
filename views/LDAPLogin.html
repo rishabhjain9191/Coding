@@ -5,12 +5,12 @@
 	<div class="message">{{message}}</div>
 	<form name='loginUser' id="loginForm">
 		<div>	
-			<input ng-click="message=''"  class="text stretch" type='text' placeholder='Company Email' ng-model='user.email' />
-			<input ng-click="message=''"  class="stretch text" type='password' placeholder='Company Password' ng-model='user.password' />
+			<input ng-click="message=''"  class="text stretch" type='text' placeholder='Company Email' ng-model='user.email' id="company_email"/>
+			<input ng-click="message=''"  class="stretch text" type='password' placeholder='Company Password' ng-model='user.password' id="company_password" />
 		</div>	
 		<div class="stretch attr" style="font-size:10px">
 			<div style="float: left; ">
-				<input type='checkbox' ng-model='checked' ng-init="checked=true" > Keep me logged in</input>
+				<input type='checkbox' ng-model='checked' ng-init="checked=true" id="keepMeLoggedIn"> Keep me logged in</input>
 			</div>
 			
 		</div>

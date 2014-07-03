@@ -74,6 +74,9 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		}*/
 		var user_password=$('#user_password').val();
 		var user_email=$('#user_email').val();
+		var keepMeLoggedIn=$('#keepMeLoggedIn').prop('checked');
+		
+		console.log(keepMeLoggedIn);
 		
 		if(user_email!="" && user_password!=""){
             debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
@@ -91,7 +94,10 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 
 					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
 					Config.data=data[0];
-					Config.keepMeLoggedIn=$scope.checked;
+					
+					console.log(keepMeLoggedIn);
+					Config.keepMeLoggedIn=keepMeLoggedIn;
+					//Config.keepMeLoggedIn=$scope.checked;
 					Config.userid=Config.data.userid;
 					Config.firstname=Config.data.firstname;
 					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){

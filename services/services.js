@@ -425,6 +425,8 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 					console.log("User Authenticated");
 
 					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
+					Config.firstname=data[0].firstname;
+					Config.userid=data[0].userid;
 					$rootScope.LoggedInItems=true;
 					deferred.resolve(200);
 				}

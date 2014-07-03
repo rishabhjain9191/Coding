@@ -42,6 +42,60 @@
 			console.log("1 Project Found  " + $scope.project.name);
 		}
 		exploreScope($scope);
+		
+		var newProjectName=$('#newProject_projectName').val();
+		var newProjectJobId=$('#newProject_jobId').val();
+		var newProjectBudget=$('#newProject_budget').val();
+		
+		console.log("color Panel value"+$('#preselectedColorPanel').val());
+		
+		if(newProjectName && newProjectName.length>=3){	
+			debuggerUtils.updateLogs("Creating new project: " + newProjectName);
+			preloader.showLoading();
+			var jobId,budgetHrs,color;
+				
+				var name=newProjectName;
+				(newProjectJobId)?(jobId=newProjectJobId):(jobId="");
+				(newProjectBudget)?(budgetHrs=newProjectBudget):(budgetHrs="");
+				/* Angular Code*/
+				//color=$scope.targetColor;
+				
+				/* JQuery Code for picking the color from full RGB Box*/
+				var color="";
+				if($(".sp-preview-inner")){
+				
+				var colorRGB = $(".sp-preview-inner").css('backgroundColor');
+				color=hexc(colorRGB);
+				}
+				/* end JQuery Code*/
+				($scope.colorindex!==null)?(colorIndex=$scope.colorindex):(colorIndex=0);
+				
+				
+				projectUtils.addProject(name, jobId, budgetHrs, color, colorIndex)
+				.then(function(data){
+					preloader.hideLoading();
+					$scope.message=data.Msg;
+					if(data.IsSuccess){
+						debuggerUtils.updateLogs("[CreateProjectResult]: Successfully created new project.");
+						$location.path('projects');
+					}
+					else{
+						debuggerUtils.updateLogs("[NewProjectResult]: data.result returned 'Error:'"+data.Msg);
+						$scope.message=data.Msg;
+					}
+				}, function(data){
+					preloader.hideLoading();
+					(data)?$scope.message=data.Msg:$scope.message=Messages.networkError;
+				});
+			
+		}
+		else{
+			$scope.message="Project name requires 3 characters."
+		}
+		
+		
+		//Angular Code
+		/*
 		if($scope.project.name && $scope.project.name.length>=3){	
 			debuggerUtils.updateLogs("Creating new project: " + $scope.project.name);
 			preloader.showLoading();
@@ -73,6 +127,8 @@
 		else{
 			$scope.message="Project name requires 3 characters."
 		}
+		
+		*/
 	},
 	$scope.cancel=function(){
 		$location.path('projects');
@@ -159,3 +215,5 @@
 	};
 	
 }]);
+
+
