@@ -44,8 +44,13 @@
 		$scope.colorBtnStyle.background=$scope.project.colorcode;
 		$scope.colorPreviewStyle.background=$scope.project.colorcode;
 	};
-	var newName, newJobId, newColorCode, newBudget;
-	$scope.save=function(){
+	var newName="", newJobId="", newColorCode="", newBudget="", newColorIndex="";
+	
+	
+//Angular Save Function	
+/* 	$scope.save=function(){
+		
+		
 		if($scope.name && $scope.name.length>=3){
 			debuggerUtils.updateLogs("Saving updated project information for: " + $scope.name + " " + $scope.project.projectid);
 			preloader.showLoading();
@@ -68,6 +73,56 @@
 					$scope.message=data.Msg;
 				}
 			}, function(data){
+				debuggerUtils.updateLogs("[EditProject]: Edit Failed: "+data/*todo);
+				preloader.hideLoading();
+				$scope.message=Messages.networkError;
+			});
+		}
+		else{
+			$scope.message="Project name requires 3 characters."
+		}
+	}, */
+	
+	
+	
+	$scope.save=function(){
+			
+		newName=$('#editProject_projectName').val();
+		newJobId=$('#editProject_jobId').val();
+		newBudget=$('#editProject_budget').val();
+		($scope.project.color)?(newColorIndex=$scope.project.color):(newColorIndex="");
+		
+		/* JQuery Code for picking the color from full RGB Box*/
+				
+				if($(".sp-preview-inner")){
+				
+				var colorRGB = $(".sp-preview-inner").css('backgroundColor');
+				newColorCode=hexc(colorRGB);
+				}
+				/* end JQuery Code*/
+		
+		console.log("Editing Project started : "+newName+newJobId+newBudget + newColorCode);
+		
+		if(newName && newName.length>=3){
+			debuggerUtils.updateLogs("Saving updated project information for: " + newName + " " + $scope.project.projectid);
+			preloader.showLoading();
+			var projectId=$scope.project.projectid;
+			
+			console.log("Editing Project : "+newName+newJobId+newBudget);
+			
+			projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode, newColorIndex)
+			.then(function(data){
+				preloader.hideLoading();
+				console.log(data);
+				if(data.IsSuccess){
+					debuggerUtils.updateLogs("[EditProjectResult]: Successfully edited the project.");
+					$location.path('projects');
+				}
+				else{
+					debuggerUtils.updateLogs("[EditProjectResult]: data.result returned 'Error:'"+data.Msg);
+					$scope.message=data.Msg;
+				}
+			}, function(data){
 				debuggerUtils.updateLogs("[EditProject]: Edit Failed: "+data/*todo*/);
 				preloader.hideLoading();
 				$scope.message=Messages.networkError;
@@ -77,6 +132,8 @@
 			$scope.message="Project name requires 3 characters."
 		}
 	},
+	
+	
 	
 	$scope.cancel=function(){
 		$location.path('projects');

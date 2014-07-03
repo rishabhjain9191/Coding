@@ -8,11 +8,11 @@
 	<div class="project">
 		<div class="group">
 			<label for="projectName">Project name</label><br/>
-			<input ng-click="message=''" class="ptext" id="projectName" ng-model="name" />
+			<input ng-click="message=''" class="ptext" id="editProject_projectName" ng-model="name" />
 		</div >
 		<div class="group">
 			<label for="jobId">Job ID</label><br/>
-			<input ng-click="message=''" class="ptext" id="jobId" ng-model="project.jobid" />
+			<input ng-click="message=''" class="ptext" id="editProject_jobId" ng-model="project.jobid" />
 		</div>
 		<div class="group">
 			<div class="colorDiv" style="float: left; width: 45px;">
@@ -28,7 +28,7 @@
 			</div>
 			<div style="float: left; width: 73%; margin-left: 3px;">
 				<span>Budget (in hours)</span>
-				<input ng-click="message=''" class="budget" ng-model="project.budget" />
+				<input ng-click="message=''" class="budget" id="editProject_budget" ng-model="project.budget" />
 			</div>
 		</div>
 		<div class="stretch middle">
