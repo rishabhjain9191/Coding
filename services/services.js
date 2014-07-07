@@ -123,7 +123,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		if(configData.timeInterval) this.TIMEINTERVAL=configData.timeInterval;
 		if(configData.checkOnlineTimeInterval) this.CHECK_ONLINE_TIMEINTERVAL=configData.checkOnlineTimeInterval;
 		if(configData.imageTimeInterval) this.IMAGE_TIMEINTERVAL=configData.imageTimeInterval;
-		if(configData.batchSize) this.BATCH_SIZE=configData.batchSize;
+		//if(configData.batchSize) this.BATCH_SIZE=configData.batchSize;
 		if(configData.thresholdCount) this.THRESHOLD_COUNT=configData.thresholdCount;
 		if(configData.batchDataSendAddress) this.BATCHDATA_SEND_ADDRESS=configData.batchDataSendAddress;
 		if(configData.checkStatusAddress) this.CHECK_STATUS_ADDRESS=configData.checkStatusAddress;
@@ -1069,6 +1069,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 		var rec=[];
 		if(Records.length>1){
 			if(Records.length>=Constants.BATCH_SIZE){
+				console.log("Batching and sending offline records");
 				for(var i=0;i<Constants.BATCH_SIZE;i++){
 					rec.push((Records.splice(0,1))[0]);
 					//Decode documentName and documentPath and hostName
@@ -1112,16 +1113,18 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 
 		$http.post(url,details)
 		.success(function(data){
-			//console.log(data);
+			console.log("[Success]Records Send to server");
 			if(data=="Invalid event details."){
 				debuggerUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
 				logit(batchedRecords);
 			}
 			else{
+				console.log("Offline records successfully send to server");
 				debuggerUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
 			}
 		}
 		).error(function(data){
+			console.log("Error in sending records"+data);
 			debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
 			logit(batchedRecords);
 		})
@@ -1129,6 +1132,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 
 	//Log unsent events to the file
 	var logit=function(buffer){
+		console.log("Writing unsend records to database size : "+buffer.length);
 		debuggerUtils.updateLogs("Logging unsent events to local file");
 		var records=JSON.parse(buffer);
 		var record;
@@ -1153,8 +1157,11 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 	var buffer=[];
 	//Buffer them till the buffer size and then sends them.
 	dbhelper.addItemToEventLogTable=function(obj){
+		console.log("Adding item to event log table");
+		console.log("Batch Size= "+Constants.BATCH_SIZE);
 		if(buffer.length<Constants.BATCH_SIZE-1&&obj.jsonEventPackage.event.type!="documentAfterSave"){
 			console.log("Data Buffered");
+			console.log(buffer.length);
 			console.log(buffer);
 			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
 			buffer.push(obj);
