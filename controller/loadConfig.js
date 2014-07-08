@@ -9,11 +9,22 @@
 
 app.controller('configLoader',['viewManager','$scope', '$rootScope', 'Constants','preloader', 'Config','debuggerUtils','CSInterface',
 function(viewManager, $scope, $rootScope, Constants, preloader, Config, debuggerUtils,CSInterface){
+	console.log("In Load Config");
 	CSInterface.evalScript('$._extXML.readConfig()', function(data){
-
+			
 			if(data != "false"){
+				//If Config file is old version
 				Config.data=JSON.parse(data);
+				console.log(Config.data);
+				if(!Config.data.configversion||(Config.data.configversion<2)){
+					console.log("old version of config found");
+					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+						console.log("config version updated");
+					});
+				}
+				
 				Constants.update(Config.data);
+				
 				Config.username=Config.data.username;
 				Config.password=Config.data.password;
 				Config.keepMeLoggedIn=Config.data.keepMeLoggedIn;
@@ -21,6 +32,7 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 				Config.userid=Config.data.userid;
 				Config.companyEmail=Config.data.companyEmail;
 				Config.companyName=Config.data.companyName;
+				
 				debuggerUtils.updateLogs("Build : "+Constants.EXTENSION_VERSION_NUMBER);
 				console.log("Build : "+Constants.EXTENSION_VERSION_NUMBER);
 				debuggerUtils.updateLogs("==============");

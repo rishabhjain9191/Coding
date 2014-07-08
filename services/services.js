@@ -120,15 +120,15 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
 		if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
 		if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
-		if(configData.timeInterval) this.TIMEINTERVAL=configData.timeInterval;
-		if(configData.checkOnlineTimeInterval) this.CHECK_ONLINE_TIMEINTERVAL=configData.checkOnlineTimeInterval;
-		if(configData.imageTimeInterval) this.IMAGE_TIMEINTERVAL=configData.imageTimeInterval;
-		//if(configData.batchSize) this.BATCH_SIZE=configData.batchSize;
-		if(configData.thresholdCount) this.THRESHOLD_COUNT=configData.thresholdCount;
+		if(configData.timeInterval_html5) this.TIMEINTERVAL=configData.timeInterval_html5;
+		if(configData.checkOnlineTimeInterval_html5) this.CHECK_ONLINE_TIMEINTERVAL=configData.checkOnlineTimeInterval_html5;
+		if(configData.imageTimeInterval_html5) this.IMAGE_TIMEINTERVAL=configData.imageTimeInterval_html5;
+		if(configData.batchSize_html5) this.BATCH_SIZE=configData.batchSize_html5;
+		if(configData.thresholdCount_html5) this.THRESHOLD_COUNT=configData.thresholdCount_html5;
 		if(configData.batchDataSendAddress) this.BATCHDATA_SEND_ADDRESS=configData.batchDataSendAddress;
 		if(configData.checkStatusAddress) this.CHECK_STATUS_ADDRESS=configData.checkStatusAddress;
 		if(configData.fileUploadAddress) this.FILE_UPLOAD_ADDRESS=configData.fileUploadAddress;
-		if(configData.logEnabled) this.LOG_ENABLE=configData.logEnabled;
+		if(configData.logEnabled_html5) this.LOG_ENABLE=configData.logEnabled_html5;
 		//(configData.configversion)?this.URL_SERVICE=configData.configversion;
 	};
 
@@ -205,6 +205,8 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 
 	};
 	utils.userLoggedIn=function(){
+		console.log("Config used : ");
+		console.log(Config);
 		console.log("user logged in  "+(new Date()).getTime());
 		//Add Event Listeners
 		AppWatcher.addEventListeners();
@@ -353,25 +355,19 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.serviceAddress = Constants.URL_SERVICE;
 	config.siteAddress = Constants.URL_SITE;
 	config.updateAddress = Constants.URL_UPDATE;
-	config.timeInterval = Constants.TIMEINTERVAL;
-	config.checkOnlineTimeInterval = Constants.CHECK_ONLINE_TIMEINTERVAL;
-	config.imageTimeInterval = Constants.IMAGE_TIMEINTERVAL;
-	config.batchSize = Constants.BATCH_SIZE;
-	config.thresholdCount = Constants.THRESHOLD_COUNT;
+	config.timeInterval_html5 = Constants.TIMEINTERVAL;
+	config.checkOnlineTimeInterval_html5 = Constants.CHECK_ONLINE_TIMEINTERVAL;
+	config.imageTimeInterval_html5 = Constants.IMAGE_TIMEINTERVAL;
+	config.batchSize_html5 = Constants.BATCH_SIZE;
+	config.thresholdCount_html5 = Constants.THRESHOLD_COUNT;
 	config.batchDataSendAddress = Constants.BATCHDATA_SEND_ADDRESS;
 	config.checkStatusAddress = Constants.CHECK_STATUS_ADDRESS;
 	config.fileUploadAddress = Constants.FILE_UPLOAD_ADDRESS;
 	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
-	config.logEnabled = Constants.LOG_ENABLE;
-	config.configversion = 1;
+	config.logEnabled_html5 = Constants.LOG_ENABLE;
+	config.configversion = 2;
 
-	config.username="";
-	config.password="";
-	config.userid="";
-	config.firstname="";
-
-	config.companyEmail="";
-
+	
 
 	/*
 		Read from the config file and update config values

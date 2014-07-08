@@ -25,7 +25,7 @@
 		if(!this.isExists()){
 			return "false";
 		}
-		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval","serviceAddress","checkOnlineTimeInterval","imageTimeInterval","batchSize","thresholdCount","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled", "configversion", "companyEmail", "companyName"];
+		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval_html5","serviceAddress","checkOnlineTimeInterval_html5","imageTimeInterval_html5","batchSize_html5","thresholdCount_html5","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled_html5", "configversion", "companyEmail", "companyName"];
 		var obj = new Object();
 		var str="{";
 		for(var i=0;i<tags.length;i++){
@@ -50,20 +50,38 @@
 		}
 		else{
 			for (c in config) {
+				
 				if(c == "username")
 					this.setTagValue('username', config[c]);
-				if(c == "password")
+				else if(c == "password")
 					this.setTagValue('password', config[c]);
-				if(c == "keepMeLoggedIn")
+				else if(c == "keepMeLoggedIn")
 					this.setTagValue('keepMeLoggedIn', config[c]);
-				if(c == "firstname")
+				else if(c == "firstname")
 					this.setTagValue('firstname', config[c]);
-				if(c == "userid")
+				else if(c == "userid")
 					this.setTagValue('userid', config[c]);
-				if(c == "companyEmail")
+				else if(c == "companyEmail")
 					this.setTagValue('companyEmail', config[c]);
-				if(c == "companyName")
+				else if(c == "companyName")
 					this.setTagValue('companyName', config[c]);
+				
+				else if(c == "timeInterval_html5")
+					this.setTagValue('timeInterval_html5', config[c]);
+				else if(c == "checkOnlineTimeInterval_html5")
+					this.setTagValue('checkOnlineTimeInterval_html5', config[c]);
+				else if(c == "imageTimeInterval_html5")
+					this.setTagValue('imageTimeInterval_html5', config[c]);
+				else if(c == "batchSize_html5")
+					this.setTagValue('batchSize_html5', config[c]);
+				else if(c == "thresholdCount_html5")
+					this.setTagValue('thresholdCount_html5', config[c]);
+				else if(c == "logEnabled_html5")
+					this.setTagValue('logEnabled_html5', config[c]);
+				else if(c == "configversion")
+					this.setTagValue('configversion', config[c]);
+				
+
 			}		
 			return "file updated successfully";
 		}
