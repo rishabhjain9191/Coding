@@ -370,7 +370,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.logEnabled_html5 = Constants.LOG_ENABLE;
 	config.configversion = 2;
 
-	
+
 
 	/*
 		Read from the config file and update config values
@@ -451,7 +451,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 		var params=[];
 		params['username']=username;
 		params['password']=password;
-		params['companyEmail']=companyEmail;
+		params['email']=companyEmail;
 		params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
 
 		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
