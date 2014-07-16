@@ -1,5 +1,5 @@
 /**
- * editProjectController - checkForFlashVersion.js
+ * flashVersionChecker - checkForFlashVersion.js
  *
  * @category   CreativeWorx
  * @package    Extension

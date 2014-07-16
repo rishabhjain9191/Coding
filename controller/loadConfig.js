@@ -32,6 +32,7 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 				Config.userid=Config.data.userid;
 				Config.companyEmail=Config.data.companyEmail;
 				Config.companyName=Config.data.companyName;
+				Config.companyEmailValue=Config.data.companyEmailValue
 				
 				debuggerUtils.updateLogs("Build : "+Constants.EXTENSION_VERSION_NUMBER);
 				console.log("Build : "+Constants.EXTENSION_VERSION_NUMBER);

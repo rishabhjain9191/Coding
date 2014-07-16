@@ -162,6 +162,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	var utils={};
 
 	utils.loggedOut=false;
+	utils.loggedIn=false;
 
 	utils.previousView="";
 	utils.loginView="";
@@ -216,6 +217,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		event.data="<onCreationComplete />";
 		CSInterface.dispatchEvent(event);
 		this.loggedOut=false;
+		this.loggedIn=true;
 		console.log('user Logged in');
 		this.loginView=$location.path().substr(1);
 		$location.path('projects');
@@ -223,6 +225,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 
 	utils.userLoggedOut=function(){
 		this.loggedOut=true;
+		this.loggedIn=false;
 		$location.path(this.loginView);
 	};
 

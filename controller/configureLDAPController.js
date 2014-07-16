@@ -15,9 +15,9 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	$scope.companyEmail="";
 	
 	
-	if(Config.companyEmail&&Config.companyEmail!='0'){
+	if(Config.companyEmailValue&&Config.companyEmailValue.length>0){
 		
-		$scope.companyEmail=Config.companyEmail;
+		$scope.companyEmail=Config.companyEmailValue;
 	}
 	
 	
@@ -53,11 +53,11 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 				if(data.success){
 					Config.companyEmail=companyEmail;
 					Config.companyName=data.success;
-					
+					Config.companyEmailValue=companyEmail;
 				}
 				else{
 					Config.companyEmail=0;
-					
+					Config.companyEmailValue=companyEmail;
 				}
 				
 				CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
