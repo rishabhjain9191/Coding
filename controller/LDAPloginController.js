@@ -63,7 +63,8 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		
 		if(company_email!="" && company_password!=""){	
 			preloader.showLoading();
-			var hashedPassword=MD5(company_password);
+			//No hashing required for LDAP login
+			var hashedPassword=company_password;
 			Config.username = company_email;
 			Config.password = hashedPassword;
 				
