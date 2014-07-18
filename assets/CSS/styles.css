@@ -52,6 +52,9 @@ select{
 select option{
 	padding: 5px 0;
 }
+input::-webkit-input-placeholder{
+	font-style:italic;
+}
 
 .pointer{
 	cursor: pointer;

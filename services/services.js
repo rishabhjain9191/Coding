@@ -230,8 +230,10 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	};
 
 	utils.configureLDAP=function(){
+		$route.reload();
+		console.log("going to configure ldap");
 		this.previousView=$location.path().substr(1);
-		$location.path('configureLDAP');
+		$location.path('configureLDAP/false');
 	};
 
 	utils.gotoPreviousView=function(){
@@ -249,6 +251,12 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		}
 		//$route.reload();
 	};
+	
+	utils.LDAPLoginError=function(invalidEmail){
+		$route.reload();
+		var str='configureLDAP/'+invalidEmail;
+		$location.path(str);
+	}
 
 	return utils;
 
@@ -416,10 +424,12 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 			utils.login(Config.username, Config.password, Config.companyEmail)
 			.then(function(data){
 				console.log(data);
-				if(data.Msg=="Error: Authentication failed"){
-					deferred.resolve(100);
+				//LDAP email is wrong
+				if(data.error){
+					deferred.resolve(50);
 				}
-				else{
+				else if(data instanceof Array){
+					
 					//User Authenticated
 					console.log("User Authenticated");
 
@@ -428,6 +438,9 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 					Config.userid=data[0].userid;
 					$rootScope.LoggedInItems=true;
 					deferred.resolve(200);
+				}
+				else{
+					deferred.resolve(100);
 				}
 			},function(error){
 				deferred.resolve(100);

@@ -7,32 +7,51 @@
  * @license    All rights reserved.
  */
  
- app.controller('configureLDAPCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','$q',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface,$q){
+ app.controller('configureLDAPCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','$q', '$routeParams',
+function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface,$q, $routeParams){
 	console.log("On LDAP Config");
 	preloader.hideLoading();
 	$scope.modalShown = false;
 	$scope.companyEmail="";
 	
+	var image_error="./assets/images/question_mark.gif";
 	
-	if(Config.companyEmailValue&&Config.companyEmailValue.length>0){
+	$scope.ldap_message_image=image_error;
+	$scope.ldap_message="LDAP Credentials not found";
+	
+	$scope.showErrorMessage=false;
+					
+	if($routeParams.error!="false"){
+		$scope.showErrorMessage=true;
+		$scope.companyEmail=$routeParams.error;
+	}
+	
+	if(Config.companyEmail&&Config.companyEmail.length>0){
 		
-		$scope.companyEmail=Config.companyEmailValue;
+		$scope.companyEmail=Config.companyEmail;
 	}
 	
 	
 	$scope.cancel=function(){
+		
+		$scope.showErrorMessage=false;
 		$scope.companyEmail="";
+		Config.keepMeLoggedIn=false;
+		if($scope.showErrorMessage)
+			viewManager.LDAPConfigDone();
+		else
 		viewManager.gotoPreviousView();
 	};
 	
 	$scope.clear=function(){
+		$scope.showErrorMessage=false;
 		$scope.companyEmail="";
 	};
 	
 	
 	/* JQ Save function*/
 	$scope.saveCompanyEmail=function(){
+		$scope.showErrorMessage=false;
 		preloader.showLoading();
 		var companyEmail=$('#LDAPcompanyEmail').val();
 		if(companyEmail==""){
@@ -43,27 +62,32 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		}
 		else{
 		
-			var deferred=$q.defer();
-			var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
 			
+			
+			var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
+			//var url="LDAPlogin.json";
 			var params=[];
 			params['email']=companyEmail;
 			$http.post(url,params)
 			.success(function(data){
+				console.log(data);
 				if(data.success){
 					Config.companyEmail=companyEmail;
 					Config.companyName=data.success;
-					Config.companyEmailValue=companyEmail;
+					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+					resultWrittentoConfig();
+					});
 				}
 				else{
-					Config.companyEmail=0;
+					preloader.hideLoading();
+					Config.companyEmail="";
 					Config.companyEmailValue=companyEmail;
+					$scope.showErrorMessage=true;
+					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+					});
 				}
 				
-				CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
-					resultWrittentoConfig();
-					
-				});
+				
 				
 				
 			})
@@ -73,7 +97,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 				$scope.alert_message="Server Offline."
 				$scope.modalShown=true;
 			})
-			return deferred.promise;
+			
 		}
 	}
 	

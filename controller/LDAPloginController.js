@@ -18,7 +18,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	$scope.alert_message="Username and Password cannot be left blank!";
 	$scope.showLogin=false;
 	$scope.modalShown = false;
-	$scope.keepLoggedIn='false';	
+	$scope.keepLoggedIn=false;	
 	$scope.message="";
 	
 	var image_error="./assets/images/question_mark.gif";
@@ -26,7 +26,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	
 	if(Config.companyEmail=="0"){
 			$scope.ldap_message_image=image_error;
-			$scope.ldap_message="LDAP Credentials not found";
+			$scope.ldap_message="LDAP credentials not found";
 		}
 		else if(Config.companyEmail.length>1){
 			$scope.ldap_message_image=image_success;
@@ -40,8 +40,18 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		.then(function(res){
 		console.log("tryLoginFromConfig"+res);
 		switch(res){
-			case 100:$scope.showLogin=true;preloader.hideLoading();return
-			case 200:preloader.hideLoading();viewManager.userLoggedIn();return;
+			case 50:
+				//Go Back to LDAP Screen with an error message and wrong email in the box and clear this email address from the config
+				preloader.hideLoading();
+				var invalidEmail=Config.companyEmail;
+				Config.companyEmail="";
+				Config.keepMeLoggedIn=false;
+				CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+				});
+				viewManager.LDAPLoginError(invalidEmail);
+				break;
+			case 100:$scope.showLogin=true;preloader.hideLoading();break;
+			case 200:preloader.hideLoading();viewManager.userLoggedIn();break;
 		}
 		})
 	}
@@ -71,8 +81,17 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			loginUtils.login(company_email, hashedPassword, Config.companyEmail)
 			.then(function(data){
 				preloader.hideLoading();
-				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
-				else{
+				if(data.error){
+					//Go Back to LDAP Screen with an error message and wrong email in the box and clear this email address from the config
+					preloader.hideLoading();
+					var invalidEmail=Config.companyEmail;
+					Config.companyEmail="";
+					Config.keepMeLoggedIn='false';
+					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+					});
+					viewManager.LDAPLoginError(invalidEmail);
+				}
+				else if(data instanceof Array){
 					//User Authenticated
 					
 					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
@@ -86,6 +105,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 					$rootScope.LoggedInItems=true;
 					viewManager.userLoggedIn();
 				}
+				else if(data.Msg){$scope.message=data.Msg;}
 			},function(error){
 				preloader.hideLoading();
 				$scope.message="Unable to communicate with server";

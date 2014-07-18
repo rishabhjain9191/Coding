@@ -88,7 +88,7 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'flashVersionChecker',
 			templateUrl:'./views/flashVersionCheck.html'
 		})
-		.when('/configureLDAP',{
+		.when('/configureLDAP/:error',{
 			controller:'configureLDAPCtrl',
 			templateUrl:'./views/configureLDAP.html'
 		})
