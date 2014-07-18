@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
 
- app.controller('loginCtrl',['viewManager','$scope','$rootScope','$location','$http','Config','Constants','loginUtils','preloader','CSInterface','debuggerUtils',
-function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface, debuggerUtils){
+ app.controller('loginCtrl',['viewManager','$scope','$rootScope','$location','$http','Config','Constants','loginUtils','preloader','CSInterface','debuggerUtils','APIUtils',
+function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface, debuggerUtils, APIUtils){
 	console.log("On Login Page");
 	preloader.hideLoading();
 	$scope.alert_message="Unknown error. Please contact us at support@creativeworx.com.";
@@ -85,7 +85,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 			Config.username = user_email;
 			Config.password = hashedPassword;
 
-			loginUtils.login(user_email, hashedPassword)
+			APIUtils.login(user_email, hashedPassword,user_password)
 			.then(function(data){
 				preloader.hideLoading();
 				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}

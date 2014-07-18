@@ -7,7 +7,7 @@
  * @license    All rights reserved.
  */
  
- app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants','Messages',function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants,Messages){
+ app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants','Messages', 'APIUtils',function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants,Messages, APIUtils){
 	preloader.hideLoading();
 	
 	
@@ -71,7 +71,7 @@
 				($scope.colorindex!==null)?(colorIndex=$scope.colorindex):(colorIndex=0);
 				
 				
-				projectUtils.addProject(name, jobId, budgetHrs, color, colorIndex)
+				APIUtils.addProject(name, jobId, budgetHrs, color, colorIndex)
 				.then(function(data){
 					preloader.hideLoading();
 					$scope.message=data.Msg;

@@ -7,7 +7,7 @@
  * @license    All rights reserved.
  */
  
- app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants', 'Messages',function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants, Messages){
+ app.controller('editProjectController',['$scope', '$rootScope', 'projectUtils','Config','$location','preloader', 'debuggerUtils', 'Constants', 'Messages', 'APIUtils', function($scope, $rootScope, projectUtils, Config, $location,preloader,debuggerUtils, constants, Messages, APIUtils){
 
 	 preloader.hideLoading();
 	 
@@ -110,7 +110,7 @@
 			
 			console.log("Editing Project : "+newName+newJobId+newBudget);
 			
-			projectUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode, newColorIndex)
+			APIUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode, newColorIndex)
 			.then(function(data){
 				preloader.hideLoading();
 				console.log(data);

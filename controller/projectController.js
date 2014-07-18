@@ -88,16 +88,16 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			if(data==""){
 				projectUtils.setCurrentProjectId(0);
 			}
-			else{projectUtils.setCurrentProjectId(parseInt(data))};
+			else{projectUtils.setCurrentProjectId(parseInt(data));}
 			matchProjectIds();
 		});
-	} 
+	}; 
 	$rootScope.refreshProjects();
 	
 	$scope.processProjectClick=function(projectId, index){
 		CSInterface.evalScript('$._extcommon.checkDocLength()',function(data){
 			if(parseInt(data)){
-				processProject(projectId,index)
+				processProject(projectId,index);
 			}else{
 				$rootScope.$apply(function(){
 					$scope.alert_message="You need an open document before assigning the Project.";

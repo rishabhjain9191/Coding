@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
  
-app.controller('aboutCtrl',['$scope', '$location', 'Constants', '$window','CSInterface','Config',
-function($scope, $location, Constants, $window, CSInterface, Config){
+app.controller('aboutCtrl',['$scope', '$location', 'Constants', '$window','CSInterface','Config', 'viewManager', 
+function($scope, $location, Constants, $window, CSInterface, Config, viewManager){
 	
 	//Removing build from version number
 	var res=Constants.EXTENSION_VERSION_NUMBER.split('.');
@@ -18,7 +18,7 @@ function($scope, $location, Constants, $window, CSInterface, Config){
 	}
 	$scope.app_version_no=str.substring(0,str.length-1);
 	
-	if(Config.username && Config.username!=""){
+	if(Config.username && Config.username!=""&&viewManager.loggedIn){
 		$scope.message="Logged in as: "+Config.username;
 	}
 	else{

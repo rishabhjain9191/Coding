@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
  
- app.controller('LDAPloginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface){
+ app.controller('LDAPloginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','APIUtils',
+function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface, APIUtils){
 	
 	
 	console.log("On Login Page");
@@ -63,11 +63,12 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		
 		if(company_email!="" && company_password!=""){	
 			preloader.showLoading();
-			var hashedPassword=MD5(company_password);
+			//No hashing in case of LDAP Login
+			var hashedPassword=company_password;
 			Config.username = company_email;
 			Config.password = hashedPassword;
 				
-			loginUtils.login(company_email, hashedPassword, Config.companyEmail)
+			APIUtils.login(company_email, hashedPassword,company_password, Config.companyEmail)
 			.then(function(data){
 				preloader.hideLoading();
 				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}

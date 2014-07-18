@@ -1,5 +1,5 @@
 /**
- * loginCtrl - configureLDAPController.js
+ * configureLDAPCtrl - configureLDAPController.js
  *
  * @category   CreativeWorx
  * @package    Extension
@@ -7,17 +7,19 @@
  * @license    All rights reserved.
  */
  
- app.controller('configureLDAPCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','$q',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface,$q){
+ app.controller('configureLDAPCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','$q','APIUtils',
+function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface,$q, APIUtils){
 	console.log("On LDAP Config");
 	preloader.hideLoading();
 	$scope.modalShown = false;
 	$scope.companyEmail="";
 	
+	console.log(Config);
 	
-	if(Config.companyEmail&&Config.companyEmail!='0'){
+	if(Config.companyEmailValue&&Config.companyEmailValue.length>0){
 		
-		$scope.companyEmail=Config.companyEmail;
+		console.log(Config.companyEmailValue);
+		$scope.companyEmail=Config.companyEmailValue;
 	}
 	
 	
@@ -37,26 +39,24 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		var companyEmail=$('#LDAPcompanyEmail').val();
 		if(companyEmail==""){
 			Config.companyEmail="";
+			Config.companyEmailValue="";
 			CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 				resultWrittentoConfig();
 				});
 		}
 		else{
 		
-			var deferred=$q.defer();
-			var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
 			
-			var params=[];
-			params['email']=companyEmail;
-			$http.post(url,params)
-			.success(function(data){
+			APIUtils.validateLDAP(companyEmail)
+			.then(function(data){
 				if(data.success){
 					Config.companyEmail=companyEmail;
 					Config.companyName=data.success;
-					
+					Config.companyEmailValue=companyEmail
 				}
 				else{
 					Config.companyEmail=0;
+					Config.companyEmailValue=companyEmail;
 					
 				}
 				
@@ -66,14 +66,14 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 				});
 				
 				
-			})
-			.error(function(data){
+			}
+			,function(data){
 				preloader.hideLoading();
 				console.log(data);
 				$scope.alert_message="Server Offline."
 				$scope.modalShown=true;
 			})
-			return deferred.promise;
+			
 		}
 	}
 	

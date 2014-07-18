@@ -28,6 +28,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_STATUS_NOIMAGE = "NONE";
 		constants.IMAGE_STATUS_ERROR = "ERROR";
 		constants.COLOR_MODE = "user_selectable";
+		constants.API_TYPE="legacy";		//OAuth1 or legacy
 		constants.PROJECT_COLORS= [
 			"#888888", //0
 			"#FFF772", //1
@@ -162,6 +163,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	var utils={};
 
 	utils.loggedOut=false;
+	utils.loggedIn=false;
 
 	utils.previousView="";
 	utils.loginView="";
@@ -216,12 +218,14 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		event.data="<onCreationComplete />";
 		CSInterface.dispatchEvent(event);
 		this.loggedOut=false;
+		utils.loggedIn=true;
 		console.log('user Logged in');
 		this.loginView=$location.path().substr(1);
 		$location.path('projects');
 	};
 
 	utils.userLoggedOut=function(){
+		utils.loggedIn=false;
 		this.loggedOut=true;
 		$location.path(this.loginView);
 	};
@@ -397,8 +401,8 @@ function($rootScope){
 	return utils;
 }]);
 
-services.factory('loginUtils',['debuggerUtils','Constants', '$location','$rootScope','Config','$http','$q',
-function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
+services.factory('loginUtils',['debuggerUtils','Constants', '$location','$rootScope','Config','$http','$q', 'APIUtils',
+function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUtils){
 	var utils={};
 	utils.loginResult='aa';
 	utils.tryLoginFromConfig=function(){
@@ -410,7 +414,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 			deferred.resolve(100);
 		}
 		else if(Config.keepMeLoggedIn=="true"){
-			utils.login(Config.username, Config.password, Config.companyEmail)
+			APIUtils.login(Config.username, Config.password, Config.companyEmail)
 			.then(function(data){
 				console.log(data);
 				if(data.Msg=="Error: Authentication failed"){
@@ -437,42 +441,181 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 		return deferred.promise;
 
 	};
-
-
-	utils.login=function(username, password, companyEmail){
-
-		var deferred=$q.defer();
-		if(username=='undefined'){username=Config.username;}
-		if(password=='undefined'){password=Config.password;}
-		if(companyEmail=='undefined'){companyEmail="";}
-		var params=[];
-		params['username']=username;
-		params['password']=password;
-		params['companyEmail']=companyEmail;
-		params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
-
-		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
-		//var url="userDetails.json";
-
-		var t1 = (new Date()).getTime();
-		$http.post(url, params)
-			.success(function(data,status){
-				var t2 = (new Date()).getTime();
-				console.log("Login request is taking time: "+(t2-t1)/1000);
-				console.log(data);
-				deferred.resolve(data);
-			})
-			.error(function(data,status){
-				console.log(data);
-				deferred.reject(data);
-			})
-			return deferred.promise;
-	};
+	
 	return utils;
 }]);
 
-services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q','CSInterface',
-function($rootScope, Constants, Config, $http, $q, CSInterface){
+services.factory('APIUtils',['Constants','$q','Config','$http',function(Constants, $q, Config, $http){
+	var utils={};
+	var sercet_key="";
+	var public_key="";
+	utils.login=function(username, hashesPassword,password, companyEmail){
+		var deferred=$q.defer();
+		if(Constants.API_TYPE=='legacy'){
+			if(username=='undefined'){username=Config.username;}
+			if(hashesPassword=='undefined'){hashesPassword=Config.password;}
+			if(companyEmail=='undefined'){companyEmail="";}
+			var params=[];
+			params['username']=username;
+			params['password']=hashesPassword;
+			params['companyEmail']=companyEmail;
+			params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
+
+			var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
+			//var url="userDetails.json";
+
+			var t1 = (new Date()).getTime();
+			$http.post(url, params)
+				.success(function(data,status){
+					var t2 = (new Date()).getTime();
+					console.log("Login request is taking time: "+(t2-t1)/1000);
+					console.log(data);
+					deferred.resolve(data);
+				})
+				.error(function(data,status){
+					console.log(data);
+					deferred.reject(data);
+				})
+		}
+		else{
+			//Call authenticate to get user's public and secret key
+			var url="https://dev-api.creativeworx.com/v1"+"/authenticate";
+			var params={};
+			params["email"]=username;
+			params["password"]=password;
+			if(companyEmail=='undefined'){companyEmail=""}
+			params["username"]=companyEmail;
+			$http.post(url,params)
+			.success(function(data){
+				console.log(data);
+				if(data.error){
+					data["Msg"]="Error: Authentication failed";
+					deferred.resolve(data);
+				}
+				else{
+					secret_key=data.keys.sk;
+					public_key=data.keys.pk;
+					//Make an OAuth Request to /user to get user details
+					var url="https://dev-api.creativeworx.com/v1"+"/user";
+					
+				}
+			})
+			.error(function(data){
+			})
+			
+		}
+		return deferred.promise;
+	};
+	
+	utils.getProjects=function(username, password, userid){
+		var deferred=$q.defer();
+		if(Constants.API_TYPE=='legacy'){
+			var params=[];
+			params['username']=username;
+			params['password']=password;
+			params['userid']=userid;
+			var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS;
+			//var url='getprojectlist.json';
+			$http.post(url,params)
+			.success(function(data){
+				deferred.resolve(data);
+			})
+			.error(function(error){
+				deferred.reject(error);
+			})
+		}
+		else{
+		}
+		return deferred.promise;
+	};
+	
+	utils.addProject=function(projectName, jobId, budgetHrs, color, colorindex){
+		var deferred=$q.defer();
+		if(Constants.API_TYPE=='legacy'){
+			var params=[];
+			params['userid']=Config.data.userid;
+			params['name']= projectName;
+			params['jobid']=jobId;
+			params['budget']=budgetHrs;
+			params['color']=color;
+			params['colorindex']=colorindex;
+
+			$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
+			.success(function(data){deferred.resolve(data);})
+			.error(function(data){deferred.reject(data);})
+		}
+		else{
+		}
+		return deferred.promise;
+	};
+
+	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color, colorindex){
+		var deferred=$q.defer();
+		if(Constants.API_TYPE=='legacy'){
+			var params=[];
+			params['projectid']=projectId;
+			params['userid']=Config.data.userid;
+			params['name']= projectName;
+			params['jobid']=jobId;
+			params['budget']=budgetHrs;
+			params['color']=color;
+			params['colorindex']=colorindex;
+			$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
+			.success(function(data){deferred.resolve(data);})
+			.error(function(data){deferred.reject(data);})
+		}
+		else{
+		}
+		return deferred.promise;
+	};
+	
+	utils.sendEvents=function(batchedRecords){
+		var deferred=$q.defer();
+		if(Constants.API_TYPE=='legacy'){
+			var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
+			var details={};
+
+			details['data']=batchedRecords;
+			details['username']=Config.username;
+			details['password']=Config.password;
+
+			$http.post(url,details)
+			.success(function(data){
+				deferred.resolve(data);
+			})
+			.error(function(data){
+				deferred.reject(data);
+			})
+		}
+		
+		else{
+		}
+		return deferred.promise;
+	};
+	
+	utils.validateLDAP=function(companyEmail){
+		var deferred=$q.defer();
+		if(Constants.API_TYPE=='legacy'){
+			var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
+			var params=[];
+			params['email']=companyEmail;
+			$http.post(url,params)
+			.success(function(data){
+				deferred.resolve(data);
+			})
+			.error(function(data){
+				deferred.reject(data);
+			})
+		}
+		return deferred.promise
+	};
+	
+	
+	return utils;
+}]);
+
+services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q','CSInterface', 'APIUtils',
+function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 	$rootScope.projectProperties=new Array();
 	for(i=0;i<100;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
@@ -525,14 +668,8 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 	};
 	utils.getProjects=function(username, password, userid){
 		var deferred=$q.defer();
-		var params=[];
-		params['username']=username;
-		params['password']=password;
-		params['userid']=userid;
-		var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS;
-		//var url='getprojectlist.json';
-		$http.post(url,params)
-		.success(function(data){
+		APIUtils.getProjects(username, password, userid)
+		.then(function(data){
 			utils.projectIndexes={};
 			utils.projectsCopy=data;				//Save the freshly retrieved project list
 			for(var i=0;i<data.length;i++){
@@ -543,45 +680,15 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 			}
 			console.log(utils.projectIndexes);
 			deferred.resolve(data);
-		})
-		.error(function(data){
+		},
+		function(data){
 			//In Case of error, send back the last retrieved copy
 			deferred.reject(utils.projectsCopy);
 		})
 		return deferred.promise;
 	};
 
-	utils.addProject=function(projectName, jobId, budgetHrs, color, colorindex){
-		var deferred=$q.defer();
-		var params=[];
-		params['userid']=Config.data.userid;
-		params['name']= projectName;
-		params['jobid']=jobId;
-		params['budget']=budgetHrs;
-		params['color']=color;
-		params['colorindex']=colorindex;
-
-		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
-		.success(function(data){deferred.resolve(data);})
-		.error(function(data){deferred.reject(data);})
-		return deferred.promise;
-	};
-
-	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color, colorindex){
-		var deferred=$q.defer();
-		var params=[];
-		params['projectid']=projectId;
-		params['userid']=Config.data.userid;
-		params['name']= projectName;
-		params['jobid']=jobId;
-		params['budget']=budgetHrs;
-		params['color']=color;
-		params['colorindex']=colorindex;
-		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
-		.success(function(data){deferred.resolve(data);})
-		.error(function(data){deferred.reject(data);})
-		return deferred.promise;
-	};
+	
 
 	utils.selectProject=function(){
 		//Check the current document's XMP
@@ -1040,8 +1147,8 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 }]);
 
 
-services.factory('DBHelper',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface',
-function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
+services.factory('DBHelper',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface', 'APIUtils',
+function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils){
 
 	//Open/Create the Log file(for unsent records)
 	CSInterface.evalScript('$._extFile.openFile()');
@@ -1100,15 +1207,8 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 	//Send the batched records to server, If records can't be sent, log them.
 	var send=function(batchedRecords){
 		//Send Batched Records to Server
-		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
-		var details={};
-
-		details['data']=batchedRecords;
-		details['username']=Config.username;
-		details['password']=Config.password;
-
-		$http.post(url,details)
-		.success(function(data){
+		APIUtils.sendEvents(batchedRecords)
+		.then(function(data){
 			console.log("[Success]Records Send to server");
 			if(data=="Invalid event details."){
 				debuggerUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
@@ -1116,10 +1216,11 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 			}
 			else{
 				console.log("Offline records successfully send to server");
+				console.log(data);
 				debuggerUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
 			}
 		}
-		).error(function(data){
+		,function(data){
 			console.log("Error in sending records"+data);
 			debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
 			logit(batchedRecords);
