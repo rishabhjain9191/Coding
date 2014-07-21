@@ -41,7 +41,7 @@
 		if($scope.project){
 			console.log("1 Project Found  " + $scope.project.name);
 		}
-		exploreScope($scope);
+		//exploreScope($scope);
 		
 		var newProjectName=$('#newProject_projectName').val();
 		var newProjectJobId=$('#newProject_jobId').val();

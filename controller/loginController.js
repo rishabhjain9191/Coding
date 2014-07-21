@@ -168,7 +168,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 			exploreScope($scope.$parent);
 	};
 	
-	exploreScope($scope);
+	//exploreScope($scope);
 	
 	
 }]);
