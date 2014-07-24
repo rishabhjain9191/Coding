@@ -28,7 +28,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_STATUS_NOIMAGE = "NONE";
 		constants.IMAGE_STATUS_ERROR = "ERROR";
 		constants.COLOR_MODE = "user_selectable";
-		constants.API_TYPE="legacy";		//OAuth1 or legacy
+		constants.API_TYPE="OAuth1";		//OAuth1 or legacy
 		constants.PROJECT_COLORS= [
 			"#888888", //0
 			"#FFF772", //1
@@ -445,11 +445,11 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUti
 	return utils;
 }]);
 
-services.factory('APIUtils',['Constants','$q','Config','$http',function(Constants, $q, Config, $http){
+services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',function(Constants, $q, Config, $http, OAuthUtils){
+
 	var utils={};
-	var sercet_key="";
-	var public_key="";
-	utils.login=function(username, hashesPassword,password, companyEmail){
+	
+	utils.login=function(username,hashesPassword,companyEmail){
 		var deferred=$q.defer();
 		if(Constants.API_TYPE=='legacy'){
 			if(username=='undefined'){username=Config.username;}
@@ -481,31 +481,112 @@ services.factory('APIUtils',['Constants','$q','Config','$http',function(Constant
 			//Call authenticate to get user's public and secret key
 			var url="https://dev-api.creativeworx.com/v1"+"/authenticate";
 			var params={};
-			params["email"]=username;
-			params["password"]=password;
+			params.email=username;
+			params.password=hashesPassword;
+			params.hashed="true";
 			if(companyEmail=='undefined'){companyEmail=""}
-			params["username"]=companyEmail;
+				params.username=companyEmail;
 			$http.post(url,params)
 			.success(function(data){
-				console.log(data);
-				if(data.error){
+				if(data.error || !data.keys){
 					data["Msg"]="Error: Authentication failed";
 					deferred.resolve(data);
 				}
 				else{
-					secret_key=data.keys.sk;
-					public_key=data.keys.pk;
-					//Make an OAuth Request to /user to get user details
-					var url="https://dev-api.creativeworx.com/v1"+"/user";
+					OAuthUtils.setConsumerCredentials(data.keys.pk,data.keys.sk);
+					//todo: save userid (data.keys.uid)	- needed for /event API
 					
+					//Make an OAuth Request to /user to get user details
+					
+					// user
+					/*
+					var url="https://dev-api.creativeworx.com/v1"+"/user";
+					var method="GET";
+					var params="";
+					*/
+					
+					// projects
+					/*
+					var url="https://dev-api.creativeworx.com/v1"+"/project";
+					var method="GET";
+					var params="";
+					*/
+					
+					// create a project
+					/*
+					var url="https://dev-api.creativeworx.com/v1"+"/project";
+					var method="POST";
+					var params=[];
+					params['name']= "Test23072014-1";
+					params['jobid']="123";
+					params['budget']="123";
+					//params['color']=color;
+					*/
+					
+					// edit a project
+					
+					var url="https://dev-api.creativeworx.com/v1"+"/project/53cf879db2965339315350b9";
+					var method="PUT";
+					var params=[];
+					params['name']= "Test23072014-1-Edited";
+					
+					
+					// create events
+					/*
+					var url="https://dev-api.creativeworx.com/v1"+"/event";
+					var method="POST";
+					var params=[];
+					params['event_type']= "user_active";
+					params['event_start']= "2014-04-08T22:03:24+00:00";
+					params['event_end']= "2014-04-08T22:03:24+00:00";
+					params['event_rec']= "2014-04-08T22:03:24+00:00";
+					params['ext_name']= "Example-TimeTracker-Plugin";
+					params['ext_ver']= "123";
+					params['host_name']= "Example App";
+					params['host_ver']= "1.0";
+					params['computer_id']= "";
+					params['document_id']= "0000-0000-0000-0000";
+					params['document_name']= "Example.doc";
+					params['document_path']= "/home/user/examples";
+					params['user_id']= "535fccdb7464e48f048b4567";
+					params['project_id']= "";
+					*/
+					
+					var authHeader=OAuthUtils.getAuthHeader(url,method,params);
+					console.log(authHeader);
+					$http({
+						method: method,
+						url: url,
+						data: params,
+						headers: {'Authorization':authHeader,
+							'Content-type':'application/x-www-form-urlencoded'
+						}
+					})
+					.success(function(data){
+						console.log(data);
+						if(data.error){
+							data["Msg"]="Error: Authentication failed";
+							deferred.resolve(data);
+						}
+						else{
+							// success
+							deferred.resolve(data);
+						}
+					})
+					.error(function(data){
+						console.log(data);
+						// request failed!
+					})					
 				}
 			})
 			.error(function(data){
+			
 			})
 			
 		}
 		return deferred.promise;
 	};
+	
 	
 	utils.getProjects=function(username, password, userid){
 		var deferred=$q.defer();
@@ -610,6 +691,92 @@ services.factory('APIUtils',['Constants','$q','Config','$http',function(Constant
 		return deferred.promise
 	};
 	
+	
+	return utils;
+}]);
+
+services.factory('OAuthUtils',['$q',function($q){
+
+	// todo: remove the dependencies
+	
+	
+	var utils={};
+	utils.oauth_consumer_key="";
+	utils.oauth_consumer_secret="";
+	utils.oauth_token_secret="";
+	utils.oauth_version="1.0";
+	utils.oauth_token="";
+	utils.oauth_timestamp="";
+	utils.oauth_nonce="";
+	utils.oauth_signature_method="HMAC-SHA1";
+	utils.oauth_signature="";
+
+	utils.setConsumerCredentials=function(key,secret){
+		this.oauth_consumer_key=key;
+		this.oauth_consumer_secret=secret;
+	};
+	
+	utils.getAuthHeader=function(url,method,params){
+	
+		this.oauth_timestamp=this.getTimestamp();
+		this.oauth_nonce=this.getNonce();
+		this.createSignature(url,method,params);
+		
+		var authHeader = 
+			'OAuth realm="",'+
+			'oauth_consumer_key="'+this.oauth_consumer_key+'",'+
+			'oauth_token="",'+
+			'oauth_signature_method="'+this.oauth_signature_method+'",'+
+			'oauth_timestamp="'+this.oauth_timestamp+'",'+
+			'oauth_nonce="'+this.oauth_nonce+'",'+
+			'oauth_version="'+this.oauth_version+'",'+
+			'oauth_signature="'+this.oauth_signature+'"';
+			
+		return authHeader;
+	};
+	
+	utils.getTimestamp=function(){
+		return OAuth.timestamp();
+	};
+	
+	utils.getNonce=function(){
+		return OAuth.nonce(11);
+	};
+	
+	utils.createSignature=function(url,method,params){
+	
+		var accessor = { 
+			consumerSecret: this.oauth_consumer_secret, 
+			tokenSecret   : this.oauth_token_secret
+		};
+			
+		var list = [];
+		if(params){
+			for (var p in params) {
+				list.push([p, params[p]]);
+			}
+		}
+		console.log("brouhaha");
+		console.log(list);
+		var message = { 
+			method: method, 
+			action: url,
+			parameters: list
+		};
+		
+		message.parameters.push(["oauth_version", this.oauth_version]);
+		message.parameters.push(["oauth_consumer_key", this.oauth_consumer_key]);
+		message.parameters.push(["oauth_token", this.oauth_token]);
+		message.parameters.push(["oauth_timestamp", this.oauth_timestamp]);
+		message.parameters.push(["oauth_nonce", this.oauth_nonce]);
+		message.parameters.push(["oauth_signature_method", this.oauth_signature_method]);
+		
+		console.log(message);
+		console.log(accessor);
+		OAuth.SignatureMethod.sign(message, accessor);
+		this.oauth_signature=OAuth.getParameter(message.parameters, "oauth_signature");
+		
+	};
 	
 	return utils;
 }]);

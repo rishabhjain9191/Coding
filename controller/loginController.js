@@ -37,10 +37,10 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 	}
 
 	$scope.login=function(){
-		console.log($scope);
-		console.log($scope.user.email);
+		//console.log($scope);
+		//console.log($scope.user.email);
 		debuggerUtils.updateLogs("Login Attempt With User: " + $scope.user.email);
-		console.log($scope.user.password);
+		//console.log($scope.user.password);
 		debuggerUtils.updateLogs("Login Attempt With Password: " + $scope.user.password);
 		/*if($scope.user.email!="" && $scope.user.password!=""){
 		debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
@@ -75,8 +75,6 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		var user_password=$('#user_password').val();
 		var user_email=$('#user_email').val();
 		var keepMeLoggedIn=$('#keepMeLoggedIn').prop('checked');
-		
-		console.log(keepMeLoggedIn);
 		
 		if(user_email!="" && user_password!=""){
             debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
@@ -168,7 +166,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 			exploreScope($scope.$parent);
 	};
 	
-	exploreScope($scope);
+	//exploreScope($scope);
 	
 	
 }]);
