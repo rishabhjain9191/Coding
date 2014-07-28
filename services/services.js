@@ -70,6 +70,8 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.REFRESH_PROJECT_INTERVAL = 5*60*1000;
 
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+		
+		constants.URL_SERVICE_NEW = "https://dev-api.creativeworx.com/v1";
 
 		constants.BATCHDATA_SEND_ADDRESS = "/service/log";
 		constants.CHECK_STATUS_ADDRESS = "/service/checkstatus";
@@ -449,250 +451,152 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 	var utils={};
 	
-	utils.login=function(username,hashesPassword,companyEmail){
-		var deferred=$q.defer();
-		if(Constants.API_TYPE=='legacy'){
-			if(username=='undefined'){username=Config.username;}
-			if(hashesPassword=='undefined'){hashesPassword=Config.password;}
-			if(companyEmail=='undefined'){companyEmail="";}
-			var params=[];
-			params['username']=username;
-			params['password']=hashesPassword;
-			params['companyEmail']=companyEmail;
-			params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
-
-			var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
-			//var url="userDetails.json";
-
-			var t1 = (new Date()).getTime();
-			$http.post(url, params)
-				.success(function(data,status){
-					var t2 = (new Date()).getTime();
-					console.log("Login request is taking time: "+(t2-t1)/1000);
-					console.log(data);
-					deferred.resolve(data);
-				})
-				.error(function(data,status){
-					console.log(data);
-					deferred.reject(data);
-				})
-		}
-		else{
-			//Call authenticate to get user's public and secret key
-			var url="https://dev-api.creativeworx.com/v1"+"/authenticate";
-			var params={};
-			params.email=username;
-			params.password=hashesPassword;
-			params.hashed="true";
-			if(companyEmail=='undefined'){companyEmail=""}
-				params.username=companyEmail;
-			$http.post(url,params)
-			.success(function(data){
-				if(data.error || !data.keys){
-					data["Msg"]="Error: Authentication failed";
-					deferred.resolve(data);
-				}
-				else{
-					OAuthUtils.setConsumerCredentials(data.keys.pk,data.keys.sk);
-					//todo: save userid (data.keys.uid)	- needed for /event API
-					
-					//Make an OAuth Request to /user to get user details
-					
-					// user
-					/*
-					var url="https://dev-api.creativeworx.com/v1"+"/user";
-					var method="GET";
-					var params="";
-					*/
-					
-					// projects
-					/*
-					var url="https://dev-api.creativeworx.com/v1"+"/project";
-					var method="GET";
-					var params="";
-					*/
-					
-					// create a project
-					/*
-					var url="https://dev-api.creativeworx.com/v1"+"/project";
-					var method="POST";
-					var params=[];
-					params['name']= "Test23072014-1";
-					params['jobid']="123";
-					params['budget']="123";
-					//params['color']=color;
-					*/
-					
-					// edit a project
-					
-					var url="https://dev-api.creativeworx.com/v1"+"/project/53cf879db2965339315350b9";
-					var method="PUT";
-					var params=[];
-					params['name']= "Test23072014-1-Edited";
-					
-					
-					// create events
-					/*
-					var url="https://dev-api.creativeworx.com/v1"+"/event";
-					var method="POST";
-					var params=[];
-					params['event_type']= "user_active";
-					params['event_start']= "2014-04-08T22:03:24+00:00";
-					params['event_end']= "2014-04-08T22:03:24+00:00";
-					params['event_rec']= "2014-04-08T22:03:24+00:00";
-					params['ext_name']= "Example-TimeTracker-Plugin";
-					params['ext_ver']= "123";
-					params['host_name']= "Example App";
-					params['host_ver']= "1.0";
-					params['computer_id']= "";
-					params['document_id']= "0000-0000-0000-0000";
-					params['document_name']= "Example.doc";
-					params['document_path']= "/home/user/examples";
-					params['user_id']= "535fccdb7464e48f048b4567";
-					params['project_id']= "";
-					*/
-					
-					var authHeader=OAuthUtils.getAuthHeader(url,method,params);
-					console.log(authHeader);
-					$http({
-						method: method,
-						url: url,
-						data: params,
-						headers: {'Authorization':authHeader,
-							'Content-type':'application/x-www-form-urlencoded'
-						}
-					})
-					.success(function(data){
-						console.log(data);
-						if(data.error){
-							data["Msg"]="Error: Authentication failed";
-							deferred.resolve(data);
-						}
-						else{
-							// success
-							deferred.resolve(data);
-						}
-					})
-					.error(function(data){
-						console.log(data);
-						// request failed!
-					})					
-				}
-			})
-			.error(function(data){
-			
-			})
-			
-		}
-		return deferred.promise;
-	};
 	
-	
-	utils.getProjects=function(username, password, userid){
-		var deferred=$q.defer();
-		if(Constants.API_TYPE=='legacy'){
-			var params=[];
-			params['username']=username;
-			params['password']=password;
-			params['userid']=userid;
-			var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS;
-			//var url='getprojectlist.json';
-			$http.post(url,params)
-			.success(function(data){
-				deferred.resolve(data);
-			})
-			.error(function(error){
-				deferred.reject(error);
-			})
-		}
-		else{
-		}
-		return deferred.promise;
-	};
-	
-	utils.addProject=function(projectName, jobId, budgetHrs, color, colorindex){
-		var deferred=$q.defer();
-		if(Constants.API_TYPE=='legacy'){
-			var params=[];
-			params['userid']=Config.data.userid;
-			params['name']= projectName;
-			params['jobid']=jobId;
-			params['budget']=budgetHrs;
-			params['color']=color;
-			params['colorindex']=colorindex;
-
-			$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
-			.success(function(data){deferred.resolve(data);})
-			.error(function(data){deferred.reject(data);})
-		}
-		else{
-		}
-		return deferred.promise;
-	};
-
-	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color, colorindex){
-		var deferred=$q.defer();
-		if(Constants.API_TYPE=='legacy'){
-			var params=[];
-			params['projectid']=projectId;
-			params['userid']=Config.data.userid;
-			params['name']= projectName;
-			params['jobid']=jobId;
-			params['budget']=budgetHrs;
-			params['color']=color;
-			params['colorindex']=colorindex;
-			$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
-			.success(function(data){deferred.resolve(data);})
-			.error(function(data){deferred.reject(data);})
-		}
-		else{
-		}
-		return deferred.promise;
-	};
-	
-	utils.sendEvents=function(batchedRecords){
-		var deferred=$q.defer();
-		if(Constants.API_TYPE=='legacy'){
-			var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
-			var details={};
-
-			details['data']=batchedRecords;
-			details['username']=Config.username;
-			details['password']=Config.password;
-
-			$http.post(url,details)
-			.success(function(data){
-				deferred.resolve(data);
-			})
-			.error(function(data){
-				deferred.reject(data);
-			})
-		}
-		
-		else{
-		}
-		return deferred.promise;
-	};
+	//
+	//	Status Codes:
+	//
+	//	400			Bad Request
+	//	401/403		Unauthorized
+	//	404			Not found
+	//	500			Server error
+	//	
 	
 	utils.validateLDAP=function(companyEmail){
 		var deferred=$q.defer();
-		if(Constants.API_TYPE=='legacy'){
-			var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
-			var params=[];
-			params['email']=companyEmail;
-			$http.post(url,params)
-			.success(function(data){
-				deferred.resolve(data);
-			})
-			.error(function(data){
-				deferred.reject(data);
-			})
-		}
+
 		return deferred.promise
 	};
 	
+	utils.login=function(/*username,hashesPassword,companyEmail*/params){
+		var deferred=$q.defer();
+		
+		var url=Constants.URL_SERVICE_NEW+"/authenticate";
+		
+		this.SendRequest(url,params,method,false);
+		
+		// will check for the response here
+		if(data.error || !data.keys){
+			data["Msg"]="Error: Authentication failed";
+			deferred.resolve(data);
+		}
+		else{
+			OAuthUtils.setConsumerCredentials(data.keys.pk,data.keys.sk);
+			//todo: save userid (data.keys.uid)	- needed for /event API
+			this.getUsers();			
+		}
+	
+		return deferred.promise;
+	};
+	
+	
+	utils.getUsers=function(params){
+		var deferred=$q.defer();
+		
+		var url=Constants.URL_SERVICE_NEW+"/user";
+		var method="GET";
+		var params="";
+			
+		this.SendRequest(url,params,method,true);
+
+		return deferred.promise;
+	};
+	
+	utils.getProjects=function(params){
+		var deferred=$q.defer();
+		
+		var url=Constants.URL_SERVICE_NEW+"/project";
+		var method="GET";
+		
+		this.SendRequest(url,params,method,true);
+
+		return deferred.promise;
+	};
+	
+	utils.addProject=function(/*projectName, jobId, budgetHrs, color, colorindex*/params){
+		var deferred=$q.defer();
+		
+		var url=Constants.URL_SERVICE_NEW+"/project";
+		var method="POST";
+		
+		this.SendRequest(url,params,method,true);
+		
+		return deferred.promise;
+	};
+
+	utils.editProject=function(/*projectId, projectName, jobId, budgetHrs, color, colorindex*/params){
+		var deferred=$q.defer();
+		
+		var url=Constants.URL_SERVICE_NEW+"/project/53cf879db2965339315350b9";
+		var method="PUT";
+		
+		this.SendRequest(url,params,method,true);
+
+		return deferred.promise;
+	};
+	
+	utils.sendEvents=function(params){
+		var deferred=$q.defer();
+		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
+		var details={};
+
+		var url=Constants.URL_SERVICE_NEW+"/event";
+		var method="POST";
+		/*
+			var params=[];
+			params['event_type']= "user_active";
+			params['event_start']= "2014-04-08T22:03:24+00:00";
+			params['event_end']= "2014-04-08T22:03:24+00:00";
+			params['event_rec']= "2014-04-08T22:03:24+00:00";
+			params['ext_name']= "Example-TimeTracker-Plugin";
+			params['ext_ver']= "123";
+			params['host_name']= "Example App";
+			params['host_ver']= "1.0";
+			params['computer_id']= "";
+			params['document_id']= "0000-0000-0000-0000";
+			params['document_name']= "Example.doc";
+			params['document_path']= "/home/user/examples";
+			params['user_id']= "535fccdb7464e48f048b4567";
+			params['project_id']= "";
+		*/
+		
+		this.SendRequest(url,params,method,true);
+		
+		return deferred.promise;
+	};
+	
+	utils.SendRequest=function(url,params,method,isOAuth){
+	
+		var headers={};
+		if(isOAuth){
+			headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
+			headers["Content-type"]='application/x-www-form-urlencoded';
+		}
+		
+		$http({
+			method: method,
+			url: url,
+			data: params,
+			headers: headers
+		})
+		.success(function(data){
+			console.log(data);
+			if(data.error){
+				// error
+				deferred.resolve(data);
+			}
+			else{
+				// success
+				deferred.resolve(data);
+			}
+		})
+		.error(function(data){
+			// request failed
+			console.log(data);
+		})		
+	};	
 	
 	return utils;
+	
 }]);
 
 services.factory('OAuthUtils',['$q',function($q){
