@@ -461,20 +461,65 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	//	500			Server error
 	//	
 	
+		utils.SendRequest=function(url,params,method,isOAuth){
+	
+		var deferred=$q.defer();
+		var headers={};
+		if(isOAuth){
+			headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
+			headers["Content-type"]='application/x-www-form-urlencoded';
+		}
+		
+		$http({
+			method: method,
+			url: url,
+			data: params,
+			headers: headers,
+
+		})
+		.success(function(data,status){
+			console.log(status);
+			console.log(data);
+			if(data.error){
+				// error
+				deferred.resolve(data,status);
+			}
+			else{
+				// success
+				deferred.resolve(data,status);
+			}
+		})
+		.error(function(data,status){
+			// request failed
+			console.log(status);
+			console.log(data);
+			deferred.reject(data,status);
+		})
+		return deferred.promise;
+	};	
+	
+
 	utils.validateLDAP=function(companyEmail){
 		var deferred=$q.defer();
-
+		//*Implementation missing*
 		return deferred.promise
 	};
 	
-	utils.login=function(/*username,hashesPassword,companyEmail*/params){
+	utils.login=function(user_email, hashedPassword,user_password){
+		console.log("Login Called");
 		var deferred=$q.defer();
 		
 		var url=Constants.URL_SERVICE_NEW+"/authenticate";
-		
-		this.SendRequest(url,params,method,false);
-		
+		var method="POST";
+		var params={};
+		params["email"]=user_email;
+		params["password"]=hashedPassword;
+		params["hashed"]=true;
+
+		utils.SendRequest(url,params,method,false)
+		.then(function(data,status){
 		// will check for the response here
+		console.log("Auth Success");
 		if(data.error || !data.keys){
 			data["Msg"]="Error: Authentication failed";
 			deferred.resolve(data);
@@ -482,8 +527,18 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		else{
 			OAuthUtils.setConsumerCredentials(data.keys.pk,data.keys.sk);
 			//todo: save userid (data.keys.uid)	- needed for /event API
-			this.getUsers();			
+			this.getUsers()
+			.then(function(data,status){
+				deferred.resolve(data,status);},
+				function(data,status){
+					deferred.resolve(data,status);
+				})			
 		}
+		},function(data,status){
+			console.log("Auth Failure");
+			console.log(data);
+			console.log(status);
+		})
 	
 		return deferred.promise;
 	};
@@ -496,7 +551,11 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var method="GET";
 		var params="";
 			
-		this.SendRequest(url,params,method,true);
+		this.SendRequest(url,params,method,true)
+		.then(function(data,status){
+			deferred.resolve(data,status);
+		},function(data,status){
+			deferred.reject(data,status)})
 
 		return deferred.promise;
 	};
@@ -564,37 +623,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		return deferred.promise;
 	};
 	
-	utils.SendRequest=function(url,params,method,isOAuth){
-	
-		var headers={};
-		if(isOAuth){
-			headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
-			headers["Content-type"]='application/x-www-form-urlencoded';
-		}
-		
-		$http({
-			method: method,
-			url: url,
-			data: params,
-			headers: headers
-		})
-		.success(function(data){
-			console.log(data);
-			if(data.error){
-				// error
-				deferred.resolve(data);
-			}
-			else{
-				// success
-				deferred.resolve(data);
-			}
-		})
-		.error(function(data){
-			// request failed
-			console.log(data);
-		})		
-	};	
-	
+
 	return utils;
 	
 }]);
