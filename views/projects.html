@@ -12,7 +12,7 @@
 	</div>
 	<div class="projectsContainer">
 		<ul class='projects'>
-			 <li  ng-repeat='project in projects'  ng-click='processProjectClick(project.pid, $index)' ng-style='projectProperties[$index].style'  title="Job ID: {{project.jobid}}">
+			 <li  ng-repeat='project in projects'  ng-click='processProjectClick(project._id, $index)' ng-style='projectProperties[$index].style'  title="Job ID: {{project.jobid}}">
 				<div class="project1" >
 					<div class="pName">{{project.name}}</div>
 					<span class="progress">{{projectProperties[$index].message}}<span>

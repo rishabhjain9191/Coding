@@ -60,7 +60,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.TIMEINTERVAL = 1000*60*4; 	// Default send data time interval of 4 minutes
 		constants.TIMEINTERVAL_MIN = 1000; 		// Minimum time inteval 1 second in milliseconds
 		constants.TIMEINTERVAL_MAX = 1000*60*60;// Maximum time interval1 hour in milliseconds
-		constants.BATCH_SIZE = 5; 				// Default number of events to send to server
+		constants.BATCH_SIZE = 1; 				// Default number of events to send to server
 		constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
 		constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
 		constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
@@ -152,6 +152,23 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 services.factory('Messages',[function(){
 	var messages={};
 	messages.networkError="Cannot Connect to Internet. Please Check your internet connection."
+	messages.authMsg={
+		"0":"Cannot Connect to Internet. Please Check your internet connection",
+		"401":"Authentication Failed",
+		"404":"User Not Found",
+		"400":"Username/Password Missing"
+	}
+	messages.getUserListMsg={
+		"0":"Cannot Connect to Internet. Please Check your internet connection",
+		"401":"Authentication Failed"
+	}
+	messages.addProjectMessages={
+		"0":"Cannot Connect to Internet. Please Check your internet connection",
+		"401":"Authentication Failed",
+		"nameEmpty":"Name of the Project cannot be empty",
+		"jobIdEmpty":"Job id of the project cannot be empty",
+		"unknown":"Error in creating new project"
+	}
 	return messages;
 }]);
 
@@ -418,24 +435,30 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUti
 		else if(Config.keepMeLoggedIn=="true"){
 			APIUtils.login(Config.username, Config.password, Config.companyEmail)
 			.then(function(data){
-				console.log(data);
-				if(data.Msg=="Error: Authentication failed"){
+				APIUtils.getUsers()
+				.then(function(result){
+					if(result.status=="200"){
+						var data=result.data.result;
+						$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
+						Config.firstname=data[0].firstname;
+						Config.userid=data[0].userid;
+						$rootScope.LoggedInItems=true;
+						deferred.resolve(200);
+				}
+				else
 					deferred.resolve(100);
-				}
-				else{
-					//User Authenticated
-					console.log("User Authenticated");
-
-					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
-					Config.firstname=data[0].firstname;
-					Config.userid=data[0].userid;
-					$rootScope.LoggedInItems=true;
-					deferred.resolve(200);
-				}
-			},function(error){
+				
+			}, 
+			//Get User Details Failed
+			function(result){
 				deferred.resolve(100);
-			});
+			})}
+			//Error in Auth
+			,function(error){
+				deferred.resolve(100);
+			})
 		}
+
 		else{
 			deferred.resolve(100);
 		}
@@ -478,22 +501,25 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 		})
 		.success(function(data,status){
-			console.log(status);
-			console.log(data);
+			var result={};
+			result["data"]=data;
+			result["status"]=status;
 			if(data.error){
 				// error
-				deferred.resolve(data,status);
+				deferred.resolve(result);
 			}
 			else{
 				// success
-				deferred.resolve(data,status);
+				deferred.resolve(result);
 			}
 		})
 		.error(function(data,status){
 			// request failed
-			console.log(status);
-			console.log(data);
-			deferred.reject(data,status);
+			console.log(headers["Authorization"]);
+			var result={};
+			result["data"]=data;
+			result["status"]=status;
+			deferred.reject(result);
 		})
 		return deferred.promise;
 	};	
@@ -517,27 +543,20 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		params["hashed"]=true;
 
 		utils.SendRequest(url,params,method,false)
-		.then(function(data,status){
+		.then(function(result){
 		// will check for the response here
 		console.log("Auth Success");
-		if(data.error || !data.keys){
-			data["Msg"]="Error: Authentication failed";
-			deferred.resolve(data);
-		}
-		else{
-			OAuthUtils.setConsumerCredentials(data.keys.pk,data.keys.sk);
-			//todo: save userid (data.keys.uid)	- needed for /event API
-			this.getUsers()
-			.then(function(data,status){
-				deferred.resolve(data,status);},
-				function(data,status){
-					deferred.resolve(data,status);
-				})			
-		}
-		},function(data,status){
+			if(result.status="200"){
+			//Save user's key and secret
+				OAuthUtils.setConsumerCredentials(result.data.keys.pk,result.data.keys.sk);
+				deferred.resolve(result);
+			}
+			else
+			//Any unexpected error has occured
+			deferred.reject(result);			
+		},function(result){
 			console.log("Auth Failure");
-			console.log(data);
-			console.log(status);
+			deferred.reject(result);
 		})
 	
 		return deferred.promise;
@@ -552,32 +571,60 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var params="";
 			
 		this.SendRequest(url,params,method,true)
-		.then(function(data,status){
-			deferred.resolve(data,status);
-		},function(data,status){
-			deferred.reject(data,status)})
+		.then(function(result){
+			deferred.resolve(result);
+		},function(result){
+			deferred.reject(result)})
 
 		return deferred.promise;
 	};
 	
-	utils.getProjects=function(params){
+	utils.getProjects=function(){
 		var deferred=$q.defer();
 		
 		var url=Constants.URL_SERVICE_NEW+"/project";
 		var method="GET";
-		
-		this.SendRequest(url,params,method,true);
+		var params={};
+		this.SendRequest(url,params,method,true)
+		.then(function(result){
+			deferred.resolve(result);
+		},function(result){
+			deferred.reject(result);
+		})
 
 		return deferred.promise;
 	};
 	
-	utils.addProject=function(/*projectName, jobId, budgetHrs, color, colorindex*/params){
+	utils.addProject=function(projectName, jobId, budgetHrs, color, colorindex){
 		var deferred=$q.defer();
+		var params={};
+		if(projectName!==undefined){
+			params["name"]=projectName;
+		}
+		if(jobId!==undefined){
+			params["jobid"]=jobId;
+		}
+		if(budgetHrs!==undefined){
+			params["budget"]=budgetHrs;
+		}
+		/*
+		if(color!==undefined){
+			params["color"]=color;
+		}
 		
+		if(colorindex!==undefined){
+			params["colorindex"]=colorindex;
+		}
+		*/
 		var url=Constants.URL_SERVICE_NEW+"/project";
 		var method="POST";
 		
-		this.SendRequest(url,params,method,true);
+		this.SendRequest(url,params,method,true)
+		.then(function(result){
+			deferred.resolve(result);
+		}, function(result){
+			deferred.reject(result);
+		})
 		
 		return deferred.promise;
 	};
@@ -600,25 +647,12 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 		var url=Constants.URL_SERVICE_NEW+"/event";
 		var method="POST";
-		/*
-			var params=[];
-			params['event_type']= "user_active";
-			params['event_start']= "2014-04-08T22:03:24+00:00";
-			params['event_end']= "2014-04-08T22:03:24+00:00";
-			params['event_rec']= "2014-04-08T22:03:24+00:00";
-			params['ext_name']= "Example-TimeTracker-Plugin";
-			params['ext_ver']= "123";
-			params['host_name']= "Example App";
-			params['host_ver']= "1.0";
-			params['computer_id']= "";
-			params['document_id']= "0000-0000-0000-0000";
-			params['document_name']= "Example.doc";
-			params['document_path']= "/home/user/examples";
-			params['user_id']= "535fccdb7464e48f048b4567";
-			params['project_id']= "";
-		*/
-		
-		this.SendRequest(url,params,method,true);
+		this.SendRequest(url,params,method,true)
+		.then(function(result){
+			deferred.resolve(result);
+		},function(result){
+			deferred.reject(result);
+		})
 		
 		return deferred.promise;
 	};
@@ -663,7 +697,7 @@ services.factory('OAuthUtils',['$q',function($q){
 			'oauth_timestamp="'+this.oauth_timestamp+'",'+
 			'oauth_nonce="'+this.oauth_nonce+'",'+
 			'oauth_version="'+this.oauth_version+'",'+
-			'oauth_signature="'+this.oauth_signature+'"';
+			'oauth_signature="'+encodeURIComponent(this.oauth_signature)+'"';
 			
 		return authHeader;
 	};
@@ -768,12 +802,14 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 	};
 	utils.getProjects=function(username, password, userid){
 		var deferred=$q.defer();
-		APIUtils.getProjects(username, password, userid)
-		.then(function(data){
+		APIUtils.getProjects()
+		.then(function(result){
+			console.log(result);
+			var data=result.data.result;
 			utils.projectIndexes={};
 			utils.projectsCopy=data;				//Save the freshly retrieved project list
 			for(var i=0;i<data.length;i++){
-				var pid=data[i].pid;
+				var pid=data[i]._id;
 				utils.projectIndexes[pid]=i;
 				$rootScope.projectProperties[i].style={};
 				$rootScope.projectProperties[i].style.color=data[i].colorcode;
@@ -781,9 +817,24 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 			console.log(utils.projectIndexes);
 			deferred.resolve(data);
 		},
-		function(data){
-			//In Case of error, send back the last retrieved copy
-			deferred.reject(utils.projectsCopy);
+		function(result){
+			console.log(result);
+			//Project List Blank or Authorization Error
+			switch(result.status){
+				case 404:
+					console.log("Project List Empty");
+					deferred.reject([]);
+					break;
+				case 401:
+					console.log("Authorization failed while fetching project list");
+					deferred.reject([]);
+					break;
+				default:
+					deferred.reject(utils.projectsCopy);
+					break;
+			}
+			
+			
 		})
 		return deferred.promise;
 	};
@@ -793,7 +844,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 	utils.selectProject=function(){
 		//Check the current document's XMP
 		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
-			if(data==""||!utils.projectIndexes.hasOwnProperty(parseInt(data))){
+			if(data==""||!utils.projectIndexes.hasOwnProperty(data)){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
 					$rootScope.$apply(function(){
@@ -812,10 +863,10 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 					}
 					if(data!=""/* ||data!="EvalScript error." */){
 						console.log("Data from project xmp : "+data);
-						utils.changeStyleToSelected(utils.projectIndexes[parseInt(data)]);
+						utils.changeStyleToSelected(utils.projectIndexes[data]);
 					}
-					utils.setSelectedProjectIndex(utils.projectIndexes[parseInt(data)]);
-					utils.setCurrentProjectId(parseInt(data));
+					utils.setSelectedProjectIndex(utils.projectIndexes[data]);
+					utils.setCurrentProjectId(data);
 				});
 			}
 		});
@@ -1147,31 +1198,21 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 		console.log("Creating Logging Data");
 		var addObj={};
 		//addObj.ID="";
-		addObj.eventID=AppModel.documentID+':'+AppModel.eventStartTime.getTime().toString();
-		addObj.userID=AppModel.userID;
+		addObj.event_type=eventType;
+		addObj.event_start=AppModel.eventStartTime.toJSON();
+		addObj.event_end=AppModel.eventEndTime.toJSON();
+		var date=new Date();
+		addObj.event_rec=date.toJSON();
+		addObj.ext_name=Constants.EXTENSION_NAME;
+		addObj.ext_ver=Constants.EXTENSION_VERSION_NUMBER;
+		addObj.host_name=AppModel.hostName;
+		addObj.host_ver=AppModel.hostVers;
 		addObj.computerID="";
-		addObj.projectID=AppModel.projectID;
-		addObj.startTime=AppModel.eventStartTime;
-		addObj.endTime=AppModel.eventEndTime;
-		addObj.imageName="";
-		addObj.eventRecordedTime=new Date();
-		//addObj.status=Constants.STATUS_NEW;
-		//addObj.imageStatus=Constants.IMAGE_STATUS_NEW;
-		var obj={
-			"event": {
-				"type": eventType,
-				"documentID": AppModel.documentID,
-				"instanceID": AppModel.instanceID,
-				"originalID": AppModel.originalID,
-				"documentName": AppModel.documentName,
-				"documentPath": AppModel.documentPath,
-				"hostName": AppModel.hostName,
-				"hostVers": AppModel.hostVers,
-				"extName": Constants.EXTENSION_NAME,
-				"extVers": Constants.EXTENSION_VERSION_NUMBER
-			}
-		};
-		addObj.jsonEventPackage=obj;
+		addObj.document_id=AppModel.documentID;
+		addObj.document_name=AppModel.documentName;
+		addObj.document_path=AppModel.documentPath;
+		addObj.user_id=AppModel.userID;
+		addObj.project_id=AppModel.projectID;
 		console.log(addObj);
 		DBHelper.addItemToEventLogTable(addObj);
 	};
@@ -1188,8 +1229,8 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 		 utils.originalID = "";
 		 utils.documentName = "";
 		 utils.documentPath = "";
-		 utils.eventStartTime = new Date();
-		 utils.eventEndTime = new Date();
+		 utils.eventStartTime ="";
+		 utils.eventEndTime = "";
 		 //utils.jsonEventInfo = "";
 		 utils.hostName="";
 		 utils.hostVers="";
@@ -1262,44 +1303,44 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 	};
 
 	//Setup Interval to read the unsend record file and try to send them.
-	var promise_sendLoggedRecords= $interval(sendLoggedRecords,5*60*1000);
+	var promise_sendLoggedRecords= $interval(sendLoggedRecords,1*60*1000);
 
 
 	//Get the records, batch them if if size>batch size and then send them to server
 	var processAndSend=function(records){
 		//Check Record Size(if recordSize>batch size, break them into batches before sending)
+		console.log(records);
 		var Records=JSON.parse(records);
 		var rec=[];
 		if(Records.length>1){
-			if(Records.length>=Constants.BATCH_SIZE){
+			while(Records.length>=Constants.BATCH_SIZE){
 				console.log("Batching and sending offline records");
 				for(var i=0;i<Constants.BATCH_SIZE;i++){
 					rec.push((Records.splice(0,1))[0]);
 					//Decode documentName and documentPath and hostName
-					rec[i].jsonEventPackage.event.documentName=atob(rec[i].jsonEventPackage.event.documentName);
-					rec[i].jsonEventPackage.event.documentPath=atob(rec[i].jsonEventPackage.event.documentPath);
-					rec[i].jsonEventPackage.event.hostName=atob(rec[i].jsonEventPackage.event.hostName);
+					rec[i].document_name=atob(rec[i].document_name);
+					rec[i].document_path=atob(rec[i].document_path);
+					rec[i].host_name=atob(rec[i].host_name);
 					//Done Decoding
-					rec[i].jsonEventPackage=JSON.stringify(rec[i].jsonEventPackage);
+					
 
 				}
-				send(JSON.stringify(rec));
+				send(rec);
 				console.log("send records\n");
-				console.log(JSON.stringify(rec));
+				console.log(rec);
 				rec=[];
 			}
 			for(var i =0;i<Records.length;i++){
 				//Decode documentName and documentPath and hostName
-				Records[i].jsonEventPackage.event.documentName=atob(Records[i].jsonEventPackage.event.documentName);
-				Records[i].jsonEventPackage.event.documentPath=atob(Records[i].jsonEventPackage.event.documentPath);
-				Records[i].jsonEventPackage.event.hostName=atob(Records[i].jsonEventPackage.event.hostName);
+				Records[i].document_name=atob(Records[i].document_name);
+				Records[i].document_path=atob(Records[i].document_path);
+				Records[i].host_name=atob(Records[i].host_name);
 				//Done Decoding
-				Records[i].jsonEventPackage=JSON.stringify(Records[i].jsonEventPackage);
 			}
 			if(Records.length>0){
-				send(JSON.stringify(Records));
+				send(Records);
 				console.log("send records\n");
-				console.log(JSON.stringify(Records));
+				console.log(Records);
 			}
 		}
 	};
@@ -1307,43 +1348,39 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 	//Send the batched records to server, If records can't be sent, log them.
 	var send=function(batchedRecords){
 		//Send Batched Records to Server
-		APIUtils.sendEvents(batchedRecords)
-		.then(function(data){
-			console.log("[Success]Records Send to server");
-			if(data=="Invalid event details."){
-				debuggerUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
-				logit(batchedRecords);
-			}
-			else{
-				console.log("Offline records successfully send to server");
+		
+			console.log(batchedRecords);
+			APIUtils.sendEvents(batchedRecords[0])/*Temporarily till server is accecpting individual records*/
+			.then(function(data){
+				console.log("[Success]Records Send to server");
+				console.log("Records successfully send to server");
 				console.log(data);
 				debuggerUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
+				
 			}
-		}
-		,function(data){
-			console.log("Error in sending records"+data);
-			debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
-			logit(batchedRecords);
-		})
+			,function(data){
+				console.log("Error in sending records");
+				console.log(data);
+				debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
+				logit(batchedRecords);
+			})
+		
 	};
 
 	//Log unsent events to the file
 	var logit=function(buffer){
 		console.log("Writing unsend records to database size : "+buffer.length);
 		debuggerUtils.updateLogs("Logging unsent events to local file");
-		var records=JSON.parse(buffer);
+		var records=buffer;
 		var record;
 		for(var i=0;i<records.length;i++){
-			records[i].jsonEventPackage=JSON.parse(records[i].jsonEventPackage);
+			
 			//Encode documentName and documentPath and hostName
-			records[i].jsonEventPackage.event.documentName=btoa(records[i].jsonEventPackage.event.documentName);
-			records[i].jsonEventPackage.event.documentPath=btoa(records[i].jsonEventPackage.event.documentPath);
-			records[i].jsonEventPackage.event.hostName=btoa(records[i].jsonEventPackage.event.hostName);
+			records[i].document_name=btoa(records[i].document_name);
+			records[i].document_path=btoa(records[i].document_path);
+			records[i].host_name=btoa(records[i].host_name);
 			//Done Encoding
-			records[i].jsonEventPackage=JSON.stringify(records[i].jsonEventPackage);
 			record=JSON.stringify(records[i]);
-			record=record.replace('jsonEventPackage":"','jsonEventPackage":');
-			record=record.replace('}}"}','}}}');
 			console.log("Logged Records \n "+record);
 			CSInterface.evalScript('$._extFile.writeObj(\''+record+'\')');
 		}
@@ -1356,21 +1393,18 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 	dbhelper.addItemToEventLogTable=function(obj){
 		console.log("Adding item to event log table");
 		console.log("Batch Size= "+Constants.BATCH_SIZE);
-		if(buffer.length<Constants.BATCH_SIZE-1&&obj.jsonEventPackage.event.type!="documentAfterSave"){
+		if(buffer.length<Constants.BATCH_SIZE-1&&obj.event_type!="documentAfterSave"){
 			console.log("Data Buffered");
 			console.log(buffer.length);
 			console.log(buffer);
-			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
 			buffer.push(obj);
 		}
 		else{
 			//Send to server
-			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
 			buffer.push(obj);
 			console.log("Sending buffer");
 			console.log(buffer);
-			console.log(JSON.stringify(buffer));
-			send(JSON.stringify(buffer));
+			send(buffer);
 			//empty the buffer
 			buffer=[];
 		}

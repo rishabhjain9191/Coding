@@ -74,18 +74,38 @@
 				APIUtils.addProject(name, jobId, budgetHrs, color, colorIndex)
 				.then(function(data){
 					preloader.hideLoading();
-					$scope.message=data.Msg;
-					if(data.IsSuccess){
+					console.log(data);
+					if(data.status="200"){
 						debuggerUtils.updateLogs("[CreateProjectResult]: Successfully created new project.");
 						$location.path('projects');
 					}
 					else{
-						debuggerUtils.updateLogs("[NewProjectResult]: data.result returned 'Error:'"+data.Msg);
-						$scope.message=data.Msg;
+						debuggerUtils.updateLogs("[NewProjectResult]: data.result returned");
 					}
 				}, function(data){
+					console.log(data);
 					preloader.hideLoading();
-					(data)?$scope.message=data.Msg:$scope.message=Messages.networkError;
+					if(data.status==400){
+						console.log(Messages.addProjectMessages["JobIdEmpty"]);
+						if(data.data.msg.jobid && data.data.msg.name){
+							$scope.message=Messages.addProjectMessages["nameEmpty"]+", "+ Messages.addProjectMessages["JobIdEmpty"];	
+						}
+						else if(data.data.msg.jobid){
+							console.log("In if");
+							$scope.message="ABCd";
+
+							$scope.message=Messages.addProjectMessages["jobIdEmpty"];	
+						}
+						else if(data.data.msg.name){
+							$scope.message=Messages.addProjectMessages["nameEmpty"];
+						}
+						else{
+							$scope.message=Messages.addProjectMessages["unknown"];	
+						}
+					}
+					else{
+						$scope.message=Messages.addProjectMessages[data.status];
+					}
 				});
 			
 		}

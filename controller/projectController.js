@@ -32,8 +32,8 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			}
 		}, function(data){
 			//On network Failure, show previous copy of projects
-			$scope.projects=projectUtils.projectsCopy;
-			debuggerUtils.updateLogs("[Cached Project List]: "+ppProjectList($scope.projects).slice(0,-2));
+			$scope.projects=data;
+			//debuggerUtils.updateLogs("[Cached Project List]: "+ppProjectList($scope.projects).slice(0,-2));
             debuggerUtils.updateLogs("[ProjectResult]: Network failure, showing cached projects list.");
             // console.log($scope.projects);
 			preloader.hideLoading();

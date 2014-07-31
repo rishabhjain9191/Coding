@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
 
- app.controller('loginCtrl',['viewManager','$scope','$rootScope','$location','$http','Config','Constants','loginUtils','preloader','CSInterface','debuggerUtils','APIUtils',
-function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface, debuggerUtils, APIUtils){
+ app.controller('loginCtrl',['viewManager','$scope','$rootScope','$location','$http','Config','Constants','loginUtils','preloader','CSInterface','debuggerUtils','APIUtils', 'Messages',
+function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface, debuggerUtils, APIUtils, Messages){
 	console.log("On Login Page");
 	preloader.hideLoading();
 	$scope.alert_message="Unknown error. Please contact us at support@creativeworx.com.";
@@ -83,30 +83,46 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 			Config.username = user_email;
 			Config.password = hashedPassword;
 
+			
 			APIUtils.login(user_email, hashedPassword,user_password)
-			.then(function(data){
-				preloader.hideLoading();
-				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
-				else{
-					//User Authenticated
-
-					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
-					Config.data=data[0];
+			.then(function(result){
+				if(result.status=="200"){
+					console.log("auth success")
+					APIUtils.getUsers().then(function(result){
+						console.log("User Details Fetched");
+						preloader.hideLoading();					
+						var data=result.data.result[0];
+						$rootScope.canEdit=canEdit(data.oid, data.org_settings);
+						Config.data=data;
+						
+						console.log(keepMeLoggedIn);
+						Config.keepMeLoggedIn=keepMeLoggedIn;
+						Config.keepMeLoggedIn=$scope.checked;
+						Config.userid=Config.data._id;
+						Config.firstname=Config.data.firstname;
+						console.log(Config);
+						CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
+						});
+						Constants.update(Config);
+						$rootScope.LoggedInItems=true;
+						viewManager.userLoggedIn();
 					
-					console.log(keepMeLoggedIn);
-					Config.keepMeLoggedIn=keepMeLoggedIn;
-					//Config.keepMeLoggedIn=$scope.checked;
-					Config.userid=Config.data.userid;
-					Config.firstname=Config.data.firstname;
-					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
-					});
-					//Config.updateConfig();
-					$rootScope.LoggedInItems=true;
-					viewManager.userLoggedIn();
-				}
-			},function(error){
+				}, function(result){
+					console.log("Can't Fetch user details");
+					console.log(result.data);
+					preloader.hideLoading();
+					$scope.message=Messages.getUserListMsg[result.status];
+				})
+			}
+			else{
 				preloader.hideLoading();
-				$scope.message="Unable to communicate with server";
+				$scope.message=Messages.authMsg[result.status];
+			}
+			},function(result){
+				console.log("Auth failed");
+				console.log(result.status);
+				preloader.hideLoading();
+				$scope.message=Messages.authMsg[result.status];
 			});
 		}
 		
