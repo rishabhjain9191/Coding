@@ -88,7 +88,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			if(data==""){
 				projectUtils.setCurrentProjectId(0);
 			}
-			else{projectUtils.setCurrentProjectId(parseInt(data));}
+			else{projectUtils.setCurrentProjectId(data);}
 			matchProjectIds();
 		});
 	}; 

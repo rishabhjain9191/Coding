@@ -441,7 +441,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUti
 						var data=result.data.result;
 						$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
 						Config.firstname=data[0].firstname;
-						Config.userid=data[0].userid;
+						Config.userid=data[0]._id;
 						$rootScope.LoggedInItems=true;
 						deferred.resolve(200);
 				}
@@ -1219,7 +1219,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 	return utils;
 }]);
 
-services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Config, Constants, CSInterface){
+services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils', function(Config, Constants, CSInterface, projectUtils){
 	var utils={};
 		 utils.defaultDocumentID = ""; //Used No where
 		 utils.userID = "";
@@ -1243,13 +1243,17 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 	utils.updateModel=function(data){
 		this.hostName=getHostName();
 		this.hostVers=CSInterface.hostEnvironment.appVersion;
-		this.projectID=data.projectID;
+		this.projectID=(function(){
+				if(projectUtils.getCurrentProjectId()==-1||projectUtils.getCurrentProjectId()==0){
+					return "";
+				}
+				else return projectUtils.getCurrentProjectId()})();
 		this.instanceID=data.instanceID;
 		this.originalID=data.originalID;
 		this.documentName=data.docName;
 		this.documentPath=data.docPath;
 		this.documentID=data.docID;
-		this.userID=Config.data.userid;
+		this.userID=Config.userid;
 		this.eventStartTime = new Date();
 		this.eventEndTime = new Date();
 
