@@ -811,6 +811,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 			for(var i=0;i<data.length;i++){
 				var pid=data[i]._id;
 				utils.projectIndexes[pid]=i;
+				utils.projectIndexes[data[i].pid]=i;
 				$rootScope.projectProperties[i].style={};
 				$rootScope.projectProperties[i].style.color=data[i].colorcode;
 			}
@@ -866,7 +867,11 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 						utils.changeStyleToSelected(utils.projectIndexes[data]);
 					}
 					utils.setSelectedProjectIndex(utils.projectIndexes[data]);
-					utils.setCurrentProjectId(data);
+					utils.setCurrentProjectId(utils.projectsCopy[utils.projectIndexes[data]]._id);
+					//if pid is old one, replace it with new one
+					if(utils.projectsCopy[utils.projectIndexes[data]].pid==data){
+						CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+utils.projectsCopy[utils.projectIndexes[data]]._id+'\')');
+					}
 				});
 			}
 		});
