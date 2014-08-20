@@ -490,7 +490,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var headers={};
 		if(isOAuth){
 			headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
-			headers["Content-type"]='application/x-www-form-urlencoded';
+			//headers["Content-type"]='application/x-www-form-urlencoded';
 		}
 		
 		$http({
@@ -609,13 +609,13 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		}
 		/*
 		if(color!==undefined){
-			params["color"]=color;
-		}
-		
-		if(colorindex!==undefined){
-			params["colorindex"]=colorindex;
+			params["colorcode"]=color;
 		}
 		*/
+		if(colorindex!==undefined){
+			params["color"]=colorindex;
+		}
+		
 		var url=Constants.URL_SERVICE_NEW+"/project";
 		var method="POST";
 		
@@ -629,13 +629,31 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		return deferred.promise;
 	};
 
-	utils.editProject=function(/*projectId, projectName, jobId, budgetHrs, color, colorindex*/params){
+	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color, colorindex){
 		var deferred=$q.defer();
-		
-		var url=Constants.URL_SERVICE_NEW+"/project/53cf879db2965339315350b9";
+		var params={};
+		if(projectName!==undefined){
+			params["name"]=projectName;
+		}
+		if(projectName!==undefined){
+			params["jobid"]=jobId;
+		}
+		if(projectName!==undefined){
+			params["budget"]=budgetHrs;
+		}
+		if(projectName!==undefined){
+			params["color"]=colorindex;
+		}
+
+		var url=Constants.URL_SERVICE_NEW+"/project/"+projectId;
 		var method="PUT";
 		
-		this.SendRequest(url,params,method,true);
+		this.SendRequest(url,params,method,true)
+		.then(function(result){
+			deferred.resolve(result);
+		}, function(result){
+			deferred.reject(result);
+		})
 
 		return deferred.promise;
 	};

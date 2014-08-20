@@ -110,22 +110,22 @@
 			
 			console.log("Editing Project : "+newName+newJobId+newBudget);
 			
-			APIUtils.editProject($scope.project.projectid, newName, newJobId,  newBudget,newColorCode, newColorIndex)
+			APIUtils.editProject($scope.project._id, newName, newJobId,  newBudget,newColorCode, newColorIndex)
 			.then(function(data){
 				preloader.hideLoading();
 				console.log(data);
-				if(data.IsSuccess){
+				if(data.status==200){
 					debuggerUtils.updateLogs("[EditProjectResult]: Successfully edited the project.");
 					$location.path('projects');
 				}
-				else{
-					debuggerUtils.updateLogs("[EditProjectResult]: data.result returned 'Error:'"+data.Msg);
-					$scope.message=data.Msg;
-				}
+				
 			}, function(data){
 				debuggerUtils.updateLogs("[EditProject]: Edit Failed: "+data/*todo*/);
 				preloader.hideLoading();
-				$scope.message=Messages.networkError;
+				if(data.data.msg===undefined)
+					$scope.message=Messages.networkError;
+				else
+					$scope.message=data.data.msg;
 			});
 		}
 		else{
