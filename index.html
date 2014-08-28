@@ -1,6 +1,16 @@
 <!doctype html>
 <html ng-app="TimeTracker">
 	<head>
+	
+	<script>
+		  window.Airbrake = [];
+		  window.Airbrake.try = function(fn) { try { fn() } catch(er) { window.Airbrake.push(er); } };
+		</script>
+		<script defer src="https://ssljscdn.airbrake.io/airbrake-js-tracekit.min.js"
+		  data-airbrake-project-id="104058"
+		  data-airbrake-project-key="771b6f4190e02788ab99b80d1d5d05da"
+		  data-airbrake-project-environment-name="local"></script>
+		  
 		<link href="assets/CSS/jquery-ui.min.css" rel="stylesheet" type="text/css">
 		<link href="assets/CSS/spectrum.css" rel="stylesheet" type="text/css">
 		<link href="assets/CSS/styles.css" rel="stylesheet" type="text/css">

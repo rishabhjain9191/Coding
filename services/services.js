@@ -652,6 +652,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		.then(function(result){
 			deferred.resolve(result);
 		}, function(result){
+			Airbrake.push(result);
 			deferred.reject(result);
 		})
 
