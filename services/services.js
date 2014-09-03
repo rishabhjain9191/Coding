@@ -305,7 +305,14 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 			deferred.resolve(1);
 
 		})
-		.error(function(data){console.log(data);deferred.reject(0);})
+		.error(function(data){
+			var err={};
+			err.type="Failed to fetch update parameter from config";
+			err.message=data;
+			
+			console.log(data);
+			deferred.reject(0);
+		})
 
 		return deferred.promise;
 	};
@@ -492,6 +499,9 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
 			//headers["Content-type"]='application/x-www-form-urlencoded';
 		}
+		if(method=="PUT"){
+			headers["Content-Type"]="application/x-www-form-urlencoded";
+		}
 		
 		$http({
 			method: method,
@@ -517,6 +527,8 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			// request failed
 			console.log(headers["Authorization"]);
 			var result={};
+			result["message"]="New Error";
+			result["type"]="Error 1";
 			result["data"]=data;
 			result["status"]=status;
 			deferred.reject(result);
@@ -555,6 +567,13 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			//Any unexpected error has occured
 			deferred.reject(result);			
 		},function(result){
+			var result1={};
+			result1["message"]="Auth Failure123";
+			result1["name"]="Error5";
+			console.log(result1);
+			Airbrake.push({
+				error:result1
+			});
 			console.log("Auth Failure");
 			deferred.reject(result);
 		})
@@ -652,7 +671,9 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		.then(function(result){
 			deferred.resolve(result);
 		}, function(result){
-			Airbrake.push(result);
+			Airbrake.push({
+				error:result
+			});
 			deferred.reject(result);
 		})
 
