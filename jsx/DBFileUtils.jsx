@@ -8,16 +8,18 @@
  */
  
 var pathToUnsendEvents = "";
+var dbFileName="CreativeWorxDB.json";
+var dbCopyName="DBCopy.json";
 if(Folder.fs=="Windows"){
-	pathToUnsendEvents = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxDB.json";
+	pathToUnsendEvents = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\";
 }else if(Folder.fs=="Macintosh"){
-	pathToUnsendEvents = "~/Library/Application Support/CreativeWorx/CreativeWorxDB.json";
+	pathToUnsendEvents = "~/Library/Application Support/CreativeWorx/";
 }
 
 var file;
 $._extFile={
 	openFile:function(){
-		file=new File(pathToUnsendEvents);
+		file=new File(pathToUnsendEvents+dbFileName);
 		file.open("e", "json", "????");
 	},
 	
@@ -53,6 +55,55 @@ $._extFile={
 		if(rec.length>1){rec=rec.substring(0,rec.length-1);}
 		rec=rec+']';
 		return rec;
+	},
+	closeFile:function(){
+		return file.close();
+	},
+	oldFileRemoved:function(){
+		var oldCopy=new File(pathToUnsendEvents+dbCopyName);
+		if(oldCopy.exists){
+			return oldCopy.remove();
+		}
+		return true;
+	},
+	fileRenamed:function(){
+		return file.rename(dbCopyName);
+	},
+	copyAndRemove:function(){
+		var copyFile=new File(pathToUnsendEvents+dbCopyName);
+		if(file.copy(copyFile)){
+			return file.remove();
+		}
+		
+		return false;
+		
+	},
+	renameCreateNewAndReturnContents:function(){
+		try{
+			
+			var oldCopy=new File(pathToUnsendEvents+dbCopyName);
+			var i,j,k;
+			this.oldFileRemoved();
+			for(i=0;i<3;i++){
+				if(this.closeFile()){
+					for(k=0;k<3;k++){
+						if(this.fileRenamed()){
+							
+							this.openFile();
+							//read the content of copy file and return it
+							var copyFile=new File(pathToUnsendEvents+dbCopyName);
+							copyFile.open("r", "json", "????");
+							var contents=copyFile.read();
+							return contents+'';
+						}
+					}
+				}
+			}
+			return "'error':'true'";
+		}
+		catch(e){
+			alert(e.type+"\n"+e.message);
+		}
 	}
 }
 

@@ -96,6 +96,14 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'LDAPloginCtrl',
 			templateUrl:'./views/LDAPLogin.html'
 		})
+		.when('/support',{
+			controller:'supportCtrl',
+			templateUrl:'./views/support.html'
+		})
+		.when('/repairDB',{
+			controller:'repairDBCtrl',
+			templateUrl:'./views/repairDB.html'
+		})
 		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
 }]);
 
@@ -214,6 +222,10 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		$rootScope.checkUpdateFromMenuClick=1;
 		if($location.path()=='/update')
 			$route.reload();
+	}
+	$rootScope.support=function(){
+		$rootScope.showFlyout = false;
+		$location.path('support');
 	}
 	CSInterface.evalScript('$._extcommon.createDebugFile()',function(){
 		viewManager.initializationDone();

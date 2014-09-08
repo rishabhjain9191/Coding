@@ -83,6 +83,22 @@ $._extcommon={
 			debugFile.open("e","TEXT","????");
 		}
 	},
+	getdebugFileContents:function(){
+		if(debugFile.exists){
+		alert(debugFile.tell());
+		var copyFilePath=debugFile.parent+"/logCopy.log";
+		var copyFile=new File(copyFilePath);
+		if(copyFile.exists){
+			copyFile.remove();
+		}
+		debugFile.copy(copyFile);
+		copyFile.open("r", "TEXT", "????");
+		var contents=copyFile.read();
+		alert("File value : "+contents);
+		
+		}
+		return contents;
+	},
 	checkDebugFileSize:function(){
 		if(debugFile.exists){
 			var size=debugFile.length; // size in bytes

@@ -685,7 +685,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
 		var details={};
 
-		var url=Constants.URL_SERVICE_NEW+"/event";
+		var url=Constants.URL_SERVICE_NEW+"/event123";
 		var method="POST";
 		this.SendRequest(url,params,method,true)
 		.then(function(result){
