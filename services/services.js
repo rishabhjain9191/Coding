@@ -59,7 +59,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.TIMEINTERVAL = 1000*60*4; 	// Default send data time interval of 4 minutes
 		constants.TIMEINTERVAL_MIN = 1000; 		// Minimum time inteval 1 second in milliseconds
 		constants.TIMEINTERVAL_MAX = 1000*60*60;// Maximum time interval1 hour in milliseconds
-		constants.BATCH_SIZE = 5; 				// Default number of events to send to server
+		constants.BATCH_SIZE = 1; 				// Default number of events to send to server
 		constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
 		constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
 		constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
@@ -70,7 +70,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
 
-		constants.BATCHDATA_SEND_ADDRESS = "/service/log";
+		constants.BATCHDATA_SEND_ADDRESS = "/service/log12";
 		constants.CHECK_STATUS_ADDRESS = "/service/checkstatus";
 		constants.FILE_UPLOAD_ADDRESS = "/service/fileupload";
 		constants.LOGIN_ADDRESS = "/service/getuserdetails";
@@ -111,6 +111,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
+		constants.TIME_WINDOW_ARRAY_SIZE=10;
 
 
 
@@ -711,7 +712,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		}
 	};
 	function onApplicationActivate(event){
-		console.log(event);
+		//console.log(event);
 		Logger.log(event.type);
 	};
 	function onApplicationBeforeQuit(event){
@@ -807,9 +808,9 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 
 	var PSCallback=function(csEvent) {
         var dataArray = csEvent.data.split(",");
-		console.log(csEvent);
+		//console.log(csEvent);
         var eventID=dataArray[0];
-		console.log(eventID);
+		//console.log(eventID);
 		switch(eventID){
 			case "1935767141":dispatchEvent('documentAfterSave');
 				CSInterface.evalScript('app.activeDocument.fullName',function(name){
@@ -819,7 +820,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 			case "1131180832":
 				console.log("document closed");
 				CSInterface.evalScript('app.documents.length',function(length){
-					console.log("In CsInterface");
+		//			console.log("In CsInterface");
 					if(length==0){
 						dispatchEvent('documentAfterDeactivate');
 					}
@@ -842,7 +843,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 
 				break;
 			case "1298866208":
-				console.log("new document");
+		//		console.log("new document");
 				CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentName()',function(name){
 					previousDocName=name;
 					dispatchEvent('documentAfterActivate');
@@ -914,14 +915,14 @@ function documentSelected(){
 
 
 
-services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInterface',function(Constants,Config ,DBHelper, AppModel, CSInterface){
+services.factory('Logger', ['Constants','Config','EventLogger', 'AppModel','CSInterface',function(Constants,Config ,EventLogger, AppModel, CSInterface){
 	/* Get the Data from App Model*/
 	/* Collate items to log like form JSON*/
 	/* Call DB function to log*/
 	var utils={};
 	console.log("In Logger...");
 	utils.log=function(event){
-		console.log("Updating App Model...");
+		//console.log("Updating App Model...");
 		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
 			AppModel.updateModel(JSON.parse(data));
 			event=eventIdToName(event);
@@ -953,7 +954,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 	};
 
 	var createLoggingData=function(eventType){
-		console.log("Creating Logging Data");
+		//console.log("Creating Logging Data");
 		var addObj={};
 		//addObj.ID="";
 		addObj.eventID=AppModel.documentID+':'+AppModel.eventStartTime.getTime().toString();
@@ -981,8 +982,8 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 			}
 		};
 		addObj.jsonEventPackage=obj;
-		console.log(addObj);
-		DBHelper.addItemToEventLogTable(addObj);
+		//console.log(addObj);
+		EventLogger.log(addObj);
 	};
 	return utils;
 }]);
@@ -1055,10 +1056,138 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 
 }]);
 
+services.factory('EventLogger',['$interval','Constants','debuggerUtils', 'TimeWindowMaintainer', 
+function($interval,Constants, debuggerUtils, TimeWindowMaintainer){
+	var logger={};
+	logger.log=function(record){
+		TimeWindowMaintainer.addRecordToHead(record);
+	};
+	return logger;
+}]);
 
-services.factory('DBHelper',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface',
+
+services.factory('TimeWindowMaintainer',['$interval','Constants','debuggerUtils', 'Sender',
+function($interval,Constants, debuggerUtils, Sender){
+	var size=Constants.TIME_WINDOW_ARRAY_SIZE;
+	var utils={};
+	utils.timeWindow=new Array(10);
+	for(var i=0;i<size;i++){
+		utils.timeWindow[i]=new Array();
+	}
+
+	utils.head=0;
+	utils.tail=-1;
+	var incrementHead=function(){
+		utils.tail=utils.head;
+		utils.head=(utils.head+1)%size;
+		console.log("sending head to sender");
+		if(utils.timeWindow[utils.tail].length>0)
+			Sender.processAndSend(utils.timeWindow[utils.tail]);
+		utils.timeWindow[utils.tail]=new Array();
+	};
+	var promise_incrementHead= $interval(incrementHead,1*60*1000);
+	
+	utils.addRecordToHead=function(record){
+		console.log(utils.timeWindow);
+		console.log(utils.head);
+		utils.timeWindow[utils.head].push(record);
+	};
+	return utils;
+
+}]);
+
+
+services.factory('Sender',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface', 'Filer',
+function($http,$interval,Constants,Config, debuggerUtils, CSInterface, Filer){
+	var sender={};
+	sender.processAndSend=function(records){
+		winner=sender.getWinner(records);
+		console.log("Sending ");
+		console.log(winner);
+		sender.send(winner);
+	};
+	sender.getWinner=function(records){
+		console.log("in get winner");
+		console.log(records);
+		var leaderBoard={};
+		for (var i = 0; i < records.length; i++) {
+			if(!leaderBoard.hasOwnProperty(records[i].jsonEventPackage.event.documentName)){
+				leaderBoard[records[i].jsonEventPackage.event.documentName]=new Array();
+				leaderBoard[records[i].jsonEventPackage.event.documentName].push([1,i]);
+			}
+			else{
+				leaderBoard[records[i].jsonEventPackage.event.documentName][0][0]+=1;
+				leaderBoard[records[i].jsonEventPackage.event.documentName][0][1]=i;	
+			}
+
+		};
+		console.log("leaderBoard");
+		console.log(leaderBoard);
+		//Determine the max. number of activities
+		var max=0;
+		var winner=-1;
+		var j;
+		for(j in leaderBoard){
+			if(leaderBoard[j][0][0]>=max){
+				max=leaderBoard[j][0][0];
+			}
+		}
+
+		for(j in leaderBoard){
+			if(leaderBoard[j][0][0]==max&&leaderBoard[j][0][1]>=winner){
+				winner=leaderBoard[j][0][1];
+			}
+		}
+
+		return records[winner];
+	};
+	sender.send=function(record){
+		console.log("In Sender");
+		console.log(record);
+		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
+		var records=new Array();
+		record.jsonEventPackage=JSON.stringify(record.jsonEventPackage);
+		records[0]=record;
+		var batchedRecords=JSON.stringify(records);
+		var details={};
+
+		details['data']=batchedRecords;
+		details['username']=Config.username;
+		details['password']=Config.password;
+
+		$http.post(url,details)
+		.success(function(data){
+			console.log(data);
+			console.log("[Success]Records Send to server");
+			if(data=="Invalid event details."){
+				debuggerUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
+				console.logit(data);
+				Filer.logit(batchedRecords);
+			}
+			else{
+				console.log("Offline records successfully send to server");
+				debuggerUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
+			}
+		}
+		).error(function(data){
+			console.log("Error in sending records"+data);
+			debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
+			Filer.logit(batchedRecords);
+		})
+	};
+	return sender;
+}]);
+
+
+
+
+
+
+
+services.factory('Filer',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface',
 function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 
+	var filer={}
 	//Open/Create the Log file(for unsent records)
 	CSInterface.evalScript('$._extFile.openFile()');
 
@@ -1071,7 +1200,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 	};
 
 	//Setup Interval to read the unsend record file and try to send them.
-	var promise_sendLoggedRecords= $interval(sendLoggedRecords,5*60*1000);
+	var promise_sendLoggedRecords= $interval(sendLoggedRecords,1*60*1000);
 
 
 	//Get the records, batch them if if size>batch size and then send them to server
@@ -1081,7 +1210,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 		var rec=[];
 		if(Records.length>1){
 			if(Records.length>=Constants.BATCH_SIZE){
-				console.log("Batching and sending offline records");
+				//console.log("Batching and sending offline records");
 				for(var i=0;i<Constants.BATCH_SIZE;i++){
 					rec.push((Records.splice(0,1))[0]);
 					//Decode documentName and documentPath and hostName
@@ -1114,41 +1243,49 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 	};
 
 	//Send the batched records to server, If records can't be sent, log them.
-	var send=function(batchedRecords){
+	var send=function(records){
 		//Send Batched Records to Server
 		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
 		var details={};
-
-		details['data']=batchedRecords;
+		var batchedRecords=new Array();
+		batchedRecords[0]=records;
+		details['data']=JSON.stringify(batchedRecords);
 		details['username']=Config.username;
 		details['password']=Config.password;
-
+		console.log(details);
+		console.log(details["data"]);
 		$http.post(url,details)
 		.success(function(data){
 			console.log("[Success]Records Send to server");
 			if(data=="Invalid event details."){
+				console.log(data);
 				debuggerUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
-				logit(batchedRecords);
+				filer.logit(batchedRecords);
 			}
 			else{
 				console.log("Offline records successfully send to server");
 				debuggerUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
+
 			}
 		}
 		).error(function(data){
-			console.log("Error in sending records"+data);
+			//console.log("Error in sending records"+data);
+			console.log(data);
 			debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
-			logit(batchedRecords);
+			filer.logit(batchedRecords);
 		})
 	};
 
 	//Log unsent events to the file
-	var logit=function(buffer){
-		console.log("Writing unsend records to database size : "+buffer.length);
+	filer.logit=function(buffer){
+		//console.log("Writing unsend records to database size : "+buffer.length);
 		debuggerUtils.updateLogs("Logging unsent events to local file");
 		var records=JSON.parse(buffer);
 		var record;
+		console.log(buffer);
 		for(var i=0;i<records.length;i++){
+			console.log(records[i]);
+			console.log(records[i].jsonEventPackage);
 			records[i].jsonEventPackage=JSON.parse(records[i].jsonEventPackage);
 			//Encode documentName and documentPath and hostName
 			records[i].jsonEventPackage.event.documentName=btoa(records[i].jsonEventPackage.event.documentName);
@@ -1160,37 +1297,11 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 			record=record.replace('jsonEventPackage":"','jsonEventPackage":');
 			record=record.replace('}}"}','}}}');
 			console.log("Logged Records \n "+record);
-			CSInterface.evalScript('$._extFile.writeObj(\''+record+'\')');
+			CSInterface.evalScript('$._extFile.writeObj(\''+record+'\')', function(data, error){console.log(error)});
 		}
 	};
 
-
-	dbhelper={};
-	var buffer=[];
-	//Buffer them till the buffer size and then sends them.
-	dbhelper.addItemToEventLogTable=function(obj){
-		console.log("Adding item to event log table");
-		console.log("Batch Size= "+Constants.BATCH_SIZE);
-		if(buffer.length<Constants.BATCH_SIZE-1&&obj.jsonEventPackage.event.type!="documentAfterSave"){
-			console.log("Data Buffered");
-			console.log(buffer.length);
-			console.log(buffer);
-			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
-			buffer.push(obj);
-		}
-		else{
-			//Send to server
-			obj.jsonEventPackage=JSON.stringify(obj.jsonEventPackage);
-			buffer.push(obj);
-			console.log("Sending buffer");
-			console.log(buffer);
-			console.log(JSON.stringify(buffer));
-			send(JSON.stringify(buffer));
-			//empty the buffer
-			buffer=[];
-		}
-	};
-	return dbhelper;
+return filer;
 }]);
 
 
