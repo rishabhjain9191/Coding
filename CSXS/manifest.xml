@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ExtensionManifest Version="4.0" ExtensionBundleId="TimeTrackerCC" ExtensionBundleVersion="2.0.8"
+<ExtensionManifest Version="4.0" ExtensionBundleId="TimeTracker-CC" ExtensionBundleVersion="2.0.8"
 		ExtensionBundleName="tthtml5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 		<Author>
@@ -120,7 +120,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
 
 
 	<ExtensionList>
-		<Extension Id="TimeTrackerCC.extension1" Version="2.0.8" />
+		<Extension Id="TimeTracker-CC.extension1" Version="2.0.8" />
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
@@ -138,7 +138,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
 		</RequiredRuntimeList>
 	</ExecutionEnvironment>
 	<DispatchInfoList>
-		<Extension Id="TimeTrackerCC.extension1">
+		<Extension Id="TimeTracker-CC.extension1">
 			<DispatchInfo >
 				<Resources>
 				<MainPath>./index.html</MainPath>
