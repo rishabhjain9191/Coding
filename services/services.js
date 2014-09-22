@@ -19,7 +19,8 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
 		constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
-
+		constants.URL_EXCHANGE="https://www.adobeexchange.com/resources/19";
+		constants.ISEXCHANGE=false;
 		constants.STATUS_NEW = "NEW";
 		constants.STATUS_ATTEMPTED = "ATTEMPTED";
 		constants.STATUS_TRANSFERRED = "TRANSFERRED";
@@ -27,7 +28,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
 		constants.IMAGE_STATUS_NOIMAGE = "NONE";
 		constants.IMAGE_STATUS_ERROR = "ERROR";
-		constants.COLOR_MODE = "user_selectable";
+		constants.COLOR_MODE = "preselected";
 		constants.API_TYPE="OAuth1";		//OAuth1 or legacy
 		constants.PROJECT_COLORS= [
 			"#888888", //0
@@ -106,12 +107,12 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 		constants.FILENAME_EXTENSION =   "TimeTracker.zxp";
 
-		constants.URL_UPDATE = "http://www.creativeworx.com";
-		constants.URL_DOWNLOAD = "/downloads/timetracker/TimeTracker";
+		constants.URL_UPDATE = "http://downloads.creativeworx.com/TimeTrackerDownloads.json";
+		constants.URL_DOWNLOAD = "";
 		constants.URL_ZXP_DOWNLOAD = "/downloads/timetracker/" + constants.FILENAME_EXTENSION;
 		constants.URL_ZIP_DOWNLOAD = "/downloads/timetracker/TimeTracker.zip";
 		constants.URL_VERSION = "/downloads/timetracker/TimeTrackerUpdate.xml";
-
+		constants.UPDATE_URL_JSON = "http://downloads.creativeworx.com/TimeTrackerDownloads.json";
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
 
@@ -120,7 +121,10 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 	constants.update=function(configData){
-		if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
+		if(configData.serviceAddress){ 
+			this.URL_SERVICE=configData.serviceAddress;
+			//this.URL_SERVICE_NEW=configData.serviceAddress;
+		}
 		if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
 		if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
 		if(configData.timeInterval_html5) this.TIMEINTERVAL=configData.timeInterval_html5;
@@ -285,23 +289,63 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 	utils.downloadPath="";
 	var updateParamsUpdate=function(){
 		var deferred=$q.defer();
-		var url=Constants.URL_UPDATE + Constants.URL_VERSION;// + "?" + Constants.EXTENSION_VERSION_NUMBER;
-		//var url="ini.xml";
+		var url=Constants.UPDATE_URL_JSON ;// + "?" + Constants.EXTENSION_VERSION_NUMBER;
+
+		//var url="TimeTrackerDownloads.json";
+		//var httpCacheFactory=$cacheFactory.get('templates');
+		//console.log(httpCacheFactory.info());
 		console.log(url);
-		$http.get(url)
+		$.ajax({
+		    type: 'GET',
+		    url: url,
+		    cache: false,
+		    success: function(data, textStatus, jqXHR) {
+		            console.log(data);
+		            console.log(textStatus);
+		            
+		            console.log("In Success method");
+		            data=JSON.parse(data);
+		            if(data.cs.color_mode)
+		                Constants.color_mode=data.cs.color_mode;
+		            if(data.cs.downloads.cc.version)
+		                utils.version=data.cs.downloads.cc.version;
+		            if(data.cs.downloads.cc.minversion)
+		                utils.minVersion=data.cs.downloads.cc.minversion;
+		            if(data.cs.downloads.cc.downloadURL)
+		                utils.downloadPath=data.cs.downloads.cc.downloadURL;
+		            
+		            deferred.resolve(1);
+		    }, 
+		    
+		    error: function(err) {
+		        var err={};
+		            err.type="Failed to fetch update parameter from config";
+		            err.message=data;
+		            
+		            console.log(data);
+		            deferred.reject(0);
+		    }
+		 });
+				
+		/*
+		$http({
+			method:'GET',
+			url:url,
+			cache:false
+		})
 		.success(function(data,status){
-			var x2js = new X2JS();
-			var jsonObj = x2js.xml_str2json(data);
-			console.log(jsonObj);
-			if(jsonObj.ExtensionUpdateInformation.color_mode){
-			Constants.COLOR_MODE=jsonObj.ExtensionUpdateInformation.color_mode;
-			}
-			if(jsonObj.ExtensionUpdateInformation.minversion)
-			utils.minVersion=jsonObj.ExtensionUpdateInformation.minversion;
-			if(jsonObj.ExtensionUpdateInformation.version)
-			utils.version=jsonObj.ExtensionUpdateInformation.version;
-			if(jsonObj.ExtensionUpdateInformation.download)
-			utils.downloadPath=jsonObj.ExtensionUpdateInformation.download;
+			console.log(data);
+			console.log(status);
+			
+			console.log("In Success method");
+			
+			if(data.cs.downloads.cc.version)
+				utils.version=data.cs.downloads.cc.version;
+			if(data.cs.downloads.cc.minversion)
+				utils.minVersion=data.cs.downloads.cc.minversion;
+			if(data.cs.downloads.cc.downloadURL)
+				utils.downloadPath=data.cs.downloads.cc.downloadURL;
+			
 			deferred.resolve(1);
 
 		})
@@ -312,7 +356,8 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 			
 			console.log(data);
 			deferred.reject(0);
-		})
+	})
+		*/
 
 		return deferred.promise;
 	};

@@ -11,6 +11,24 @@ app.controller('updateCtrl',['viewManager','$scope', '$rootScope','$http','Const
 function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUtils,$interval, $timeout, CSInterface,$rootScope){
 		
 		var updateType;
+		console.log("In Update View");
+		$scope.updateMessage="Update";
+		$scope.downloading=false;
+		$scope.showUpdateView=true;
+		$scope.ttDownloadLocation=Constants.URL_UPDATE+Constants.URL_ZXP_DOWNLOAD;
+		$scope.progressBarValue=0;
+		$scope.updateBtn=true;
+		$scope.returnMessage='Not Now';
+		$scope.showLearnHow=false;
+		var downloadFilePaths;
+		
+		var promise_downloadComplete;
+		var result=0;
+		var downloaded=false;
+		$scope.disableUpdateBtn=false;
+		var promise_checkDownloaded;
+		
+		
 		updateUtils.checkForUpdate()
 		.then(function(updateReq){
 			console.log(updateReq);
@@ -23,39 +41,41 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 				default:viewManager.updateDone();break;
 				
 				
-			}
-		}
-		})
+			}}
+		});
 	
-	console.log("In Update View");
-	$scope.updateMessage="Update";
-	$scope.downloading=false;
-	$scope.showUpdateView=true;
-	$scope.ttDownloadLocation=Constants.URL_UPDATE+Constants.URL_ZXP_DOWNLOAD;
-	$scope.progressBarValue=0;
-	$scope.updateBtn=true;
-	$scope.returnMessage='Not Now';
-	var downloadFilePaths;
-	
-	var promise_downloadComplete;
-	var result=0;
-	var downloaded=false;
-	$scope.disableUpdateBtn=false;
-	var promise_checkDownloaded;
-	
+
 	var updateNecessary=function(){
+		console.log("in no update necessary");
+		if(Constants.ISEXCHANGE){
+			$scope.message="A new version is available.\nEnable File Syncing for Creative Cloud for automatic updates.  ";
+				$scope.updateBtn=false;
+			$scope.showLearnHow=true;
+		}
+		else{
+			$scope.message="A newer extension is available. \n\nUpdate required.";
+		}
 		$scope.showUpdateView=false;
-		$scope.message="A newer extension is available. \n\nUpdate required.";
 		$scope.canReturn=false;
 	};
 	
 	var updateOptional=function(){
+		if(Constants.ISEXCHANGE){
+			$scope.message="A new version is available.\nEnable File Syncing for Creative Cloud for automatic updates.  ";
+				$scope.updateBtn=false;
+			$scope.showLearnHow=true;
+		}
+		else{
+			$scope.message="A newer extension is available.\n\nWould you like to update now?";
+		}
+		console.log("in no update optional");
 		$scope.showUpdateView=false;
-		$scope.message="A newer extension is available.\n\nWould you like to update now?";
+		
 		$scope.canReturn=true;
 	};
 	
 	var noUpdateRequired=function(){
+			console.log("in no update required");
 		if($rootScope.checkUpdateFromMenuClick==1){
 			$scope.showUpdateView=false;
 			$scope.message="This Extension is up-to-date";
@@ -120,6 +140,9 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	
 	$scope.openUpdateSite=function(){
 		CSInterface.openURLInDefaultBrowser(Constants.URL_UPDATE+Constants.URL_DOWNLOAD);
+	};
+	$scope.gotoExchange=function(){
+		CSInterface.openURLInDefaultBrowser(Constants.URL_EXCHANGE);	
 	}
 	
 	var checkDownloaded=function(downloaded){

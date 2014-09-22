@@ -1,0 +1,69 @@
+{
+  "cs": {
+    "title": "Adobe Creative-Cloud Extension",
+    "description": "The TimeTracker CS extension automatically captures activity in Photoshop, Illustrator, and InDesign. Flash Pro is supported on CS5-CS6.",
+    "downloads": {
+      "cc": {
+        "buttonTitle": "CC, CC 2014",
+        "version": "2.0.9",
+        "changelog": "Bug fixes.",
+        "minversion": "2.0.0",
+        "downloadURL": "http://downloads.creativeworx.com/Extension/TimeTrackerCC.zxp",
+        "releasedate": "June 27, 2014",
+        "supportedapps": [
+          "CC and CC 2014"
+        ],
+        "oses": [
+          "Mac and Windows"
+        ]
+      },
+      "cs": {
+        "buttonTitle": "CS5, CS5.5, CS6",
+        "version": "1.1.93",
+        "changelog": "Bug fixes.",
+        "minversion": "1.0.3",
+        "downloadURL": "http://downloads.creativeworx.com/Extension/TimeTrackerCS.zxp",
+        "releasedate": "May 23, 2014",
+        "supportedapps": [
+          "CS5, CS5.5, CS6 and CC"
+        ],
+        "oses": [
+          "Mac and Windows"
+        ]
+      }
+    }
+  },
+  "desktop": {
+    "title": "Desktop Application",
+    "description": "The TimeTracker desktop application automatically captures activity in Microsoft Office (Word, PowerPoint and Excel) on both Mac and Windows. Automatic capture in Pages, Numbers, Keynote, Preview, Adobe Acrobat, and Adobe Reader are also supported on Mac only.",
+    "downloads": {
+      "mac": {
+        "buttonTitle": "Mac",
+        "version": "2.1.0",
+        "minversion": "2.0.3",
+        "downloadURL": "http://downloads.creativeworx.com/Desktop/Mac/TimeTracker.dmg",
+        "releasedate": "September 17, 2014",
+        "supportedapps": [
+          "Microsoft Office 2010 and later",
+          "Pages, Keynote, Numbers 9 and later"
+        ],
+        "oses": [
+          "OSX 10.5 and later"
+        ]
+      },
+      "windows": {
+        "buttonTitle": "Windows",
+        "version": "0.7.17",
+        "minversion": "0.0.0",
+        "downloadURL": "http://downloads.creativeworx.com/Desktop/Windows/TimeTrackerDesktop.zip",
+        "releasedate": "May 21, 2014",
+        "supportedapps": [
+          "Microsoft Office 2010 and later"
+        ],
+        "oses": [
+          "Windows XP and later"
+        ]
+      }
+    }
+  }
+}

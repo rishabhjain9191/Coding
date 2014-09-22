@@ -108,8 +108,8 @@ app.config(['$routeProvider', function($routeProvider){
 }]);
 
 
-app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route','Config','CSInterface',
-function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface){	
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route','Config','CSInterface','$templateCache','updateUtils',
+function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface, $templateCache, updateUtils){	
 	// Initialize $rootScope variables
 	$rootScope.showFlyout=false;
 	$rootScope.logs="";
@@ -218,10 +218,15 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		console.log($rootScope);
 	};
 	$rootScope.checkUpdate=function(){
-		$location.path('update');
-		$rootScope.checkUpdateFromMenuClick=1;
-		if($location.path()=='/update')
-			$route.reload();
+		//updateUtils.checkForUpdate(function(data){console.log(data);}, function(){});
+		if($location.path()=='/update'){
+			$route.reload()
+		}
+		else{
+			$location.path('update');
+			$rootScope.checkUpdateFromMenuClick=1;
+		}
+		
 	}
 	$rootScope.support=function(){
 		$rootScope.showFlyout = false;

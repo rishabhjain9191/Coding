@@ -80,12 +80,12 @@
 			<div ng-hide='LoggedInItems'>
 				<div class="menu_item" ng-click="configureLDAP()">Configure LDAP</div>
 				<div class="menu_item" ng-click="about()">About TimeTracker</div>
-				<!--
+				
 				<div class="menu_item" ng-click="checkUpdate()">Check for updates...</div>
 				<div class="menu_item" ng-click="feedback()">Feedback...</div>
-				-->
-				<div class="menu_item" ng-click="support()">Support</div>
-			</div>
+				
+<!-- 				<div class="menu_item" ng-click="support()">Support</div>
+ -->			</div>
 
 			<div ng-show='LoggedInItems'>
 				<div class="menu_item" ng-show="canEdit" ng-click="create()">New Project</div>
@@ -95,11 +95,11 @@
 				<div class="menu_item" ng-click="openHomePage()">View Calendar</div>
 				<div class="separator"></div>
 				<div class="menu_item" ng-click="about()">About TimeTracker</div>
-				<!--
+				
 				<div class="menu_item" ng-click="checkUpdate()">Check for updates...</div>
 				<div class="menu_item" ng-click="feedback()">Feedback...</div>
-				-->
-				<div class="menu_item" ng-click="support()">Support</div>
+				
+				<!-- <div class="menu_item" ng-click="support()">Support</div> -->
 				<div class="separator"></div>
 				<div class="menu_item" ng-click="logout()">Logout</div>
 			</div>
