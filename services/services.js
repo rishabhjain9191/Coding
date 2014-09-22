@@ -501,6 +501,8 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		}
 		if(method=="PUT"){
 			headers["Content-Type"]="application/x-www-form-urlencoded";
+			headers["X-HTTP-Method-Override"]="PUT";
+			method="POST";
 		}
 		
 		$http({
@@ -685,7 +687,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
 		var details={};
 
-		var url=Constants.URL_SERVICE_NEW+"/event123";
+		var url=Constants.URL_SERVICE_NEW+"/event";
 		var method="POST";
 		this.SendRequest(url,params,method,true)
 		.then(function(result){
