@@ -25,6 +25,7 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 				
 				Constants.update(Config.data);
 				
+				Config.serviceAddress=Config.data.serviceAddress;
 				Config.username=Config.data.username;
 				Config.password=Config.data.password;
 				Config.keepMeLoggedIn=Config.data.keepMeLoggedIn;

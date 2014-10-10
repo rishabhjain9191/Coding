@@ -64,11 +64,11 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		if(company_email!="" && company_password!=""){	
 			preloader.showLoading();
 			//No hashing in case of LDAP Login
-			var hashedPassword=company_password;
+			var password=company_password;
 			Config.username = company_email;
-			Config.password = hashedPassword;
+			Config.password = password;
 				
-			APIUtils.login(company_email, hashedPassword,company_password, Config.companyEmail)
+			APIUtils.login(company_email, password,company_password, Config.companyEmail)
 			.then(function(data){
 				preloader.hideLoading();
 				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}

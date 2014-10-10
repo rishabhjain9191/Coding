@@ -65,14 +65,16 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
 		constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
 		constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
+
 		constants.IMAGE_TIMEINTERVAL = 50000;
 		constants.THRESHOLD_COUNT = 100;
 		constants.APP_EVENT_POLL = 5000; 		// How frequently to check for events in the app
 		constants.REFRESH_PROJECT_INTERVAL = 5*60*1000;
+		constants.SEND_UNSENT_EVENTS_TIMER=5*60*1000;
 
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
 		
-		constants.URL_SERVICE_NEW = "https://dev-api.creativeworx.com/v1";
+		constants.URL_SERVICE_NEW = "https://api.creativeworx.com/v1";
 
 		constants.BATCHDATA_SEND_ADDRESS = "/service/log";
 		constants.CHECK_STATUS_ADDRESS = "/service/checkstatus";
@@ -123,7 +125,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 	constants.update=function(configData){
 		if(configData.serviceAddress){ 
 			this.URL_SERVICE=configData.serviceAddress;
-			//this.URL_SERVICE_NEW=configData.serviceAddress;
+			this.URL_SERVICE_NEW=configData.serviceAddress;
 		}
 		if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
 		if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
@@ -220,11 +222,13 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	};
 	utils.configloaded=function(){
 		console.log("Config Loaded  "+(new Date()).getTime());
+		//console.log(Config.serviceAddress);
 		$route.reload();
-		if(Config.companyEmail&&Config.companyEmail.length>0){
+		if(Config.companyEmail&&Config.companyEmail.length>0&&Config.companyEmail!=0){
 			$location.path('LDAPLogin');
 		}
 		else{
+			console.log(Config.serviceAddress);
 			$location.path('login');
 		}
 
@@ -265,7 +269,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	utils.LDAPConfigDone=function(){
 		$route.reload();
 		console.log(Config.companyEmail);
-		if(Config.companyEmail!==""){
+		if(Config.companyEmail!==""&&Config.companyEmail!==0){
 			$location.path('LDAPLogin');
 		}
 		else{
@@ -304,6 +308,7 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 		            console.log(textStatus);
 		            
 		            console.log("In Success method");
+		            try{
 		            data=JSON.parse(data);
 		            if(data.cs.color_mode)
 		                Constants.color_mode=data.cs.color_mode;
@@ -315,6 +320,10 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 		                utils.downloadPath=data.cs.downloads.cc.downloadURL;
 		            
 		            deferred.resolve(1);
+		        }
+		        catch(e){
+		        	deferred.reject(0);	
+		        }
 		    }, 
 		    
 		    error: function(err) {
@@ -427,7 +436,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.data='';
 
 
-	config.serviceAddress = Constants.URL_SERVICE;
+	config.serviceAddress = Constants.URL_SERVICE_NEW;
 	config.siteAddress = Constants.URL_SITE;
 	config.updateAddress = Constants.URL_UPDATE;
 	config.timeInterval_html5 = Constants.TIMEINTERVAL;
@@ -485,7 +494,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUti
 			deferred.resolve(100);
 		}
 		else if(Config.keepMeLoggedIn=="true"){
-			APIUtils.login(Config.username, Config.password, Config.companyEmail)
+			APIUtils.login(Config.username, Config.password, Config.password,Config.companyEmail)
 			.then(function(data){
 				APIUtils.getUsers()
 				.then(function(result){
@@ -586,21 +595,41 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 	utils.validateLDAP=function(companyEmail){
 		var deferred=$q.defer();
-		//*Implementation missing*
+		/**
+			STILL USING THE OLD END POINT
+		*/
+		var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
+		var params=[];
+		params['email']=companyEmail;
+		$http.post(url,params)
+		.success(function(data){
+			deferred.resolve(data);
+		})
+		.error(function(data){
+			deferred.reject(data);
+		})
+
 		return deferred.promise
 	};
 	
-	utils.login=function(user_email, hashedPassword,user_password){
+	utils.login=function(user_email, hashedPassword,user_password, companyEmail){
 		console.log("Login Called");
 		var deferred=$q.defer();
 		
 		var url=Constants.URL_SERVICE_NEW+"/authenticate";
 		var method="POST";
 		var params={};
-		params["email"]=user_email;
-		params["password"]=hashedPassword;
-		params["hashed"]=true;
-
+		if(companyEmail.length>1){
+			params["email"]=companyEmail;
+			params["password"]=hashedPassword;
+			params["username"]=user_email;
+		}
+		
+		else{	
+			params["email"]=user_email;
+			params["password"]=hashedPassword;
+			params["hashed"]=true;
+		}
 		utils.SendRequest(url,params,method,false)
 		.then(function(result){
 		// will check for the response here
@@ -1399,7 +1428,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 	};
 
 	//Setup Interval to read the unsend record file and try to send them.
-	var promise_sendLoggedRecords= $interval(sendLoggedRecords,1*60*1000);
+	var promise_sendLoggedRecords= $interval(sendLoggedRecords,Constants.SEND_UNSENT_EVENTS_TIMER);
 
 
 	//Get the records, batch them if if size>batch size and then send them to server

@@ -83,8 +83,8 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 			Config.username = user_email;
 			Config.password = hashedPassword;
 
-			
-			APIUtils.login(user_email, hashedPassword,user_password)
+		
+			APIUtils.login(user_email, hashedPassword,user_password, "")
 			.then(function(result){
 				if(result.status=="200"){
 					console.log("auth success")

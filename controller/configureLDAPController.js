@@ -13,6 +13,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	preloader.hideLoading();
 	$scope.modalShown = false;
 	$scope.companyEmail="";
+	$scope.message="";
 	
 	console.log(Config);
 	
@@ -52,11 +53,13 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 				if(data.success){
 					Config.companyEmail=companyEmail;
 					Config.companyName=data.success;
-					Config.companyEmailValue=companyEmail
+					Config.companyEmailValue=companyEmail;
 				}
 				else{
 					Config.companyEmail=0;
 					Config.companyEmailValue=companyEmail;
+					preloader.hideLoading();
+					$scope.message="Authentication Failure";
 					
 				}
 				
@@ -127,7 +130,9 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	var resultWrittentoConfig=function(){
 		console.log("Result written in config");
 		preloader.hideLoading();
-		viewManager.LDAPConfigDone();
+		if(Config.companyEmail!==0){
+			viewManager.LDAPConfigDone();
+		}
 	};
 	
 }]);

@@ -9,6 +9,7 @@
  
 var pathToUnsendEvents = "";
 var dbFileName="CreativeWorxDB.json";
+var dbFileNameNew="CreativeWorxDBvII.json";
 var dbCopyName="DBCopy.json";
 if(Folder.fs=="Windows"){
 	pathToUnsendEvents = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\";
@@ -19,7 +20,7 @@ if(Folder.fs=="Windows"){
 var file;
 $._extFile={
 	openFile:function(){
-		file=new File(pathToUnsendEvents+dbFileName);
+		file=new File(pathToUnsendEvents+dbFileNameNew);
 		file.open("e", "json", "????");
 	},
 	
@@ -42,7 +43,7 @@ $._extFile={
 		}
 		//Delete the file and create a new one
 		file.close();
-		file=new File(pathToUnsendEvents);
+		file=new File(pathToUnsendEvents+dbFileNameNew);
 		file.open("w", "json", "????");
 		file.close();
 		file.open("e", "json", "????"); 
