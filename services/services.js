@@ -112,7 +112,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
 		constants.TIME_WINDOW_ARRAY_SIZE=10;
-		constants.MAX_PROJECTS=1000;
+		constants.MAX_PROJECTS=100;
 
 
 
@@ -492,7 +492,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q','CSInterface',
 function($rootScope, Constants, Config, $http, $q, CSInterface){
 	$rootScope.projectProperties=new Array();
-	for(i=0;i<100;i++){
+	for(i=0;i<Constants.MAX_PROJECTS;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
 	}
 	var utils={};
@@ -553,6 +553,12 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 		.success(function(data){
 			utils.projectIndexes={};
 			utils.projectsCopy=data;				//Save the freshly retrieved project list
+			while(data.length>Constants.MAX_PROJECTS){
+				for(var i=Constants.MAX_PROJECTS;i<2*Constants.MAX_PROJECTS;i++){
+					$rootScope.projectProperties.push(new projectNo(i));
+				}
+				Constants.MAX_PROJECTS=2*Constants.MAX_PROJECTS;
+			}
 			for(var i=0;i<data.length;i++){
 				var pid=data[i].pid;
 				utils.projectIndexes[pid]=i;
