@@ -2,10 +2,10 @@
 
 var pathToConfigFile = "";
 if(Folder.fs=="Windows"){
- pathToConfigFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxConfigv0.xml";
+ pathToConfigFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxConfig.xml";
  pathToDebugFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorx.log";
 }else if(Folder.fs=="Macintosh"){
- pathToConfigFile = "~/Library/Application Support/CreativeWorx/CreativeWorxConfigv0.xml";
+ pathToConfigFile = "~/Library/Application Support/CreativeWorx/CreativeWorxConfig.xml";
  pathToDebugFile = "~/Library/Application Support/CreativeWorx/CreativeWorx.log";
 }
 var XMLHeader = '<\?xml version=\"1.0\" encoding=\"UTF-8\"?>';
