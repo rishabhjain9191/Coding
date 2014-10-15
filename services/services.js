@@ -117,7 +117,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.UPDATE_URL_JSON = "http://downloads.creativeworx.com/TimeTrackerDownloads.json";
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
-		constants.MAX_PROJECTS=1000;
+		constants.MAX_PROJECTS=5;
 
 
 
@@ -330,9 +330,7 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 		    error: function(err) {
 		        var err={};
 		            err.type="Failed to fetch update parameter from config";
-		            err.message=data;
 		            
-		            console.log(data);
 		            deferred.reject(0);
 		    }
 		 });
@@ -868,7 +866,7 @@ services.factory('OAuthUtils',['$q',function($q){
 services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q','CSInterface', 'APIUtils',
 function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 	$rootScope.projectProperties=new Array();
-	for(i=0;i<100;i++){
+	for(i=0;i<Constants.MAX_PROJECTS;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
 	}
 	var utils={};
@@ -925,6 +923,12 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 			var data=result.data.result;
 			utils.projectIndexes={};
 			utils.projectsCopy=data;				//Save the freshly retrieved project list
+			while(data.length>Constants.MAX_PROJECTS){
+				for(var i=Constants.MAX_PROJECTS;i<2*Constants.MAX_PROJECTS;i++){
+					$rootScope.projectProperties.push(new projectNo(i));
+				}
+				Constants.MAX_PROJECTS=2*Constants.MAX_PROJECTS;
+			}
 			for(var i=0;i<data.length;i++){
 				var pid=data[i]._id;
 				utils.projectIndexes[pid]=i;

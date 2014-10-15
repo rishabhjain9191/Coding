@@ -188,7 +188,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		AppWatcher.removeEventListeners();
 		projectUtils.reset();
 		$rootScope.projectProperties=new Array();
-		for(i=0;i<100;i++){
+		for(i=0;i<Constants.MAX_PROJECTS;i++){
 			$rootScope.projectProperties.push(new projectNo(i));
 		}
 		$rootScope.LoggedInItems=false;		

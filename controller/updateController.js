@@ -42,7 +42,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 				
 				
 			}}
-		});
+		}, function(){viewManager.updateDone();});
 	
 
 	var updateNecessary=function(){
