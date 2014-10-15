@@ -112,6 +112,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
 		constants.TIME_WINDOW_ARRAY_SIZE=10;
+		constants.MAX_PROJECTS=1000;
 
 
 
