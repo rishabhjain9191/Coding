@@ -117,6 +117,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.UPDATE_URL_JSON = "http://downloads.creativeworx.com/TimeTrackerDownloads.json";
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
+		constants.MAX_PROJECTS=1000;
 
 
 
