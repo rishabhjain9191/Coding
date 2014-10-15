@@ -117,7 +117,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.UPDATE_URL_JSON = "http://downloads.creativeworx.com/TimeTrackerDownloads.json";
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
-		constants.MAX_PROJECTS=5;
+		constants.MAX_PROJECTS=100;
 
 
 
@@ -924,10 +924,11 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 			utils.projectIndexes={};
 			utils.projectsCopy=data;				//Save the freshly retrieved project list
 			while(data.length>Constants.MAX_PROJECTS){
-				for(var i=Constants.MAX_PROJECTS;i<2*Constants.MAX_PROJECTS;i++){
+				for(var i=Constants.MAX_PROJECTS;i<2*Constants.MAX_PROJECTS+1;i++){
 					$rootScope.projectProperties.push(new projectNo(i));
 				}
-				Constants.MAX_PROJECTS=2*Constants.MAX_PROJECTS;
+				//Plus 1 for incoperating a new project when no. of projects=2^n
+				Constants.MAX_PROJECTS=2*Constants.MAX_PROJECTS+1;
 			}
 			for(var i=0;i<data.length;i++){
 				var pid=data[i]._id;
