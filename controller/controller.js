@@ -120,7 +120,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 	$rootScope.userLoggedState=1;
 	$rootScope.checkUpdateFromMenuClick=0;
 	
-	for(i=0;i<100;i++){
+	for(i=0;i<1000;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
 	}	
 	
