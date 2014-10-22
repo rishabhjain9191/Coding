@@ -25,7 +25,7 @@
 		if(!this.isExists()){
 			return "false";
 		}
-		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval_html5","serviceAddress","checkOnlineTimeInterval_html5","imageTimeInterval_html5","batchSize_html5","thresholdCount_html5","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled_html5", "configversion", "companyEmail", "companyEmailValue" , "companyName"];
+		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval_html5","serviceAddress","checkOnlineTimeInterval_html5","imageTimeInterval_html5","batchSize_html5","thresholdCount_html5","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled_html5", "configversion", "companyEmail", "companyEmailValue" , "companyName", "homePage"];
 		var obj = new Object();
 		var str="{";
 		for(var i=0;i<tags.length;i++){
@@ -83,6 +83,8 @@
 					this.setTagValue('logEnabled_html5', config[c]);
 				else if(c == "configversion")
 					this.setTagValue('configversion', config[c]);
+				else if(c == "homePage")
+					this.setTagValue('homePage', config[c]);
 				
 
 			}		

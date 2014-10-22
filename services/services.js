@@ -73,6 +73,8 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.SEND_UNSENT_EVENTS_TIMER=5*60*1000;
 
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+
+		constants.HOME_PAGE = "https://timetracker.creativeworx.com";
 		
 		constants.URL_SERVICE_NEW = "https://api.creativeworx.com/v1";
 
@@ -129,6 +131,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 			this.URL_SERVICE_NEW=configData.serviceAddress;
 		}
 		if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
+		if(configData.homePage) this.HOME_PAGE=configData.homePage;
 		if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
 		if(configData.timeInterval_html5) this.TIMEINTERVAL=configData.timeInterval_html5;
 		if(configData.checkOnlineTimeInterval_html5) this.CHECK_ONLINE_TIMEINTERVAL=configData.checkOnlineTimeInterval_html5;
@@ -449,7 +452,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
 	config.logEnabled_html5 = Constants.LOG_ENABLE;
 	config.configversion = 2;
-
+	config.homePage=Constants.HOME_PAGE;
 	
 
 	/*
