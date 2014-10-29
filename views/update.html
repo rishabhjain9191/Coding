@@ -1,17 +1,24 @@
 <div class="updateContainer" ng-hide="showUpdateView">
 
-	<div ng-show="downloading">New Extension available...</div>
+	<div ng-show="downloading">New extension available...</div>
 	<div ng-hide="downloading" style="min-height: 40px;"></div>
-	<div><progress value="{{progressBarValue}}" max="100" ng-show="downloading"></progress></div>
-	
-	<div style="margin: 20px;"><pre style="font-family:Arial;">{{message}}</pre>
-	<div style="cursor:pointer; text-decoration:underline" ng-click="gotoExchange()" ng-show="showLearnHow">Learn How</div>
-	</div>
-	
-	<div style="padding-bottom: 20px;" ng-show="downloading">Extension also Available at:<br><br><span style="text-decoration: underline;" ng-click="openUpdateSite()">www.CreativeWorx.com<span></div>
-	
 	<div>
-	<button style="width:auto;" class="lightBtn" ng-show='updateBtn'  ng-click="download()" ng-disabled="disableUpdateBtn">{{updateMessage}}</button>
-	<button style="width:auto;" class="lightBtn" ng-click="done()" ng-show="canReturn">{{returnMessage}}</button>
+        <progress value="{{progressBarValue}}" max="100" ng-show="downloading"></progress>
+    </div>
+
+	<div style="margin: 20px;">
+        <pre style="font-family:Arial;">{{message}}</pre>
+        <div style="cursor:pointer; text-decoration:underline" ng-click="gotoExchange()" ng-show="showLearnHow">Learn How</div>
+	</div>
+
+	<div style="padding-bottom: 20px;" ng-show="downloading">
+        Extension also available in the
+        <br><br>
+        <span style="cursor: pointer; text-decoration: underline;" ng-click="openDownloadCenter()">TimeTracker Download Center<span>
+    </div>
+
+    <div>
+        <button style="width:auto;" class="lightBtn" ng-show='updateBtn'  ng-click="download()" ng-disabled="disableUpdateBtn">{{updateMessage}}</button>
+        <button style="width:auto;" class="lightBtn" ng-click="done()" ng-show="canReturn">{{returnMessage}}</button>
 	</div>
 <div>

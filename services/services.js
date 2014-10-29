@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.8.1";
+		constants.EXTENSION_VERSION_NUMBER = "2.1.0-0";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -75,7 +75,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
 
 		constants.HOME_PAGE = "https://timetracker.creativeworx.com";
-		
+
 		constants.URL_SERVICE_NEW = "https://api.creativeworx.com/v1";
 
 		constants.BATCHDATA_SEND_ADDRESS = "/service/log";
@@ -112,10 +112,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.FILENAME_EXTENSION =   "TimeTracker.zxp";
 
 		constants.URL_UPDATE = "http://downloads.creativeworx.com/TimeTrackerDownloads.json";
-		constants.URL_DOWNLOAD = "";
-		constants.URL_ZXP_DOWNLOAD = "/downloads/timetracker/" + constants.FILENAME_EXTENSION;
-		constants.URL_ZIP_DOWNLOAD = "/downloads/timetracker/TimeTracker.zip";
-		constants.URL_VERSION = "/downloads/timetracker/TimeTrackerUpdate.xml";
+		constants.URL_DOWNLOAD_CENTER = "/user/settings#/download";
 		constants.UPDATE_URL_JSON = "http://downloads.creativeworx.com/TimeTrackerDownloads.json";
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
@@ -126,7 +123,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 	constants.update=function(configData){
-		if(configData.serviceAddress){ 
+		if(configData.serviceAddress){
 			this.URL_SERVICE=configData.serviceAddress;
 			this.URL_SERVICE_NEW=configData.serviceAddress;
 		}
@@ -308,36 +305,36 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 		    url: url,
 		    cache: false,
 		    success: function(data, textStatus, jqXHR) {
-		            console.log(data);
-		            console.log(textStatus);
-		            
-		            console.log("In Success method");
-		            try{
+	            console.log(data);
+	            console.log(textStatus);
+
+	            console.log("In Success method");
+	            try{
 		            data=JSON.parse(data);
-		            if(data.cs.color_mode)
-		                Constants.color_mode=data.cs.color_mode;
-		            if(data.cs.downloads.cc.version)
-		                utils.version=data.cs.downloads.cc.version;
-		            if(data.cs.downloads.cc.minversion)
-		                utils.minVersion=data.cs.downloads.cc.minversion;
-		            if(data.cs.downloads.cc.downloadURL)
-		                utils.downloadPath=data.cs.downloads.cc.downloadURL;
-		            
+                    if(data.cs.color_mode)
+                        Constants.color_mode=data.cs.color_mode;
+                    if(data.cs.downloads.cc.version)
+                        utils.version=data.cs.downloads.cc.version;
+                    if(data.cs.downloads.cc.minversion)
+                        utils.minVersion=data.cs.downloads.cc.minversion;
+                    if(data.cs.downloads.cc.downloadURL)
+                        utils.downloadPath=data.cs.downloads.cc.downloadURL;
+
 		            deferred.resolve(1);
 		        }
 		        catch(e){
-		        	deferred.reject(0);	
+		        	deferred.reject(0);
 		        }
-		    }, 
-		    
+		    },
+
 		    error: function(err) {
 		        var err={};
 		            err.type="Failed to fetch update parameter from config";
-		            
+
 		            deferred.reject(0);
 		    }
 		 });
-				
+
 		/*
 		$http({
 			method:'GET',
@@ -347,16 +344,16 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 		.success(function(data,status){
 			console.log(data);
 			console.log(status);
-			
+
 			console.log("In Success method");
-			
+
 			if(data.cs.downloads.cc.version)
 				utils.version=data.cs.downloads.cc.version;
 			if(data.cs.downloads.cc.minversion)
 				utils.minVersion=data.cs.downloads.cc.minversion;
 			if(data.cs.downloads.cc.downloadURL)
 				utils.downloadPath=data.cs.downloads.cc.downloadURL;
-			
+
 			deferred.resolve(1);
 
 		})
@@ -364,7 +361,7 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 			var err={};
 			err.type="Failed to fetch update parameter from config";
 			err.message=data;
-			
+
 			console.log(data);
 			deferred.reject(0);
 	})
@@ -453,7 +450,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.logEnabled_html5 = Constants.LOG_ENABLE;
 	config.configversion = 2;
 	config.homePage=Constants.HOME_PAGE;
-	
+
 
 	/*
 		Read from the config file and update config values
@@ -510,8 +507,8 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUti
 				}
 				else
 					deferred.resolve(100);
-				
-			}, 
+
+			},
 			//Get User Details Failed
 			function(result){
 				deferred.resolve(100);
@@ -529,15 +526,15 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUti
 		return deferred.promise;
 
 	};
-	
+
 	return utils;
 }]);
 
 services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',function(Constants, $q, Config, $http, OAuthUtils){
 
 	var utils={};
-	
-	
+
+
 	//
 	//	Status Codes:
 	//
@@ -545,10 +542,10 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	//	401/403		Unauthorized
 	//	404			Not found
 	//	500			Server error
-	//	
-	
+	//
+
 		utils.SendRequest=function(url,params,method,isOAuth){
-	
+
 		var deferred=$q.defer();
 		var headers={};
 		if(isOAuth){
@@ -560,7 +557,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			headers["X-HTTP-Method-Override"]="PUT";
 			method="POST";
 		}
-		
+
 		$http({
 			method: method,
 			url: url,
@@ -592,8 +589,8 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			deferred.reject(result);
 		})
 		return deferred.promise;
-	};	
-	
+	};
+
 
 	utils.validateLDAP=function(companyEmail){
 		var deferred=$q.defer();
@@ -613,11 +610,11 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 		return deferred.promise
 	};
-	
+
 	utils.login=function(user_email, hashedPassword,user_password, companyEmail){
 		console.log("Login Called");
 		var deferred=$q.defer();
-		
+
 		var url=Constants.URL_SERVICE_NEW+"/authenticate";
 		var method="POST";
 		var params={};
@@ -626,8 +623,8 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			params["password"]=hashedPassword;
 			params["username"]=user_email;
 		}
-		
-		else{	
+
+		else{
 			params["email"]=user_email;
 			params["password"]=hashedPassword;
 			params["hashed"]=true;
@@ -643,7 +640,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			}
 			else
 			//Any unexpected error has occured
-			deferred.reject(result);			
+			deferred.reject(result);
 		},function(result){
 			var result1={};
 			result1["message"]="Auth Failure123";
@@ -655,18 +652,18 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			console.log("Auth Failure");
 			deferred.reject(result);
 		})
-	
+
 		return deferred.promise;
 	};
-	
-	
+
+
 	utils.getUsers=function(params){
 		var deferred=$q.defer();
-		
+
 		var url=Constants.URL_SERVICE_NEW+"/user";
 		var method="GET";
 		var params="";
-			
+
 		this.SendRequest(url,params,method,true)
 		.then(function(result){
 			deferred.resolve(result);
@@ -675,10 +672,10 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 		return deferred.promise;
 	};
-	
+
 	utils.getProjects=function(){
 		var deferred=$q.defer();
-		
+
 		var url=Constants.URL_SERVICE_NEW+"/project";
 		var method="GET";
 		var params={};
@@ -691,7 +688,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 		return deferred.promise;
 	};
-	
+
 	utils.addProject=function(projectName, jobId, budgetHrs, color, colorindex){
 		var deferred=$q.defer();
 		var params={};
@@ -712,17 +709,17 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		if(colorindex!==undefined){
 			params["color"]=colorindex;
 		}
-		
+
 		var url=Constants.URL_SERVICE_NEW+"/project";
 		var method="POST";
-		
+
 		this.SendRequest(url,params,method,true)
 		.then(function(result){
 			deferred.resolve(result);
 		}, function(result){
 			deferred.reject(result);
 		})
-		
+
 		return deferred.promise;
 	};
 
@@ -744,7 +741,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 		var url=Constants.URL_SERVICE_NEW+"/project/"+projectId;
 		var method="PUT";
-		
+
 		this.SendRequest(url,params,method,true)
 		.then(function(result){
 			deferred.resolve(result);
@@ -757,7 +754,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 		return deferred.promise;
 	};
-	
+
 	utils.sendEvents=function(params){
 		var deferred=$q.defer();
 		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
@@ -771,20 +768,20 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		},function(result){
 			deferred.reject(result);
 		})
-		
+
 		return deferred.promise;
 	};
-	
+
 
 	return utils;
-	
+
 }]);
 
 services.factory('OAuthUtils',['$q',function($q){
 
 	// todo: remove the dependencies
-	
-	
+
+
 	var utils={};
 	utils.oauth_consumer_key="";
 	utils.oauth_consumer_secret="";
@@ -800,14 +797,14 @@ services.factory('OAuthUtils',['$q',function($q){
 		this.oauth_consumer_key=key;
 		this.oauth_consumer_secret=secret;
 	};
-	
+
 	utils.getAuthHeader=function(url,method,params){
-	
+
 		this.oauth_timestamp=this.getTimestamp();
 		this.oauth_nonce=this.getNonce();
 		this.createSignature(url,method,params);
-		
-		var authHeader = 
+
+		var authHeader =
 			'OAuth realm="",'+
 			'oauth_consumer_key="'+this.oauth_consumer_key+'",'+
 			'oauth_token="",'+
@@ -816,25 +813,25 @@ services.factory('OAuthUtils',['$q',function($q){
 			'oauth_nonce="'+this.oauth_nonce+'",'+
 			'oauth_version="'+this.oauth_version+'",'+
 			'oauth_signature="'+encodeURIComponent(this.oauth_signature)+'"';
-			
+
 		return authHeader;
 	};
-	
+
 	utils.getTimestamp=function(){
 		return OAuth.timestamp();
 	};
-	
+
 	utils.getNonce=function(){
 		return OAuth.nonce(11);
 	};
-	
+
 	utils.createSignature=function(url,method,params){
-	
-		var accessor = { 
-			consumerSecret: this.oauth_consumer_secret, 
+
+		var accessor = {
+			consumerSecret: this.oauth_consumer_secret,
 			tokenSecret   : this.oauth_token_secret
 		};
-			
+
 		var list = [];
 		if(params){
 			for (var p in params) {
@@ -843,26 +840,26 @@ services.factory('OAuthUtils',['$q',function($q){
 		}
 		console.log("brouhaha");
 		console.log(list);
-		var message = { 
-			method: method, 
+		var message = {
+			method: method,
 			action: url,
 			parameters: list
 		};
-		
+
 		message.parameters.push(["oauth_version", this.oauth_version]);
 		message.parameters.push(["oauth_consumer_key", this.oauth_consumer_key]);
 		message.parameters.push(["oauth_token", this.oauth_token]);
 		message.parameters.push(["oauth_timestamp", this.oauth_timestamp]);
 		message.parameters.push(["oauth_nonce", this.oauth_nonce]);
 		message.parameters.push(["oauth_signature_method", this.oauth_signature_method]);
-		
+
 		console.log(message);
 		console.log(accessor);
 		OAuth.SignatureMethod.sign(message, accessor);
 		this.oauth_signature=OAuth.getParameter(message.parameters, "oauth_signature");
-		
+
 	};
-	
+
 	return utils;
 }]);
 
@@ -959,13 +956,13 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 					deferred.reject(utils.projectsCopy);
 					break;
 			}
-			
-			
+
+
 		})
 		return deferred.promise;
 	};
 
-	
+
 
 	utils.selectProject=function(){
 		//Check the current document's XMP
@@ -1456,7 +1453,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 					rec[i].document_path=atob(rec[i].document_path);
 					rec[i].host_name=atob(rec[i].host_name);
 					//Done Decoding
-					
+
 
 				}
 				send(rec);
@@ -1482,7 +1479,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 	//Send the batched records to server, If records can't be sent, log them.
 	var send=function(batchedRecords){
 		//Send Batched Records to Server
-		
+
 			console.log(batchedRecords);
 			APIUtils.sendEvents(batchedRecords[0])/*Temporarily till server is accecpting individual records*/
 			.then(function(data){
@@ -1490,7 +1487,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 				console.log("Records successfully send to server");
 				console.log(data);
 				debuggerUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
-				
+
 			}
 			,function(data){
 				console.log("Error in sending records");
@@ -1498,7 +1495,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 				debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
 				logit(batchedRecords);
 			})
-		
+
 	};
 
 	//Log unsent events to the file
@@ -1508,7 +1505,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 		var records=buffer;
 		var record;
 		for(var i=0;i<records.length;i++){
-			
+
 			//Encode documentName and documentPath and hostName
 			records[i].document_name=btoa(records[i].document_name);
 			records[i].document_path=btoa(records[i].document_path);
