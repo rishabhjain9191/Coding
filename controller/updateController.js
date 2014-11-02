@@ -100,7 +100,8 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 		//$scope.message="Extention Download Complete\n";
 		$scope.message="Extension Manager will launch after download. After installing, quit and restart this application.";
 
-		CSInterface.evalScript('$._extcommon.createDowloadFileProcess()',function(paths){
+		CSInterface.evalScript('$._extcommon.createDownloadFileProcess(\"'+updateUtils.downloadPath+'\")',function(paths){
+            // alert(paths);
 			downloadFilePaths=JSON.parse(paths.split('\\').join('\\\\'));
 			console.log(downloadFilePaths);
 			if(Constants.OS=="Windows"){

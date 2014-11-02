@@ -9,6 +9,36 @@
 var debugFile=new File(pathToDebugFile);
 
 
+var fileURLProcessorConstructor = function(){
+    var self = this;
+    self.defaultFileURLObject = ["http://downloads.creativeworx.com", ["Extension"], "TimeTrackerCC.zxp"];
+    self.parseFileURLIntoObjectWithDefault = function (fileURLString, defaultFileURLObject) {
+        var fileURLObject,
+            matched = fileURLString.match(/^(.*?)\/([^\.]*)\/([^\/]*)$/);
+        if (matched !== null) {
+            fileURLObject = matched.slice(1);
+            if (fileURLObject[0] === "") {
+                fileURLObject[0] = defaultFileURLObject[0];
+            }
+            fileURLObject[1] = fileURLObject[1].split('\/');
+        } else {
+            fileURLObject = defaultFileURLObject.slice(0); // Hacky way to do javascript Array deepcopy
+        }
+        return fileURLObject;
+    };
+    self.constructDirectoryPathFromFileURLObjectAndSeperator = function (fileURLObject, seperator) {
+        return seperator + fileURLObject[1].join(seperator) + seperator;
+    };
+    self.constructURLFromFileURLObject = function (fileURLObject) {
+        var processedFileURLObject = fileURLObject.slice(0);
+        processedFileURLObject[1] = processedFileURLObject[1].join('\/')
+        return processedFileURLObject.join('\/');
+    };
+    self.getFileNameFromFileURLObject = function (fileURLObject) {
+        return fileURLObject[fileURLObject.length-1];
+    };
+    return self;
+};
 
 
 $._extcommon={
@@ -20,41 +50,40 @@ $._extcommon={
 		return len+'';
 	},
 
-	createDowloadFileProcess:function(url){
-		var configFile = new File(pathToConfigFile);
+    createDownloadFileProcess:function(url){
+        var configFile = new File(pathToConfigFile);
 
-		var extensionName="TimeTracker.zxp";
-        // TODO : Need this to reference utils.downloadPath which is set inside updateParamsUpdate in services.js and lives on the updateUtils object
-		var downloadURL = "http://www.creativeworx.com/downloads/timetracker/TimeTracker.zxp";
+        var FileURLProcessor=new fileURLProcessorConstructor();
+        var downloadURLObject=FileURLProcessor.parseFileURLIntoObjectWithDefault(url);
+        var downloadURL=FileURLProcessor.constructURLFromFileURLObject(downloadURLObject);
+        var extensionName=FileURLProcessor.getFileNameFromFileURLObject(downloadURLObject);
 
-		var result;
-		var downloadFilePath;
+        var downloadFilePath;
 
-		if(Folder.fs == "Windows"){
-			file=new File(configFile.parent+"/tmp.bat");
-			file.open("w", "TEXT");
+        if(Folder.fs == "Windows"){
+            file=new File(configFile.parent+"/tmp.bat");
+            file.open("w", "TEXT");
+            downloadFilePath=configFile.parent.fsName+"\\downloads"+FileURLProcessor.constructDirectoryPathFromFileURLObjectAndSeperator(downloadURLObject, "\\")+extensionName;
 
-			downloadFilePath=configFile.parent.fsName+"\\downloads\\timetracker\\"+extensionName;
-			this.createDownloadFolder(downloadFilePath);
-			file.write("C:/Windows/System32/bitsadmin /transfer ZXPDownlaodJob  /download /priority high "+downloadURL+" \""+downloadFilePath+"\"");
-			file.close();
+            this.createDownloadFolder(downloadFilePath);
+            file.write("C:/Windows/System32/bitsadmin /transfer ZXPDownlaodJob  /download /priority high "+downloadURL+" \""+downloadFilePath+"\"");
+            file.close();
+        }
 
+        else if(Folder.fs == "Macintosh"){
+            file=new File(configFile.parent+"/tmp.sh");
+            file.open("w", "TEXT");
+            // return ": "+configFile.parent.fsName+" : "+FileURLProcessor.constructDirectoryPathFromFileURLObjectAndSeperator(downloadURLObject, "/")+" :";
+            downloadFilePath=configFile.parent.fsName+"/downloads"+FileURLProcessor.constructDirectoryPathFromFileURLObjectAndSeperator(downloadURLObject, "/")+extensionName;
 
-		}
-
-		else if(Folder.fs == "Macintosh"){
-			file=new File(configFile.parent+"/tmp.sh");
-			file.open("w", "TEXT");
-			downloadFilePath=configFile.parent.fsName+"/downloads/timetracker/"+extensionName;
-			this.createDownloadFolder(downloadFilePath);
-			file.write("curl "+downloadURL+" -o \""+downloadFilePath+"\"");
-			file.close();
-
-
-		}
-		result='{"tmpFilePath":"'+file.fsName+'","zxpFilePath":"'+downloadFilePath+'"}';
-			return result;
-	},
+            this.createDownloadFolder(downloadFilePath);
+            file.write("curl "+downloadURL+" -o \""+downloadFilePath+"\"");
+            file.close();
+        }
+        // return ": "+extensionName+" : "+downloadURL+" : "+downloadURL+" : "+downloadFilePath+" :";
+        var result='{"tmpFilePath":"'+file.fsName+'","zxpFilePath":"'+downloadFilePath+'"}';
+        return result;
+    },
 
 	createDownloadFolder:function(path){
 		var downloadFile=new File(path);
