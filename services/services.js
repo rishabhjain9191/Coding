@@ -329,9 +329,8 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 
 		    error: function(err) {
 		        var err={};
-		            err.type="Failed to fetch update parameter from config";
-
-		            deferred.reject(0);
+	            err.type="Failed to fetch update parameter from config";
+	            deferred.reject(0);
 		    }
 		 });
 

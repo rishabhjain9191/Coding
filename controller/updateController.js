@@ -46,7 +46,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	var updateNecessary=function(){
 		console.log("in no update necessary");
 		if(Constants.ISEXCHANGE){
-			$scope.message="A new version is available.\nEnable File Syncing for Creative Cloud for automatic updates.  ";
+			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.  ";
 				$scope.updateBtn=false;
 			$scope.showLearnHow=true;
 		}
@@ -59,7 +59,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 
 	var updateOptional=function(){
 		if(Constants.ISEXCHANGE){
-			$scope.message="A new version is available.\nEnable File Syncing for Creative Cloud for automatic updates.  ";
+			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.  ";
 				$scope.updateBtn=false;
 			$scope.showLearnHow=true;
 		}
