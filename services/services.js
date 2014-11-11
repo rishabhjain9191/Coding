@@ -552,8 +552,8 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 			if(method=="PUT"){
 			headers["Content-Type"]="application/x-www-form-urlencoded";
-			headers["X-HTTP-Method-Override"]="PUT";
-			method="POST";
+			//headers["X-HTTP-Method-Override"]="PUT";
+			//method="POST";
 		}
 
 
