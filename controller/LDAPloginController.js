@@ -6,24 +6,24 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
+
  app.controller('LDAPloginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','APIUtils',
 function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface, APIUtils){
-	
-	
+
+
 	console.log("On Login Page");
-	
+
 	console.log($location.path());
 	preloader.hideLoading();
 	$scope.alert_message="Username and Password cannot be left blank!";
 	$scope.showLogin=false;
 	$scope.modalShown = false;
-	$scope.keepLoggedIn='false';	
+	$scope.keepLoggedIn='false';
 	$scope.message="";
-	
+
 	var image_error="./assets/images/question_mark.gif";
 	var image_success="./assets/images/check.png";
-	
+
 	if(Config.companyEmail=="0"){
 			$scope.ldap_message_image=image_error;
 			$scope.ldap_message="LDAP Credentials not found";
@@ -32,7 +32,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			$scope.ldap_message_image=image_success;
 			$scope.ldap_message=Config.companyName;
 		}
-	
+
 	if(!viewManager.loggedOut){
 		console.log("In if");
 		preloader.showLoading();
@@ -48,33 +48,33 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	else{
 		console.log("In else");
 		$scope.showLogin=true;
-		
+
 		preloader.hideLoading();
 	}
-	
-	
-	
+
+
+
 	/* JQ Implementation*/
 	$scope.login=function(){
-		
+
 		var company_password=$('#company_password').val();
 		var company_email=$('#company_email').val();
 		var keepMeLoggedIn=$('#keepMeLoggedIn').prop('checked');
-		
 		if(company_email!="" && company_password!=""){	
+
 			preloader.showLoading();
 			//No hashing in case of LDAP Login
 			var password=company_password;
 			Config.username = company_email;
 			Config.password = password;
-				
-			APIUtils.login(company_email, password,company_password, Config.companyEmail)
+
+			APIUtils.login(company_email,password,company_password,Config.companyEmail)
 			.then(function(data){
 				preloader.hideLoading();
-				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
-				else{
-					//User Authenticated
-					
+				if(data.Msg=="Error: Authentication failed"){
+                    $scope.message="Authentication Failure";
+                }else{
+					// User Authenticated
 					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
 					Config.data=data[0];
 					Config.keepMeLoggedIn=$scope.checked;
@@ -82,7 +82,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 					Config.firstname=Config.data.firstname;
 					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 					});
-					//Config.updateConfig();
+					// Config.updateConfig();
 					$rootScope.LoggedInItems=true;
 					viewManager.userLoggedIn();
 				}
@@ -95,27 +95,27 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			$scope.modalShown = true;
 		}
 	};
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/* Angular Implementation
 	$scope.login=function(){
-		if($scope.user && $scope.user.email!="" && $scope.user.password!=""){	
+		if($scope.user && $scope.user.email!="" && $scope.user.password!=""){
 			preloader.showLoading();
 			var hashedPassword=MD5($scope.user.password);
 			Config.username = $scope.user.email;
 			Config.password = hashedPassword;
-				
+
 			loginUtils.login($scope.user.email, hashedPassword, Config.companyEmail)
 			.then(function(data){
 				preloader.hideLoading();
 				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}
 				else{
 					//User Authenticated
-					
+
 					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
 					Config.data=data[0];
 					Config.keepMeLoggedIn=$scope.checked;
@@ -137,7 +137,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		}
 	};
 	*/
-	
-	
-	
+
+
+
 }]);

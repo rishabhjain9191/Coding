@@ -543,21 +543,21 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	//	500			Server error
 	//
 
-		utils.SendRequest=function(url,params,method,isOAuth){
+	utils.SendRequest=function(url,params,method,isOAuth){
 
 		var deferred=$q.defer();
 		var headers={};
-			if(method=="PUT"){
+		if(method=="PUT"){
 			headers["Content-Type"]="application/x-www-form-urlencoded";
-			headers["X-HTTP-Method-Override"]="PUT";
-			method="POST";
+			// headers["X-HTTP-Method-Override"]="PUT";
+			// method="POST";
 		}
-		
+
 		if(isOAuth){
-			headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
 			//headers["Content-type"]='application/x-www-form-urlencoded';
+            headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
 		}
-	
+
 
 		$http({
 			method: method,
@@ -588,7 +588,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			result["data"]=data;
 			result["status"]=status;
 			deferred.reject(result);
-		})
+		});
 		return deferred.promise;
 	};
 
@@ -607,25 +607,23 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		})
 		.error(function(data){
 			deferred.reject(data);
-		})
+		});
 
-		return deferred.promise
+		return deferred.promise;
 	};
 
-	utils.login=function(user_email, hashedPassword,user_password, companyEmail){
-		console.log("Login Called");
+	utils.login=function(user_email,hashedPassword,user_password,companyEmail){
+		console.log("Login Called: user_email:",user_email,"hashedPassword:",hashedPassword,"user_password:",user_password,"companyEmail:",companyEmail,"companyEmail.length:",companyEmail.length);
 		var deferred=$q.defer();
 
-		var url=Constants.URL_SERVICE_NEW+"/authenticate";
+		var url=Config.serviceAddress+"/authenticate";
 		var method="POST";
 		var params={};
 		if(companyEmail.length>1){
-			params["email"]=companyEmail;
-			params["password"]=hashedPassword;
-			params["username"]=user_email;
-		}
-
-		else{
+			params.email=companyEmail;
+			params.password=hashedPassword;
+			params.username=user_email;
+		}else{
 			params["email"]=user_email;
 			params["password"]=hashedPassword;
 			params["hashed"]=true;
@@ -661,7 +659,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	utils.getUsers=function(params){
 		var deferred=$q.defer();
 
-		var url=Constants.URL_SERVICE_NEW+"/user";
+		var url=Config.serviceAddress+"/user";
 		var method="GET";
 		var params="";
 
@@ -677,7 +675,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	utils.getProjects=function(){
 		var deferred=$q.defer();
 
-		var url=Constants.URL_SERVICE_NEW+"/project";
+		var url=Config.serviceAddress+"/project";
 		var method="GET";
 		var params={};
 		this.SendRequest(url,params,method,true)
@@ -711,7 +709,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			params["color"]=colorindex;
 		}
 
-		var url=Constants.URL_SERVICE_NEW+"/project";
+		var url=Config.serviceAddress+"/project";
 		var method="POST";
 
 		this.SendRequest(url,params,method,true)
@@ -719,7 +717,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			deferred.resolve(result);
 		}, function(result){
 			deferred.reject(result);
-		})
+		});
 
 		return deferred.promise;
 	};
@@ -740,7 +738,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			params["color"]=colorindex;
 		}
 
-		var url=Constants.URL_SERVICE_NEW+"/project/"+projectId;
+		var url=Config.serviceAddress+"/project/"+projectId;
 		var method="PUT";
 
 		this.SendRequest(url,params,method,true)
@@ -751,7 +749,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 				error:result
 			});
 			deferred.reject(result);
-		})
+		});
 
 		return deferred.promise;
 	};
@@ -761,14 +759,14 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
 		var details={};
 
-		var url=Constants.URL_SERVICE_NEW+"/event";
+		var url=Config.serviceAddress+"/event";
 		var method="POST";
 		this.SendRequest(url,params,method,true)
 		.then(function(result){
 			deferred.resolve(result);
 		},function(result){
 			deferred.reject(result);
-		})
+		});
 
 		return deferred.promise;
 	};
