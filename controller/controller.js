@@ -306,7 +306,7 @@ function canEdit(oid, orgSetting){
 		return true;
 	}
 	else{
-		return true; // make it to false
+		return false;
 	}
 }
 

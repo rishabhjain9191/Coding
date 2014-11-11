@@ -73,6 +73,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.SEND_UNSENT_EVENTS_TIMER=5*60*1000;
 
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+		constants.URL_SERVICE_OLD = "https://timetracker.creativeworx.com";
 
 		constants.HOME_PAGE = "https://timetracker.creativeworx.com";
 
@@ -499,9 +500,12 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUti
 				.then(function(result){
 					if(result.status=="200"){
 						var data=result.data.result;
-						$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
-						Config.firstname=data[0].firstname;
-						Config.userid=data[0]._id;
+						if(data.oid)
+							$rootScope.canEdit=canEdit(data.oid, data.org_settings);
+						else
+							$rootScope.canEdit=true;
+						Config.firstname=data.firstname;
+						Config.userid=data._id;
 						$rootScope.LoggedInItems=true;
 						deferred.resolve(200);
 				}
@@ -553,7 +557,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			headers["X-HTTP-Method-Override"]="PUT";
 			method="POST";
 		}
-		
+
 		if(isOAuth){
 			headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
 			//headers["Content-type"]='application/x-www-form-urlencoded';
@@ -618,6 +622,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var deferred=$q.defer();
 
 		var url=Constants.URL_SERVICE_NEW+"/authenticate";
+		
 		var method="POST";
 		var params={};
 		if(companyEmail.length>1){
@@ -638,6 +643,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			if(result.status="200"){
 			//Save user's key and secret
 				OAuthUtils.setConsumerCredentials(result.data.keys.pk,result.data.keys.sk);
+				Config.userid=result.data.keys.uid;
 				deferred.resolve(result);
 			}
 			else
@@ -662,7 +668,8 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	utils.getUsers=function(params){
 		var deferred=$q.defer();
 
-		var url=Constants.URL_SERVICE_NEW+"/user";
+		var url=Constants.URL_SERVICE_NEW+"/user"+"/"+Config.userid;
+		
 		var method="GET";
 		var params="";
 

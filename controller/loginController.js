@@ -91,8 +91,12 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 					APIUtils.getUsers().then(function(result){
 						console.log("User Details Fetched");
 						preloader.hideLoading();					
-						var data=result.data.result[0];
-						$rootScope.canEdit=canEdit(data.oid, data.org_settings);
+						var data=result.data.result;
+						console.log(data);
+						if(data.oid)
+							$rootScope.canEdit=canEdit(data.oid, data.org_settings);
+						else
+							$rootScope.canEdit=true;
 						Config.data=data;
 						
 						console.log(keepMeLoggedIn);
@@ -138,7 +142,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 	};
 
 	$scope.forgetLogin=function(){
-		CSInterface.openURLInDefaultBrowser(Constants.URL_SERVICE + Constants.URL_FORGOT_LOGIN);
+		CSInterface.openURLInDefaultBrowser(Constants.URL_SERVICE_OLD + Constants.URL_FORGOT_LOGIN);
 	};
 	
 	

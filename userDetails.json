@@ -1,17 +1,17 @@
-[
-    {
-        "_id": "5314e96ab0e6df5b17c0a67c",
-        "dept": "Tech",
-        "email": "dtorres@creativeworx.com",
-        "firstname": "David",
-        "lastname": "Torres",
+{
+    "result": {
+        "_id": "535fcd027464e490048b4567",
+        "dept": "",
+        "email": "rishabh.j@parikshalabs.com",
+        "firstname": "Rishabh",
+        "lastname": "Jain",
         
-        "role": "Developer",
-        "userid": 931,
-        "username": "dtorres@creativeworx.com",
+        "ouid": "",
+        "registerdate": "2014-04-29T16:02:10+00:00",
+        "role": "",
         "usertype": "orgadmin",
         "org_settings": {
-            "user_add_projects": false
+            "user_add_projects": true
         }
     }
-]
+}
