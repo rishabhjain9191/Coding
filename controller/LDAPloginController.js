@@ -38,12 +38,12 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		preloader.showLoading();
 		loginUtils.tryLoginFromConfig()
 		.then(function(res){
-		console.log("tryLoginFromConfig"+res);
-		switch(res){
-			case 100:$scope.showLogin=true;preloader.hideLoading();return
-			case 200:preloader.hideLoading();viewManager.userLoggedIn();return;
-		}
-		})
+    		console.log("tryLoginFromConfig"+res);
+    		switch(res){
+    			case 100:$scope.showLogin=true;preloader.hideLoading();return;
+    			case 200:preloader.hideLoading();viewManager.userLoggedIn();return;
+    		}
+		});
 	}
 	else{
 		console.log("In else");
@@ -60,7 +60,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		var company_password=$('#company_password').val();
 		var company_email=$('#company_email').val();
 		var keepMeLoggedIn=$('#keepMeLoggedIn').prop('checked');
-		if(company_email!="" && company_password!=""){	
+		if(company_email!="" && company_password!=""){
 
 			preloader.showLoading();
 			//No hashing in case of LDAP Login

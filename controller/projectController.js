@@ -6,7 +6,7 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
+
  app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q',  'preloader','debuggerUtils','CSInterface','$interval',
 function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  preloader,debuggerUtils,CSInterface,$interval){
 	console.log("Projects view loaded");
@@ -54,7 +54,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			CSInterface.dispatchEvent(event);
 			//Change Style on Project Deselect
 		});
-		
+
 	};
 	var selectProject=function(){
 		//Modify XMP data of the project.
@@ -73,7 +73,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 		}
 		return ;
 	};
-	
+
 	var matchProjectIds=function(){
 		if(projectUtils.getCurrentProjectId()==projectUtils.getSelectedProjectId()){
 			deselectProject();
@@ -91,9 +91,9 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			else{projectUtils.setCurrentProjectId(data);}
 			matchProjectIds();
 		});
-	}; 
+	};
 	$rootScope.refreshProjects();
-	
+
 	$scope.processProjectClick=function(projectId, index){
 		CSInterface.evalScript('$._extcommon.checkDocLength()',function(data){
 			if(parseInt(data)){
@@ -106,7 +106,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			}
 		});
 	};
-	
+
 	var processProject=function(projectId, index){
 		$scope.processing=true;
 		prev_index=projectUtils.getSelectedProjectIndex();
@@ -123,7 +123,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 				projectUtils.changeStyleToDeselected(prev_index);
 			});
 			projectUtils.setSelectedProjectIndex(index);
-			
+
 		}
 		else{
 			$rootScope.$apply(function(){
@@ -132,8 +132,8 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			projectUtils.setSelectedProjectIndex(-1);
 		}
 		projectUtils.setSelectedProjectId(projectId);
-		
-		
+
+
 		CSInterface.evalScript('$._ext.getCurrentDoc()', function(data){
 			if(data=='1'){
 				checkDocXMP();
@@ -158,9 +158,8 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 	$scope.checkSelected=function(projectId){
 		if(projectId==projectUtils.getCurrentProjectId()){
 			return {'font-weight':'bold'};
-		}
-		else{
+		}else{
 			return {'font-weight':'normal'};
-		} 
+		}
 	};
 }]);

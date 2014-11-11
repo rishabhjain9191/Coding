@@ -11,7 +11,7 @@ app.controller('configLoader',['viewManager','$scope', '$rootScope', 'Constants'
 function(viewManager, $scope, $rootScope, Constants, preloader, Config, debuggerUtils,CSInterface){
 	console.log("In Load Config");
 	CSInterface.evalScript('$._extXML.readConfig()', function(data){
-			
+
 			if(data != "false"){
 				//If Config file is old version
 				Config.data=JSON.parse(data);
@@ -22,9 +22,9 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 						console.log("config version updated");
 					});
 				}
-				
+
 				Constants.update(Config.data);
-				
+
 				Config.serviceAddress=Config.data.serviceAddress;
 				Config.username=Config.data.username;
 				Config.password=Config.data.password;
@@ -33,8 +33,8 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 				Config.userid=Config.data.userid;
 				Config.companyEmail=Config.data.companyEmail;
 				Config.companyName=Config.data.companyName;
-				Config.companyEmailValue=Config.data.companyEmailValue
-				
+				Config.companyEmailValue=Config.data.companyEmailValue;
+
 				debuggerUtils.updateLogs("Build : "+Constants.EXTENSION_VERSION_NUMBER);
 				console.log("Build : "+Constants.EXTENSION_VERSION_NUMBER);
 				debuggerUtils.updateLogs("==============");
@@ -50,10 +50,9 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 				debuggerUtils.updateLogs("Logging Enabled: " /*todo*/);
 				debuggerUtils.updateLogs("==============");
 				viewManager.configloaded();
-			}
-			else{
+			}else{
 				viewManager.configloaded();
 			}
 		});
-		
+
 }]);

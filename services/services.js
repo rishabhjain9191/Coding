@@ -164,11 +164,11 @@ services.factory('Messages',[function(){
 		"401":"Authentication Failed",
 		"404":"User Not Found",
 		"400":"Username/Password Missing"
-	}
+	};
 	messages.getUserListMsg={
 		"0":"Cannot Connect to Internet. Please Check your internet connection",
 		"401":"Authentication Failed"
-	}
+	};
 	messages.addProjectMessages={
 		"0":"Cannot Connect to Internet. Please Check your internet connection",
 		"401":"Authentication Failed",
@@ -433,7 +433,6 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	var config={};
 	config.data='';
 
-
 	config.serviceAddress = Constants.URL_SERVICE_NEW;
 	config.siteAddress = Constants.URL_SITE;
 	config.updateAddress = Constants.URL_UPDATE;
@@ -448,8 +447,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
 	config.logEnabled_html5 = Constants.LOG_ENABLE;
 	config.configversion = 2;
-	config.homePage=Constants.HOME_PAGE;
-
+	config.homePage = Constants.HOME_PAGE;
 
 	/*
 		Read from the config file and update config values
@@ -547,46 +545,41 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 
 		var deferred=$q.defer();
 		var headers={};
-		if(method=="PUT"){
-			headers["Content-Type"]="application/x-www-form-urlencoded";
+		// if(method=="PUT"){
+			// headers["Content-Type"]="application/x-www-form-urlencoded";
 			// headers["X-HTTP-Method-Override"]="PUT";
 			// method="POST";
-		}
+		// }
 
 		if(isOAuth){
-			//headers["Content-type"]='application/x-www-form-urlencoded';
+			headers["Content-type"]='application/x-www-form-urlencoded';
             headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
 		}
-
 
 		$http({
 			method: method,
 			url: url,
 			data: params,
-			headers: headers,
-
+			headers: headers
 		})
 		.success(function(data,status){
 			var result={};
-			result["data"]=data;
-			result["status"]=status;
+			result.data=data;
+			result.status=status;
 			if(data.error){
-				// error
 				deferred.resolve(result);
-			}
-			else{
-				// success
+			}else{
 				deferred.resolve(result);
 			}
 		})
 		.error(function(data,status){
 			// request failed
-			console.log(headers["Authorization"]);
+			console.log(headers.Authorization, data, status);
 			var result={};
-			result["message"]="New Error";
-			result["type"]="Error 1";
-			result["data"]=data;
-			result["status"]=status;
+			result.message="New Error";
+			result.type="Error 1";
+			result.data=data;
+			result.status=status;
 			deferred.reject(result);
 		});
 		return deferred.promise;
@@ -600,7 +593,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		*/
 		var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
 		var params=[];
-		params['email']=companyEmail;
+		params.email=companyEmail;
 		$http.post(url,params)
 		.success(function(data){
 			deferred.resolve(data);
@@ -624,33 +617,36 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			params.password=hashedPassword;
 			params.username=user_email;
 		}else{
-			params["email"]=user_email;
-			params["password"]=hashedPassword;
-			params["hashed"]=true;
+			params.email=user_email;
+			params.password=hashedPassword;
+			params.hashed=true;
 		}
 		utils.SendRequest(url,params,method,false)
-		.then(function(result){
-		// will check for the response here
-		console.log("Auth Success");
-			if(result.status="200"){
-			//Save user's key and secret
-				OAuthUtils.setConsumerCredentials(result.data.keys.pk,result.data.keys.sk);
-				deferred.resolve(result);
-			}
-			else
-			//Any unexpected error has occured
-			deferred.reject(result);
-		},function(result){
-			var result1={};
-			result1["message"]="Auth Failure123";
-			result1["name"]="Error5";
-			console.log(result1);
-			Airbrake.push({
-				error:result1
-			});
-			console.log("Auth Failure");
-			deferred.reject(result);
-		})
+		.then(
+            function(result){
+        		// will check for the response here
+        		console.log("Auth Success");
+    			if(result.status="200"){
+        			// Save user's key and secret
+    				OAuthUtils.setConsumerCredentials(result.data.keys.pk,result.data.keys.sk);
+    				deferred.resolve(result);
+    			}
+    			else
+    			// Any unexpected error has occured
+    			deferred.reject(result);
+    		},
+            function(result){
+    			var result1={};
+    			result1.message="Auth Failure123";
+    			result1.name="Error5";
+    			console.log(result1);
+    			Airbrake.push({
+    				error:result1
+    			});
+    			console.log("Auth Failure");
+    			deferred.reject(result);
+    		}
+        );
 
 		return deferred.promise;
 	};
