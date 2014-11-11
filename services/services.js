@@ -165,11 +165,11 @@ services.factory('Messages',[function(){
 		"401":"Authentication Failed",
 		"404":"User Not Found",
 		"400":"Username/Password Missing"
-	}
+	};
 	messages.getUserListMsg={
 		"0":"Cannot Connect to Internet. Please Check your internet connection",
 		"401":"Authentication Failed"
-	}
+	};
 	messages.addProjectMessages={
 		"0":"Cannot Connect to Internet. Please Check your internet connection",
 		"401":"Authentication Failed",
@@ -330,9 +330,8 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 
 		    error: function(err) {
 		        var err={};
-		            err.type="Failed to fetch update parameter from config";
-
-		            deferred.reject(0);
+	            err.type="Failed to fetch update parameter from config";
+	            deferred.reject(0);
 		    }
 		 });
 
@@ -435,7 +434,6 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	var config={};
 	config.data='';
 
-
 	config.serviceAddress = Constants.URL_SERVICE_NEW;
 	config.siteAddress = Constants.URL_SITE;
 	config.updateAddress = Constants.URL_UPDATE;
@@ -450,8 +448,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
 	config.logEnabled_html5 = Constants.LOG_ENABLE;
 	config.configversion = 2;
-	config.homePage=Constants.HOME_PAGE;
-
+	config.homePage = Constants.HOME_PAGE;
 
 	/*
 		Read from the config file and update config values
@@ -548,52 +545,49 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	//	500			Server error
 	//
 
-		utils.SendRequest=function(url,params,method,isOAuth){
+	utils.SendRequest=function(url,params,method,isOAuth){
 
 		var deferred=$q.defer();
 		var headers={};
+
 			if(method=="PUT"){
 			headers["Content-Type"]="application/x-www-form-urlencoded";
 			headers["X-HTTP-Method-Override"]="PUT";
 			method="POST";
 		}
 
+
 		if(isOAuth){
-			headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
-			//headers["Content-type"]='application/x-www-form-urlencoded';
+			headers["Content-type"]='application/x-www-form-urlencoded';
+            headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
 		}
-	
 
 		$http({
 			method: method,
 			url: url,
 			data: params,
-			headers: headers,
-
+			headers: headers
 		})
 		.success(function(data,status){
 			var result={};
-			result["data"]=data;
-			result["status"]=status;
+			result.data=data;
+			result.status=status;
 			if(data.error){
-				// error
 				deferred.resolve(result);
-			}
-			else{
-				// success
+			}else{
 				deferred.resolve(result);
 			}
 		})
 		.error(function(data,status){
 			// request failed
-			console.log(headers["Authorization"]);
+			console.log(headers.Authorization, data, status);
 			var result={};
-			result["message"]="New Error";
-			result["type"]="Error 1";
-			result["data"]=data;
-			result["status"]=status;
+			result.message="New Error";
+			result.type="Error 1";
+			result.data=data;
+			result.status=status;
 			deferred.reject(result);
-		})
+		});
 		return deferred.promise;
 	};
 
@@ -605,38 +599,38 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		*/
 		var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
 		var params=[];
-		params['email']=companyEmail;
+		params.email=companyEmail;
 		$http.post(url,params)
 		.success(function(data){
 			deferred.resolve(data);
 		})
 		.error(function(data){
 			deferred.reject(data);
-		})
+		});
 
-		return deferred.promise
+		return deferred.promise;
 	};
 
-	utils.login=function(user_email, hashedPassword,user_password, companyEmail){
-		console.log("Login Called");
+	utils.login=function(user_email,hashedPassword,user_password,companyEmail){
+		console.log("Login Called: user_email:",user_email,"hashedPassword:",hashedPassword,"user_password:",user_password,"companyEmail:",companyEmail,"companyEmail.length:",companyEmail.length);
 		var deferred=$q.defer();
 
-		var url=Constants.URL_SERVICE_NEW+"/authenticate";
-		
+
+		var url=Config.serviceAddress+"/authenticate";
+
 		var method="POST";
 		var params={};
 		if(companyEmail.length>1){
-			params["email"]=companyEmail;
-			params["password"]=hashedPassword;
-			params["username"]=user_email;
-		}
-
-		else{
-			params["email"]=user_email;
-			params["password"]=hashedPassword;
-			params["hashed"]=true;
+			params.email=companyEmail;
+			params.password=hashedPassword;
+			params.username=user_email;
+		}else{
+			params.email=user_email;
+			params.password=hashedPassword;
+			params.hashed=true;
 		}
 		utils.SendRequest(url,params,method,false)
+
 		.then(function(result){
 		// will check for the response here
 		console.log("Auth Success");
@@ -661,6 +655,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			deferred.reject(result);
 		})
 
+
 		return deferred.promise;
 	};
 
@@ -668,8 +663,9 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	utils.getUsers=function(params){
 		var deferred=$q.defer();
 
-		var url=Constants.URL_SERVICE_NEW+"/user"+"/"+Config.userid;
-		
+
+		var url=Config.serviceAddress+"/user"+"/"+Config.userid;
+
 		var method="GET";
 		var params="";
 
@@ -685,7 +681,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	utils.getProjects=function(){
 		var deferred=$q.defer();
 
-		var url=Constants.URL_SERVICE_NEW+"/project";
+		var url=Config.serviceAddress+"/project";
 		var method="GET";
 		var params={};
 		this.SendRequest(url,params,method,true)
@@ -719,7 +715,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			params["color"]=colorindex;
 		}
 
-		var url=Constants.URL_SERVICE_NEW+"/project";
+		var url=Config.serviceAddress+"/project";
 		var method="POST";
 
 		this.SendRequest(url,params,method,true)
@@ -727,7 +723,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			deferred.resolve(result);
 		}, function(result){
 			deferred.reject(result);
-		})
+		});
 
 		return deferred.promise;
 	};
@@ -748,7 +744,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			params["color"]=colorindex;
 		}
 
-		var url=Constants.URL_SERVICE_NEW+"/project/"+projectId;
+		var url=Config.serviceAddress+"/project/"+projectId;
 		var method="PUT";
 
 		this.SendRequest(url,params,method,true)
@@ -759,7 +755,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 				error:result
 			});
 			deferred.reject(result);
-		})
+		});
 
 		return deferred.promise;
 	};
@@ -769,14 +765,14 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
 		var details={};
 
-		var url=Constants.URL_SERVICE_NEW+"/event";
+		var url=Config.serviceAddress+"/event";
 		var method="POST";
 		this.SendRequest(url,params,method,true)
 		.then(function(result){
 			deferred.resolve(result);
 		},function(result){
 			deferred.reject(result);
-		})
+		});
 
 		return deferred.promise;
 	};

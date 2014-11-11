@@ -75,7 +75,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		var user_password=$('#user_password').val();
 		var user_email=$('#user_email').val();
 		var keepMeLoggedIn=$('#keepMeLoggedIn').prop('checked');
-		
+
 		if(user_email!="" && user_password!=""){
             debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
 			preloader.showLoading();
@@ -83,13 +83,14 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 			Config.username = user_email;
 			Config.password = hashedPassword;
 
-		
+
 			APIUtils.login(user_email, hashedPassword,user_password, "")
 			.then(function(result){
 				if(result.status=="200"){
 					console.log("auth success")
 					APIUtils.getUsers().then(function(result){
 						console.log("User Details Fetched");
+
 						preloader.hideLoading();					
 						var data=result.data.result;
 						console.log(data);
@@ -97,8 +98,9 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 							$rootScope.canEdit=canEdit(data.oid, data.org_settings);
 						else
 							$rootScope.canEdit=true;
+
 						Config.data=data;
-						
+
 						console.log(keepMeLoggedIn);
 						Config.keepMeLoggedIn=keepMeLoggedIn;
 						Config.keepMeLoggedIn=$scope.checked;
@@ -110,13 +112,13 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 						Constants.update(Config);
 						$rootScope.LoggedInItems=true;
 						viewManager.userLoggedIn();
-					
+
 				}, function(result){
 					console.log("Can't Fetch user details");
 					console.log(result.data);
 					preloader.hideLoading();
 					$scope.message=Messages.getUserListMsg[result.status];
-				})
+				});
 			}
 			else{
 				preloader.hideLoading();
@@ -129,8 +131,8 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 				$scope.message=Messages.authMsg[result.status];
 			});
 		}
-		
-		
+
+
 		else{
             $scope.alert_message="Username and Password cannot be left blank!";
 			$scope.modalShown = true;
@@ -142,11 +144,13 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 	};
 
 	$scope.forgetLogin=function(){
-		CSInterface.openURLInDefaultBrowser(Constants.URL_SERVICE_OLD + Constants.URL_FORGOT_LOGIN);
+
+		CSInterface.openURLInDefaultBrowser(Constants.HOME_PAGE + Constants.URL_FORGOT_LOGIN);
+
 	};
-	
-	
-	
+
+
+
 		var exploreScope=function($scope){
 		console.log($scope);
 		console.log("1");
@@ -156,11 +160,11 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		if($scope.user){
 			console.log("parent User Found  " + $scope.user.email);
 			debuggerUtils.updateLogs("parent User Found  " + $scope.user.email);
-			
+
 		}
 		console.log("2");
 		if($scope.$$prevSibling){
-			var prevSibling=$scope.$$prevSibling
+			var prevSibling=$scope.$$prevSibling;
 			while(prevSibling){
 				console.log("prev");
 				if(prevSibling.user){
@@ -185,8 +189,8 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		if($scope.$parent)
 			exploreScope($scope.$parent);
 	};
-	
+
 	//exploreScope($scope);
-	
-	
+
+
 }]);

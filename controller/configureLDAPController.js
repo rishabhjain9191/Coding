@@ -6,7 +6,7 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
+
  app.controller('configureLDAPCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','$q','APIUtils',
 function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface,$q, APIUtils){
 	console.log("On LDAP Config");
@@ -14,26 +14,25 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	$scope.modalShown = false;
 	$scope.companyEmail="";
 	$scope.message="";
-	
+
 	console.log(Config);
-	
+
 	if(Config.companyEmailValue&&Config.companyEmailValue.length>0){
-		
 		console.log(Config.companyEmailValue);
 		$scope.companyEmail=Config.companyEmailValue;
 	}
-	
-	
+
+
 	$scope.cancel=function(){
 		$scope.companyEmail="";
 		viewManager.gotoPreviousView();
 	};
-	
+
 	$scope.clear=function(){
 		$scope.companyEmail="";
 	};
-	
-	
+
+
 	/* JQ Save function*/
 	$scope.saveCompanyEmail=function(){
 		preloader.showLoading();
@@ -43,11 +42,8 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			Config.companyEmailValue="";
 			CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 				resultWrittentoConfig();
-				});
-		}
-		else{
-		
-			
+			});
+		}else{
 			APIUtils.validateLDAP(companyEmail)
 			.then(function(data){
 				if(data.success){
@@ -78,23 +74,21 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			})
 			
 		}
-	}
-	
+	};
+
 	/* Angular Save function
 	$scope.saveCompanyEmail=function(){
 		preloader.showLoading();
-		
+
 		if($scope.companyEmail==""){
 			Config.companyEmail="";
 			CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 				resultWrittentoConfig();
-				});
-		}
-		else{
-		
+			});
+		}else{
 			var deferred=$q.defer();
 			var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
-			
+
 			var params=[];
 			params['email']=$scope.companyEmail;
 			$http.post(url,params)
@@ -102,19 +96,12 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 				if(data.success){
 					Config.companyEmail=$scope.companyEmail;
 					Config.companyName=data.success;
-					
-				}
-				else{
+				}else{
 					Config.companyEmail=0;
-					
 				}
-				
 				CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 					resultWrittentoConfig();
-					
 				});
-				
-				
 			})
 			.error(function(data){
 				preloader.hideLoading();
@@ -126,7 +113,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		}
 	};
 	*/
-	
+
 	var resultWrittentoConfig=function(){
 		console.log("Result written in config");
 		preloader.hideLoading();
@@ -134,5 +121,5 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			viewManager.LDAPConfigDone();
 		}
 	};
-	
+
 }]);
