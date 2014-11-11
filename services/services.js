@@ -550,7 +550,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var deferred=$q.defer();
 		var headers={};
 
-			if(method=="PUT"){
+		if(method=="PUT"){
 			headers["Content-Type"]="application/x-www-form-urlencoded";
 			//headers["X-HTTP-Method-Override"]="PUT";
 			//method="POST";
