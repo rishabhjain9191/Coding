@@ -46,7 +46,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	var updateNecessary=function(){
 		console.log("in no update necessary");
 		if(Constants.ISEXCHANGE){
-			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.  ";
+			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.";
 				$scope.updateBtn=false;
 			$scope.showLearnHow=true;
 		}
@@ -59,7 +59,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 
 	var updateOptional=function(){
 		if(Constants.ISEXCHANGE){
-			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.  ";
+			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.";
 				$scope.updateBtn=false;
 			$scope.showLearnHow=true;
 		}
@@ -76,7 +76,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 			console.log("in no update required");
 		if($rootScope.checkUpdateFromMenuClick==1){
 			$scope.showUpdateView=false;
-			$scope.message="This Extension is up-to-date";
+			$scope.message="This extension is up-to-date";
 			$scope.canReturn=true;
 			$scope.updateBtn=false;
 			$scope.returnMessage="Return";
