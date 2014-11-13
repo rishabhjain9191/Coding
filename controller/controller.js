@@ -110,6 +110,20 @@ app.config(['$routeProvider', function($routeProvider){
 
 app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route','Config','CSInterface','$templateCache','updateUtils',
 function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface, $templateCache, updateUtils){	
+	
+	
+	//Disable right click
+	document.oncontextmenu=new Function("return false");
+
+	//Make Panel Persistant in Photoshop
+	if(CSInterface.hostEnvironment.appName == "PHXS"){
+		var event=new CSEvent("com.adobe.PhotoshopPersistent", "APPLICATION");
+		event.extensionId = Constants.EXTENSION_ID;
+		console.log("Event ");
+		console.log(event);
+		CSInterface.dispatchEvent(event);
+	}
+
 	// Initialize $rootScope variables
 	$rootScope.showFlyout=false;
 	$rootScope.logs="";
@@ -149,9 +163,9 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 	 	$rootScope.showFlyout = false;
 		//1. Check the Current Document is saved or not
 		//If no project is selected, alert-No Project Selected
-		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
+		if(projectUtils.currentProjectId==-1){
 		//$rootScope.apply(function(){
-			$scope.alert_message = "Assign Project requires an open document that has already been saved.";
+			$scope.alert_message = "No Project Selected";
 			$scope.modalShown=true;
 			//});
 		}
@@ -167,7 +181,10 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 					});
 				}else{
 				$scope.$apply(function(){
-					$scope.alert_message="The current project has been assigned to the current folder.";
+					if(projectUtils.currentProjectId==0)
+						$scope.alert_message="The project assignment is cleared from current folder";
+					else	
+						$scope.alert_message="The current project has been assigned to the current folder.";
 					$scope.modalShown=true;
 				});
 				}

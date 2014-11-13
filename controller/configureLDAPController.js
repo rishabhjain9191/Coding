@@ -32,6 +32,21 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		$scope.companyEmail="";
 	};
 
+	
+	$(function() {
+    $("#LDAPcompanyEmail").keypress(function (e) {
+        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+            $('#saveBtn').click();
+            return false;
+        } else {
+            return true;
+        }
+    	});
+	});
+
+
+
+
 
 	/* JQ Save function*/
 	$scope.saveCompanyEmail=function(){

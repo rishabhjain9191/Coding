@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
 
- app.controller('LDAPloginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','APIUtils',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface, APIUtils){
+ app.controller('LDAPloginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','APIUtils','$event',
+function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface, APIUtils, $event){
 
 
 	console.log("On Login Page");
@@ -20,6 +20,9 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	$scope.modalShown = false;
 	$scope.keepLoggedIn='false';
 	$scope.message="";
+
+
+
 
 	var image_error="./assets/images/question_mark.gif";
 	var image_success="./assets/images/check.png";
@@ -54,6 +57,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 
 
 
+	
 	/* JQ Implementation*/
 	$scope.login=function(){
 
