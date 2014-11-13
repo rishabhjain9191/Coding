@@ -14,7 +14,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.1.0-0";
+		constants.EXTENSION_VERSION_NUMBER = "2.1.0";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
@@ -550,7 +550,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var deferred=$q.defer();
 		var headers={};
 
-			if(method=="PUT"){
+		if(method=="PUT"){
 			headers["Content-Type"]="application/x-www-form-urlencoded";
 			//headers["X-HTTP-Method-Override"]="PUT";
 			//method="POST";
