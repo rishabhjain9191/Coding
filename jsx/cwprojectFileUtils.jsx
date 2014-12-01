@@ -15,7 +15,6 @@
 		file.write("\uFEFF");
 		file.lineFeed = "unix";
 		file.write(xml.toXMLString());
-		$.writeln(file);
 		file.close();
 	},
 	
@@ -66,6 +65,14 @@
 		
 	updateOrCreateFile : function(pid, uid) {
 		try{
+			//Special checking for Illustrator as it treats every document as saved one.
+			if(app.name=="Adobe Illustrator"){
+				var file=new File(app.activeDocument.fullName);
+				if(!file.exists){
+					return false;
+				}
+	
+			}
 			myFile = app.activeDocument.fullName;
 			parentFolder = myFile.parent;
 			var file = this.checkIfFileExists(parentFolder);

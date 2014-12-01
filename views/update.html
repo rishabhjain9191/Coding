@@ -8,7 +8,10 @@
 
 	<div style="margin: 20px;">
         <pre style="font-family:Arial;">{{message}}</pre>
-        <div style="cursor:pointer; text-decoration:underline" ng-click="gotoExchange()" ng-show="showLearnHow">Learn How</div>
+		<div style="display:run-in">
+		<div style="display:run-in">{{exchangeMsg.msg1}}</div>
+        <div style="cursor:pointer; text-decoration:underline" ng-click="gotoExchange()"  ng-show="showLearnHow">{{exchangeMsg.msg2}}</div> <div position="relative" float="left">{{exchangeMsg.msg3}}</div>
+		</div>
 	</div>
 
 	<div style="padding-bottom: 20px;" ng-show="downloading">

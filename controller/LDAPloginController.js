@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
 
- app.controller('LDAPloginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','APIUtils','$event',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface, APIUtils, $event){
+ app.controller('LDAPloginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','APIUtils','Messages',
+function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface, APIUtils, Messages){
 
 
 	console.log("On Login Page");
@@ -104,7 +104,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 					console.log("Can't Fetch user details");
 					console.log(result.data);
 					preloader.hideLoading();
-					$scope.message=Messages.getUserListMsg[result.status];
+					$scope.message=Messages.authMsg[result.status];
 				})
 			}
 			else{

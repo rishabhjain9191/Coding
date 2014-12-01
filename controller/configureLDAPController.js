@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
 
- app.controller('configureLDAPCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','$q','APIUtils',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface,$q, APIUtils){
+ app.controller('configureLDAPCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','$q','APIUtils','Messages',
+function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface,$q, APIUtils, Messages){
 	console.log("On LDAP Config");
 	preloader.hideLoading();
 	$scope.modalShown = false;
@@ -61,19 +61,12 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		}else{
 			APIUtils.validateLDAP(companyEmail)
 			.then(function(data){
-				if(data.success){
-					Config.companyEmail=companyEmail;
-					Config.companyName=data.success;
-					Config.companyEmailValue=companyEmail;
-				}
-				else{
-					Config.companyEmail=0;
-					Config.companyEmailValue=companyEmail;
-					preloader.hideLoading();
-					$scope.message="Authentication Failure";
-					
-				}
+			console.log(data);	
 				
+				Config.companyEmail=companyEmail;
+				Config.companyName=data.data.result;
+				Config.companyEmailValue=companyEmail;
+							
 				CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 					resultWrittentoConfig();
 					
@@ -84,8 +77,8 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			,function(data){
 				preloader.hideLoading();
 				console.log(data);
-				$scope.alert_message="Server Offline."
-				$scope.modalShown=true;
+				$scope.message=Messages.authMsg[data.status];
+				//$scope.modalShown=true;
 			})
 			
 		}

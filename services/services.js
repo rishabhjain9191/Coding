@@ -20,7 +20,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.CW_NAMESPACE_NAME = "creativeworx";
 		constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
 		constants.URL_EXCHANGE="https://www.adobeexchange.com/resources/19";
-		constants.ISEXCHANGE=false;
+		constants.ISEXCHANGE=true;
 		constants.STATUS_NEW = "NEW";
 		constants.STATUS_ATTEMPTED = "ATTEMPTED";
 		constants.STATUS_TRANSFERRED = "TRANSFERRED";
@@ -87,7 +87,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.CHECK_USER_DETAILS_ADDRESS = "/service/userdetails";
 		constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject";
 
-		constants.VALIDATE_LDAP_EMAIL = "/service/validate-ldap-email";
+		constants.VALIDATE_LDAP_EMAIL = "/util/validate-ldap";
 
 
 		constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
@@ -164,7 +164,8 @@ services.factory('Messages',[function(){
 		"0":"Cannot Connect to Internet. Please Check your internet connection",
 		"401":"Authentication Failed",
 		"404":"User Not Found",
-		"400":"Username/Password Missing"
+		"400":"Username/Password Invalid",
+		"500":"Authorization Failed"
 	};
 	messages.getUserListMsg={
 		"0":"Cannot Connect to Internet. Please Check your internet connection",
@@ -597,16 +598,14 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		/**
 			STILL USING THE OLD END POINT
 		*/
-		var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL;
+		var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL+"/"+companyEmail;
 		var params=[];
-		params.email=companyEmail;
-		$http.post(url,params)
-		.success(function(data){
-			deferred.resolve(data);
+		utils.SendRequest(url,params,'GET',false)
+		.then(function(result){
+			deferred.resolve(result);
+		}, function(result){
+			deferred.reject(result);
 		})
-		.error(function(data){
-			deferred.reject(data);
-		});
 
 		return deferred.promise;
 	};

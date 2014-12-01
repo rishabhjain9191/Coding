@@ -11,6 +11,7 @@ app.controller('updateCtrl',['viewManager','$scope', '$rootScope','$http','Const
 function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUtils,$interval, $timeout, CSInterface,$rootScope){
 
 		var updateType;
+		var exchangeMsg={"msg1":"Please","msg2":" Enable File Sharing", "msg3":" for automatic updates."};
 		console.log("In Update View");
 		$scope.updateMessage="Update";
 		$scope.downloading=false;
@@ -46,12 +47,17 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	var updateNecessary=function(){
 		console.log("in no update necessary");
 		if(Constants.ISEXCHANGE){
-			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.";
+			$scope.message="A new version is available. Your current version is no longer supported. Please upgrade.";
 				$scope.updateBtn=false;
+			
+			exchangeMsg.msg1="";
+			exchangeMsg.msg2="Enable File Sharing";
+			$scope.exchangeMsg=exchangeMsg;
+
 			$scope.showLearnHow=true;
 		}
 		else{
-			$scope.message="A newer extension is available. \n\nUpdate required.";
+			$scope.message="A newer extension is available. \n\nYour current version is no longer supported. Please update.";
 		}
 		$scope.showUpdateView=false;
 		$scope.canReturn=false;
@@ -60,11 +66,13 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	var updateOptional=function(){
 		if(Constants.ISEXCHANGE){
 			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.";
+				exchangeMsg.msg2=" enable File Sharing";
+				$scope.exchangeMsg=exchangeMsg;
 				$scope.updateBtn=false;
 			$scope.showLearnHow=true;
 		}
 		else{
-			$scope.message="A newer extension is available.\n\nWould you like to update now?";
+			$scope.message="A new version is available.\n\nWould you like to update now?";
 		}
 		console.log("in no update optional");
 		$scope.showUpdateView=false;
@@ -78,7 +86,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 			$scope.showUpdateView=false;
 			$scope.message="This extension is up-to-date";
 			$scope.canReturn=true;
-			$scope.updateBtn=false;
+						$scope.updateBtn=false;
 			$scope.returnMessage="Return";
 		}
 		else{
