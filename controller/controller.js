@@ -167,7 +167,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		//If no project is selected, alert-No Project Selected
 		if(projectUtils.currentProjectId==-1){
 		//$rootScope.apply(function(){
-			$scope.alert_message = "No Project Selected";
+			$scope.alert_message = "No project selected";
 			$scope.modalShown=true;
 			//});
 		}
