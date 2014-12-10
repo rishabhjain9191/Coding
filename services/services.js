@@ -140,6 +140,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		if(configData.checkStatusAddress) this.CHECK_STATUS_ADDRESS=configData.checkStatusAddress;
 		if(configData.fileUploadAddress) this.FILE_UPLOAD_ADDRESS=configData.fileUploadAddress;
 		if(configData.logEnabled_html5) this.LOG_ENABLE=configData.logEnabled_html5;
+		if(configData.oid) this.LOG_ENABLE=configData.oid;
 		//(configData.configversion)?this.URL_SERVICE=configData.configversion;
 	};
 

@@ -25,7 +25,7 @@
 		if(!this.isExists()){
 			return "false";
 		}
-		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval_html5","serviceAddress","checkOnlineTimeInterval_html5","imageTimeInterval_html5","batchSize_html5","thresholdCount_html5","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled_html5", "configversion", "companyEmail", "companyEmailValue" , "companyName", "homePage"];
+		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval_html5","serviceAddress","checkOnlineTimeInterval_html5","imageTimeInterval_html5","batchSize_html5","thresholdCount_html5","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled_html5", "configversion", "companyEmail", "companyEmailValue" , "companyName", "homePage", "oid"];
 		var obj = new Object();
 		var str="{";
 		for(var i=0;i<tags.length;i++){
@@ -63,6 +63,11 @@
 					this.setTagValue('userid', config[c]);
 				else if(c == "companyEmail")
 					this.setTagValue('companyEmail', config[c]);
+				
+				else if(c == "oid")
+					this.setTagValue('oid', config[c]);
+				
+					
 				else if(c == "companyName")
 					this.setTagValue('companyName', config[c]);
 				

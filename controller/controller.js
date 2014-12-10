@@ -173,7 +173,11 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		}
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
 		else{
-			CSInterface.evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
+			var id=Config.userid;
+			if(Config.oid){
+				id=Config.oid;
+			}
+			CSInterface.evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+id+'\')', function(data){
 				console.log($rootScope);
 				console.log($scope);
 				if(data == "false"){
