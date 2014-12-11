@@ -82,8 +82,10 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 						preloader.hideLoading();
 						var data=result.data.result;
 						console.log(data);
-						if(data.oid)
+						if(data.oid){
+							Config.oid=data.oid;
 							$rootScope.canEdit=canEdit(data.oid, data.org_settings);
+						}
 						else
 							$rootScope.canEdit=true;
 						Config.data=data;

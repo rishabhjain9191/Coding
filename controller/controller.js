@@ -162,6 +162,20 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 	};
 
 		$rootScope.asgnPrjFldr=function(){
+			function getApprId(){
+				if(Config.oid)
+					return "oid"
+				else
+					return "userid";
+			}
+			function makeObjectToWrite(){
+				var obj={};
+				obj["id"]=getApprId();
+				obj[getApprId()]=Config[getApprId()];
+				obj["projectid"]=projectUtils.currentProjectId;
+				return obj;
+			}
+
 	 	$rootScope.showFlyout = false;
 		//1. Check the Current Document is saved or not
 		//If no project is selected, alert-No Project Selected
@@ -173,7 +187,8 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		}
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
 		else{
-			CSInterface.evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
+			console.log(makeObjectToWrite());
+			CSInterface.evalScript('$._extCWFile.updateOrCreateFile('+JSON.stringify(makeObjectToWrite())+')', function(data){
 				console.log($rootScope);
 				console.log($scope);
 				if(data == "false"){
