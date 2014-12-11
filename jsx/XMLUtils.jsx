@@ -37,9 +37,11 @@
 	},
 	
 	writeConfig:function(config){
+		//alert(config);
 		if(!this.isExists()){
 			var myRootXmlObj = new XML ("<config></config>");
 			configFile = new File(pathToConfigFile);
+			
 			for (c in config) {
 				if(c != "data"){
 					myRootXmlObj.appendChild(new XML ("<"+c+">"+config[c]+"</"+c+">"));
