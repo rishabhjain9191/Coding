@@ -17,7 +17,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	preloader.hideLoading();
 	$scope.alert_message="Username and Password cannot be left blank!";
 	$scope.showLogin=false;
-	$scope.modalShown = false;
+	$scope.modalShown=false;
 	$scope.keepLoggedIn='false';
 	$scope.message="";
 
