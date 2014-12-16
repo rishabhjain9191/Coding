@@ -140,7 +140,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		if(configData.checkStatusAddress) this.CHECK_STATUS_ADDRESS=configData.checkStatusAddress;
 		if(configData.fileUploadAddress) this.FILE_UPLOAD_ADDRESS=configData.fileUploadAddress;
 		if(configData.logEnabled_html5) this.LOG_ENABLE=configData.logEnabled_html5;
-		if(configData.oid) this.LOG_ENABLE=configData.oid;
+		//if(configData.oid) this.oid=configData.oid;
 		//(configData.configversion)?this.URL_SERVICE=configData.configversion;
 	};
 
@@ -460,6 +460,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 		this.password="";
 		this.userid="";
 		this.firstname="";
+		this.oid="";
 	};
 	return config;
 }]);
@@ -1062,7 +1063,8 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		console.log(event);
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
 		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworxproject file recursively, and get project Id, else get 0.
-		CSInterface.evalScript('$._extCWFile.getProjectID(\"'+Config.userid+'\")', function(pid){
+		var id=(Config.oid)?"oid":"userid";
+		CSInterface.evalScript('$._extCWFile.getProjectID(\"'+Config[id]+'\")', function(pid){
 			console.log("project id from .creativeworx file"+pid);
 			if(pid!=""){
 				//Assign that project id to the current document

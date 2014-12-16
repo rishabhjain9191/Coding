@@ -17,7 +17,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	preloader.hideLoading();
 	$scope.alert_message="Username and Password cannot be left blank!";
 	$scope.showLogin=false;
-	$scope.modalShown = false;
+	$scope.modalShown=false;
 	$scope.keepLoggedIn='false';
 	$scope.message="";
 
@@ -29,7 +29,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 
 	if(Config.companyEmail=="0"){
 			$scope.ldap_message_image=image_error;
-			$scope.ldap_message="LDAP Credentials not found";
+			$scope.ldap_message="Company login credentials not found";
 		}
 		else if(Config.companyEmail.length>1){
 			$scope.ldap_message_image=image_success;
@@ -57,7 +57,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 
 
 
-	
+
 	/* JQ Implementation*/
 	$scope.login=function(){
 
@@ -72,14 +72,14 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			Config.username = company_email;
 			Config.password = password;
 
-				
+
 			APIUtils.login(company_email, password,company_password, Config.companyEmail)
 						.then(function(result){
 				if(result.status=="200"){
 					console.log("auth success")
 					APIUtils.getUsers().then(function(result){
 						console.log("User Details Fetched");
-						preloader.hideLoading();					
+						preloader.hideLoading();
 						var data=result.data.result;
 						console.log(data);
 						if(data.oid){
@@ -89,7 +89,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 						else
 							$rootScope.canEdit=true;
 						Config.data=data;
-						
+
 						console.log(keepMeLoggedIn);
 						Config.keepMeLoggedIn=keepMeLoggedIn;
 						Config.keepMeLoggedIn=$scope.checked;
@@ -101,7 +101,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 						Constants.update(Config);
 						$rootScope.LoggedInItems=true;
 						viewManager.userLoggedIn();
-					
+
 				}, function(result){
 					console.log("Can't Fetch user details");
 					console.log(result.data);
