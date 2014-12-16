@@ -16,7 +16,11 @@ function($scope, $location, Constants, $window, CSInterface, Config, viewManager
 	for(var i=0;i<3;i++){
 		str =str + res[i]+'.';
 	}
-	$scope.app_version_no=str.substring(0,str.length-1);
+	var version=str.substring(0,str.length-1);
+	if(Constants.ISEXCHANGE)
+		version=version+'e';
+	
+	$scope.app_version_no=version;
 	
 	if(Config.username && Config.username!=""&&viewManager.loggedIn){
 		$scope.message="Logged in as: "+Config.username;
