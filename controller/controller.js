@@ -122,7 +122,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		event.extensionId = Constants.EXTENSION_ID;
 		console.log("Event ");
 		console.log(event);
-		CSInterface.dispatchEvent(event);
+		//CSInterface.dispatchEvent(event);
 	}
 
 
@@ -191,7 +191,14 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 			CSInterface.evalScript('$._extCWFile.updateOrCreateFile('+JSON.stringify(makeObjectToWrite())+')', function(data){
 				console.log($rootScope);
 				console.log($scope);
-				if(data == "false"){
+				if(data=="PRMDND"){
+					//Permission denied !
+					$scope.$apply(function(){
+						$scope.alert_message="Unable to assign project to current folder. Your administrator may have locked project assignment to this folder";
+						$scope.modalShown=true;	
+					});
+				}
+				else if(data == "false"){
 					$scope.$apply(function(){
 						$scope.alert_message="Assign Project requires an open document that has already been saved.";
 						$scope.modalShown=true;

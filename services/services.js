@@ -1079,6 +1079,26 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 					Logger.log("documentAfterSave");
 				});
 			}
+			else{
+				if(id=="oid"){
+					id="userid";
+					CSInterface.evalScript('$._extCWFile.getProjectID(\"'+Config[id]+'\")', function(pid){
+						if(pid!==""){
+							CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+pid+'\')',function(data){
+								console.log("XMP Inserted");
+								projectUtils.setCurrentProjectId(pid);
+								projectUtils.selectProject();
+								var event=new CSEvent("projectSelected", "APPLICATION");
+								event.type="projectSelected";
+								event.data="<projectSelected />";
+								CSInterface.dispatchEvent(event);
+								Logger.log("documentAfterSave");
+							});
+						}
+					});
+				}
+
+			}
 		});
 
 		}

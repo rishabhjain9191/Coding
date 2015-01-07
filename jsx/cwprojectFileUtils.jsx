@@ -177,6 +177,9 @@
 			parentFolder = myFile.parent;
 			var file = this.checkIfFileExists(parentFolder);
 			var file = new File(parentFolder+"/.creativeworxproject");
+			if(file.readonly){
+				return "PRMDND"
+			}
 			this.writeFile(file, newPair);
 			return "true";
 		}

@@ -30,6 +30,9 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			if(!data.length){
 				$scope.showNoProjectsMessage = true;
 			}
+			else{
+				$scope.showNoProjectsMessage = false;	
+			}
 		}, function(data){
 			//On network Failure, show previous copy of projects
 			$scope.projects=data;

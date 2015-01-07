@@ -19,7 +19,7 @@
 	 // creating the colors array for the colorbox
 	 $scope.colors=[];
 	 var projectColors = constants.PROJECT_COLORS;
-	 for(var i=0; i<projectColors.length; i++){
+	 for(var i=0+1; i<projectColors.length; i++){
 		var obj = {};
 		obj.colorindex=i;
 		obj.colorcode=projectColors[i];

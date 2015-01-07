@@ -20,16 +20,19 @@
 	
 	$scope.colorBtnStyle={};
 	$scope.colorPreviewStyle={};
-	$scope.colorindex=0;
-	$scope.targetColor="#888888";
-	$scope.colorBtnStyle.background="#888888";
-	$scope.colorPreviewStyle.background="#888888";
+	/*Default Color Settings*/
+	$scope.colorindex=24;
+	$scope.targetColor="#999999";
+	$scope.colorBtnStyle.background="#999999";
+	$scope.colorPreviewStyle.background="#999999";
+	/*End default color setting*/
+
 	$scope.showColorPanel=false;
 	
 	// creating the colors array for the colorbox
 	$scope.colors=[];
 	 var projectColors = constants.PROJECT_COLORS;
-	 for(var i=0; i<projectColors.length; i++){
+	 for(var i=0+1; i<projectColors.length; i++){
 		var obj = {};
 		obj.colorindex=i;
 		obj.colorcode=projectColors[i];
@@ -68,7 +71,7 @@
 				color=hexc(colorRGB);
 				}
 				/* end JQuery Code*/
-				($scope.colorindex!==null)?(colorIndex=$scope.colorindex):(colorIndex=0);
+				($scope.colorindex!==null)?(colorIndex=$scope.colorindex):(colorIndex=24);
 				
 				
 				APIUtils.addProject(name, jobId, budgetHrs, color, colorIndex)

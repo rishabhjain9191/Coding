@@ -301,7 +301,7 @@ li{
 .colorsPanel{
 	position: fixed;
 	top: 94px;
-	width: 171px;
+	width: 152px;
 	background: rgb(241, 241, 241);
 	height: 107px;
 	left: 19px;
@@ -332,6 +332,9 @@ li{
 
 .colors div:hover{
 	border: 1px solid white;
+}
+#nohover:hover{
+	border: 1px solid black;
 }
 
 .budget{
