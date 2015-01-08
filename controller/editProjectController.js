@@ -40,9 +40,14 @@
 		$scope.name=$scope.project.name;
 		$scope.colorBtnStyle={};
 		$scope.colorPreviewStyle={};
-		$scope.targetColor=$scope.project.colorcode;
-		$scope.colorBtnStyle.background=$scope.project.colorcode;
-		$scope.colorPreviewStyle.background=$scope.project.colorcode;
+		if($scope.project.colorcode=="#888888"){
+			$scope.selectColor(23);
+		}
+		else{
+			$scope.targetColor=$scope.project.colorcode;
+			$scope.colorBtnStyle.background=$scope.project.colorcode;
+			$scope.colorPreviewStyle.background=$scope.project.colorcode;
+		}
 	};
 	var newName="", newJobId="", newColorCode="", newBudget="", newColorIndex="";
 	
@@ -90,6 +95,7 @@
 		newName=$('#editProject_projectName').val();
 		newJobId=$('#editProject_jobId').val();
 		newBudget=$('#editProject_budget').val();
+		console.log($scope.project.color);
 		($scope.project.color)?(newColorIndex=$scope.project.color):(newColorIndex="");
 		
 		/* JQuery Code for picking the color from full RGB Box*/
@@ -143,9 +149,18 @@
 	
 	$scope.changeProject=function(p){
 		$scope.name = p.name;
-		$scope.colorBtnStyle.background=p.colorcode;
-		$scope.colorPreviewStyle.background=p.colorcode;
-		$scope.targetColor=p.colorcode;
+		
+		if(p.colorcode=="#888888"){
+			$scope.selectColor(23);
+			$scope.colorPreviewStyle.background="#999999";
+
+			console.log($scope.project.color);
+		}
+		else{
+			$scope.targetColor=p.colorcode;
+			$scope.colorBtnStyle.background=p.colorcode;
+			$scope.colorPreviewStyle.background=p.colorcode;
+		}
 	},
 	
 	$scope.showColorBox=function(){
