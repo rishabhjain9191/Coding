@@ -21,10 +21,10 @@
 	$scope.colorBtnStyle={};
 	$scope.colorPreviewStyle={};
 	/*Default Color Settings*/
-	$scope.colorindex=24;
-	$scope.targetColor="#999999";
-	$scope.colorBtnStyle.background="#999999";
-	$scope.colorPreviewStyle.background="#999999";
+	$scope.colorindex=13;
+	$scope.targetColor="#337EBD";
+	$scope.colorBtnStyle.background="#337EBD";
+	$scope.colorPreviewStyle.background="#337EBD";
 	/*End default color setting*/
 
 	$scope.showColorPanel=false;
