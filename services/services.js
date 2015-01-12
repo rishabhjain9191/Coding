@@ -1015,7 +1015,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 /********** App Watcher *********/
 /********************************/
 
-services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'CSInterface', 'Config', 'WatcherPhotoshop',function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, CSInterface, Config, watcherPS){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'CSInterface', 'Config', 'WatcherPhotoshop','WatcherAICY', function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, CSInterface, Config, watcherPS, watcherAICY){
 	var utils={};
 	utils.removeEventListeners=function(){
 		CSInterface.removeEventListener('documentAfterActivate',onDocumentAfterActivate);
@@ -1027,6 +1027,10 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	};
 
 	utils.addEventListeners=function(){
+		if(Constants.APP_NAME=='AICY'){
+			console.log("APP=INCopy");
+			watcherAICY.setEventListenersExtendScript();
+		}
 		//Define Event Listeners
 		CSInterface.addEventListener('documentAfterActivate', onDocumentAfterActivate);
 		CSInterface.addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
@@ -1114,6 +1118,42 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		Logger.log(event.type);
 	};
 
+	return utils;
+
+}]);
+
+services.factory('WatcherAICY',['Constants', function(Constants){
+	function loadPlugPlugLibrary(){
+		 var csInterface = new CSInterface();
+	    //Determine the plaform, so that we can direct our ExtendScript to the correct version.
+	    var osInformation = csInterface.getOSInformation();
+	    var plugPlugFile;
+	    if(osInformation.match(/Mac OS/gi)!= null){
+	        plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Mac/osx10_64/PlugPlugExternalObject.framework";
+	    }
+	    else{
+	        if(osInformation.match(/64-bit/gi) != null){
+	            plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Win/win64/PlugPlugExternalObject.dll";        
+	        }
+	        else{
+	            plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Win/win32/PlugPlugExternalObject.dll";                    
+	        }
+	    }
+	    plugPlugFile = escape(plugPlugFile);
+	    csInterface.evalScript('$._ext_AICY_EVENTS.loadPlugPlugLibrary("' + plugPlugFile + '")');
+	};
+		function addPlugPlugSuccessEventListener(){
+	    var csInterface = new CSInterface();
+	    csInterface.addEventListener("plugPlugSuccess", function(){
+	        new CSInterface().evalScript('$._ext_AICY_EVENTS.addEventListeners()');
+	    });
+	};
+	var utils={};
+	utils.setEventListenersExtendScript=function(){
+		addPlugPlugSuccessEventListener();
+		loadPlugPlugLibrary();
+
+	}
 	return utils;
 
 }]);
@@ -1422,6 +1462,7 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils
 			case "IDSN":return 'indesign';
 			case "PHXS":return 'photoshop';
 			case "ILST":return 'illustrator';
+			case "AICY":return 'incopy';
 			default:return '';
 		}
 	};

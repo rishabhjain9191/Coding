@@ -125,6 +125,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
 	<ExecutionEnvironment>
 		<HostList>
 			<Host Name="IDSN" Version="[9.1,10.9]" />
+			<Host Name="AICY" Version="[9.1,10.9]" />
 			<Host Name="ILST" Version="[17.0,18.9]" />
 			<Host Name="PHXS" Version="[14.0,15.9]" />
 			<Host Name="PHSP" Version="[14.0,15.9]" />

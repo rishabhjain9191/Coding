@@ -215,11 +215,14 @@
 
 	},
 	getProjectID : function(userid) {
+		try{
 		myFile = app.activeDocument.fullName;
 		parentFolder = myFile.parent;
+
 		var file = this.checkIfFileExistsRecursively(parentFolder);
 		if(file){
-			var matchingProjectID = this.getMatchingProjectID(file, userid);
+			var matchingProjectID = this.getMatchingProjectID(file, userid)+'';
+				//alert(matchingProjectID);
 				//If the user id in .creativeworx file and user requesting the project id from .creatoveworx file are not same, do not assign any project id.
 				if(matchingProjectID=='0'){
 					return "";
@@ -230,6 +233,12 @@
 			return "";
 		}
 	}
+
+catch(e){
+	alert(e);
+	return e.message;
+}
+}
 };
 
 
