@@ -196,6 +196,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 
 	utils.previousView="";
 	utils.loginView="";
+	utils.isFreezed=false;
 
 
 	utils.initializationDone=function(){
@@ -262,8 +263,10 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	};
 
 	utils.configureLDAP=function(){
-		this.previousView=$location.path().substr(1);
-		$location.path('configureLDAP');
+		if(!this.isFreezed){
+			this.previousView=$location.path().substr(1);
+			$location.path('configureLDAP');
+		}
 	};
 
 	utils.gotoPreviousView=function(){
@@ -281,6 +284,22 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		}
 		//$route.reload();
 	};
+
+	utils.moveToFreezeScreen=function(){
+		$route.reload();
+		this.isFreezed=true;
+		this.previousView="freezeScreen";
+		this.loginView="freezeScreen";
+	};
+	
+	utils.gotoRestoreTT=function(){
+		this.previousView=$location.path().substr(1);
+		$route.reload();
+		$location.path('restoreTT');
+	};
+
+
+
 
 	return utils;
 

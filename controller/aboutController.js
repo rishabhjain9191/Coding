@@ -29,7 +29,9 @@ function($scope, $location, Constants, $window, CSInterface, Config, viewManager
 		$scope.message="Currently not logged in";
 	}
 	$scope.return1=function(){
+		
 		$window.history.back();
+		//viewManager.gotoPreviousView();
 	};
 	
 	$scope.terms=function(){
@@ -48,3 +50,7 @@ function($scope, $location, Constants, $window, CSInterface, Config, viewManager
 		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE);
 	};
 }]);
+
+
+
+

@@ -79,6 +79,23 @@ $._extFile={
 		return false;
 		
 	},
+	deleteDBFile:function(){
+		var file=new File(pathToUnsendEvents+dbFileNameNew);
+		if(file.exists){
+			try{
+			file.close();
+			file.open("w", "json", "????");
+			file.close();
+			var result=file.remove();
+			return result.toString();
+			}
+			catch(e){
+				alert(e);
+				return "false";}
+		}
+		else{alert("file doesnot exists");return "true";}
+
+	},
 	renameCreateNewAndReturnContents:function(){
 		try{
 			

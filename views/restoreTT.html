@@ -1,0 +1,24 @@
+<div style="text-align:center">
+	<div>
+	<p>Clear the User related setting Message</p>
+	<button style="margin: auto;" class="darkBtn" ng-click='clearConfig()' ng-disabled="deleteDBWarning">Clear User Settings</button>
+	</div>
+
+	<div>
+	<p>Clear TimeTracker local Database Message</p>
+	<button style="margin: auto;" class="darkBtn" ng-click='showDeleteDBWarning()' ng-hide="deleteDBWarning">Clear Database</button>
+
+		<div ng-show="deleteDBWarning">
+			{{deleteDBWarningMessage}}
+			<button style="margin: auto;" class="darkBtn" ng-click='abortDeleteDB()'>Not Now</button>
+			<button style="margin: auto;" class="darkBtn" ng-click='clearDB()'>Proceed</button>
+
+
+		</div>
+	</div>
+
+	<div>
+		<button style="margin: auto;" class="darkBtn" ng-click='cancel()' ng-hide="deleteDBWarning">Cancel</button>
+	</div>
+	<modal-dialog show='modalShown'><p>{{alert_message}}<p></modal-dialog>
+</div>

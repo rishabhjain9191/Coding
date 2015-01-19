@@ -45,6 +45,10 @@
 		<script src="controller/LDAPloginController.js" type="text/javascript"></script>
 		<script src="controller/supportController.js" type="text/javascript"></script>
 		<script src="controller/repairDBController.js" type="text/javascript"></script>
+		<script src="controller/restoreTTController.js" type="text/javascript"></script>
+		<script src="controller/freezeScreenController.js" type="text/javascript"></script>
+
+
 		
 		<script type="text/javascript">
 			$(function() {
@@ -80,7 +84,8 @@
 			<div ng-hide='LoggedInItems'>
 				<div class="menu_item" ng-click="configureLDAP()">Configure company login</div>
 				<div class="menu_item" ng-click="about()">About TimeTracker</div>
-				
+				<div class="menu_item" ng-click="restoreTT()">Restore Time Tracker</div>
+
 				<div class="menu_item" ng-click="checkUpdate()">Check for updates...</div>
 				<div class="menu_item" ng-click="feedback()">Feedback...</div>
 				
@@ -98,7 +103,8 @@
 				
 				<div class="menu_item" ng-click="checkUpdate()">Check for updates...</div>
 				<div class="menu_item" ng-click="feedback()">Feedback...</div>
-				
+				<div class="menu_item" ng-click="restoreTT()">Restore Time Tracker</div>
+
 				<!-- <div class="menu_item" ng-click="support()">Support</div> -->
 				<div class="separator"></div>
 				<div class="menu_item" ng-click="logout()">Logout</div>
