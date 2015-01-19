@@ -138,5 +138,17 @@
         file.writeln (XMLHeader);
 		file.write(xml.toXMLString());
 		file.close();
+	},
+
+	deleteConfigFile:function(){
+		if(this.isExists()){
+			var configFile = new File(pathToConfigFile);
+			var result=configFile.remove();
+			return result.toString();
+		}
+		else{
+			return "true";
+		}
+
 	}
 };

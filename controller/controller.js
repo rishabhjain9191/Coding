@@ -104,6 +104,15 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'repairDBCtrl',
 			templateUrl:'./views/repairDB.html'
 		})
+		.when('/restoreTT',{
+			controller:'restoreTTController',
+			templateUrl:'./views/restoreTT.html'
+		})
+		.when('/freezeScreen',{
+			controller:'freezeScreenController',
+			templateUrl:'./views/freezeScreen.html'
+		})
+
 		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
 }]);
 
@@ -260,7 +269,10 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 	};
 	$rootScope.checkUpdate=function(){
 		//updateUtils.checkForUpdate(function(data){console.log(data);}, function(){});
-		if($location.path()=='/update'){
+		if(viewManager.isFreezed){
+
+		}
+		else if($location.path()=='/update'){
 			$route.reload()
 		}
 		else{
@@ -268,6 +280,10 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 			$rootScope.checkUpdateFromMenuClick=1;
 		}
 
+	}
+	$rootScope.restoreTT=function(){
+		viewManager.gotoRestoreTT();
+		//$location.path('restoreTT');
 	}
 	$rootScope.support=function(){
 		$rootScope.showFlyout = false;
