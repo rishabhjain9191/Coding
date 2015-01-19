@@ -14,13 +14,13 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.1.1";
+		constants.EXTENSION_VERSION_NUMBER = "2.2.1";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
 		constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
 		constants.URL_EXCHANGE="https://www.adobeexchange.com/resources/19";
-		constants.ISEXCHANGE=true;
+		constants.ISEXCHANGE=false;
 		constants.STATUS_NEW = "NEW";
 		constants.STATUS_ATTEMPTED = "ATTEMPTED";
 		constants.STATUS_TRANSFERRED = "TRANSFERRED";
@@ -1133,10 +1133,10 @@ services.factory('WatcherAICY',['Constants', function(Constants){
 	    }
 	    else{
 	        if(osInformation.match(/64-bit/gi) != null){
-	            plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Win/win64/PlugPlugExternalObject.dll";        
+	            plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Win/win64/PlugPlugExternalObject.dll";
 	        }
 	        else{
-	            plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Win/win32/PlugPlugExternalObject.dll";                    
+	            plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Win/win32/PlugPlugExternalObject.dll";
 	        }
 	    }
 	    plugPlugFile = escape(plugPlugFile);
