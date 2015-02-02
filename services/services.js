@@ -14,6 +14,8 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
+		constants.EXTENSION_ID = "com.creativeworx.tthtml";
+
 		constants.EXTENSION_VERSION_NUMBER = "2.1.1";
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
@@ -197,7 +199,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	utils.previousView="";
 	utils.loginView="";
 	utils.isFreezed=false;
-
+	utils.freezeScreenMessage="";
 
 	utils.initializationDone=function(){
 
@@ -285,7 +287,8 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		//$route.reload();
 	};
 
-	utils.moveToFreezeScreen=function(){
+	utils.moveToFreezeScreen=function(message){
+		this.freezeScreenMessage=message;
 		$route.reload();
 		this.isFreezed=true;
 		this.previousView="freezeScreen";
@@ -572,6 +575,8 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var deferred=$q.defer();
 		var headers={};
 
+		headers["app_ver"]=Constants.EXTENSION_VERSION_NUMBER;
+		headers["app_id"]=Constants.EXTENSION_ID;
 		if(method=="PUT"){
 			headers["Content-Type"]="application/x-www-form-urlencoded";
 			//headers["X-HTTP-Method-Override"]="PUT";

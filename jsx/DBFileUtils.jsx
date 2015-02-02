@@ -30,7 +30,7 @@ $._extFile={
 			file.writeln(str);
 		}
 		catch(e){
-			alert(e);
+			//alert(e);
 		}
 	},
 	
@@ -90,10 +90,13 @@ $._extFile={
 			return result.toString();
 			}
 			catch(e){
-				alert(e);
+				//alert(e);
 				return "false";}
 		}
-		else{alert("file doesnot exists");return "true";}
+		else{
+			//alert("file doesnot exists");
+			return "true";
+		}
 
 	},
 	renameCreateNewAndReturnContents:function(){
@@ -120,7 +123,7 @@ $._extFile={
 			return "'error':'true'";
 		}
 		catch(e){
-			alert(e.type+"\n"+e.message);
+			//alert(e.type+"\n"+e.message);
 		}
 	}
 }
