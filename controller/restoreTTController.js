@@ -11,7 +11,7 @@ app.controller('restoreTTController',['$scope','$rootScope', '$location', 'Const
 function($scope, $rootScope, $location, Constants, $window, CSInterface, Config, viewManager, ngDialog){
 	
 	$scope.deleteDBWarning=false;
-	$scope.deleteDBWarningMessage="This operation will delete all the local TT data of all the users on this machine";
+	$scope.deleteDBWarningMessage="This action will reset your extension config file, thereby wiping out any saved passwords, and settings. After reseting, please restart any Adobe apps that are currently running TimeTracker.";
 
 	$scope.clearConfig=function(){
 			ngDialog.openConfirm({
@@ -37,7 +37,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 				showClose:false,
 				data:{
 					heading:"Flush Cache",
-					message:"This action will reset your extension event database, thereby wiping out any unsent activity for your account or the accounts of other users who have used this computer. Afterward you will need to restart the host app and any other host apps currently running TimeTracker.",
+					message:"This action will wipe out any unsynced activity for your account or the accounts of others on this computer. After reseting, please restart any Adobe apps that are currently running TimeTracker.",
 					command:"Flush"
 				}
 
