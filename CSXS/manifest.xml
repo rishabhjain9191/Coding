@@ -148,7 +148,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
 				<Lifecycle>
 					<AutoVisible>true</AutoVisible>
 					 <StartOn>
-      				 <Event>documentAfterActivate</Event>
+      				 <Event></Event>
  					 </StartOn>
 				</Lifecycle>
 				<UI>
