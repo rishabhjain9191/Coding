@@ -20,7 +20,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 				showClose:false,
 				data:{
 					heading:"Restore factory defauts",
-					message:"This operation will delete all the local TT data of all the users on this machine",
+					message:"This action will reset your extension config file, thereby wiping out any saved passwords, and settings. After reseting, please restart any Adobe apps that are currently running TimeTracker.",
 					command:"Reset"
 
 				}
