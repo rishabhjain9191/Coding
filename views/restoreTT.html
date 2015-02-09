@@ -12,7 +12,10 @@
 <script type="text/ng-template" id="errorDialogId">
 		<div class="ngdialog-message">
 			<h3>{{ngDialogData.heading}}</h3>
-			<p>{{ngDialogData.message}}</p>
+			<p>{{ngDialogData.message}}
+			<span ng-click="openFAQ()" class="pointer">FAQ</span>
+			</p>
+
 		</div>
 		<div class="ngdialog-buttons">
 			<button type="button" ng-click="cancel()" class="lightBtn" style="width:auto">I got it!</button>

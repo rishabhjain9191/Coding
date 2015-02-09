@@ -88,7 +88,13 @@
 			</div>
 		</div>
 		<div class="flyout" ng-show='showFlyout'>
-			<div ng-hide='LoggedInItems'>
+			<div ng-hide='LoggedInItems' ng-show="FreezedItems">
+				<div class="menu_item" ng-click="about()">About TimeTracker</div>
+				<div class="menu_item" ng-click="restoreTT()">Prefrences</div>
+				<div class="menu_item" ng-click="feedback()">Feedback...</div>
+			</div>
+
+			<div ng-hide='LoggedInItems+FreezedItems'>
 				<div class="menu_item" ng-click="configureLDAP()">Configure company login</div>
 				<div class="menu_item" ng-click="about()">About TimeTracker</div>
 				<div class="menu_item" ng-click="restoreTT()">Prefrences</div>

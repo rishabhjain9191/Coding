@@ -141,6 +141,8 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 	$rootScope.loading=false;
 	$rootScope.opaqueStyle={};
 	$rootScope.LoggedInItems=false;
+	$rootScope.FreezedItems=false;
+
 	$rootScope.projectProperties=new Array();
 	$rootScope.userLoggedState=1;
 	$rootScope.checkUpdateFromMenuClick=0;
@@ -251,6 +253,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		$rootScope.showFlyout = false;
 		viewManager.configureLDAP();
 	};
+
 
 	$rootScope.feedback=function(){
 		$rootScope.showFlyout = false;

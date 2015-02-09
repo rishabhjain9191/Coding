@@ -62,6 +62,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 			if(result=='true'){	
 				//logout user
 				viewManager.moveToFreezeScreen("Cache Flushed");
+				$rootScope.FreezedItems=true;
 				$rootScope.logout();
 			}
 			else{
@@ -91,6 +92,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 			if(result=='true'){	
 				//logout user
 				viewManager.moveToFreezeScreen("Factory restored");
+				$rootScope.FreezedItems=true;
 				$rootScope.logout();
 			}
 			else{
@@ -117,6 +119,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 			if(result=='true'){	
 				//logout user
 				viewManager.moveToFreezeScreen("Cache flushed");
+				$rootScope.FreezedItems=true;
 				$rootScope.logout();
 			}
 			else{
@@ -143,7 +146,10 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 		else{
 			message="flushing cache";
 		}
-
+		message+=". To manually remove the files, follow the instructions in this";
+		//message+="<a href='http://www.creativeworx.com/faq/manually-reseting-extension-data-event-database-settings-remember-login-defaults/'>";
+		//message+="FAQ";
+		//message+="</a>";
 		ngDialog.openConfirm({
 				template:'errorDialogId',
 				controller: 'InsideCtrl',
@@ -167,6 +173,9 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 		
 	};
 
-	
+	$scope.openFAQ=function(){
+		CSInterface.openURLInDefaultBrowser("http://www.creativeworx.com/faq/manually-reseting-extension-data-event-database-settings-remember-login-defaults/");
+
+	};
 
 }]);
