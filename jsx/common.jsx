@@ -45,7 +45,10 @@ $._extcommon={
 
 	file:"abc",
 
-	checkDocLength:function(){
+	checkDocLength:function(appName){
+		if(appName=='PPRO'){
+			return 1+'';
+		}
 		var len=app.documents.length;
 		return len+'';
 	},

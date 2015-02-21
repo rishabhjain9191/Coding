@@ -62,6 +62,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 	var selectProject=function(){
 		//Modify XMP data of the project.
 		console.log("Selecting Project");
+		console.log(Constants.APP_NAME);
 		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
 			console.log("XMP Inserted");
 			projectUtils.setCurrentProjectId(projectUtils.getSelectedProjectId());
@@ -98,7 +99,9 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 	$rootScope.refreshProjects();
 
 	$scope.processProjectClick=function(projectId, index){
-		CSInterface.evalScript('$._extcommon.checkDocLength()',function(data){
+				//CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+projectUtils.getSelectedProjectId()+'\')', function(data){
+
+		CSInterface.evalScript('$._extcommon.checkDocLength(\''+Constants.APP_NAME+'\')',function(data){
 			if(parseInt(data)){
 				processProject(projectId,index);
 			}else{
@@ -137,7 +140,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 		projectUtils.setSelectedProjectId(projectId);
 
 
-		CSInterface.evalScript('$._ext.getCurrentDoc()', function(data){
+		CSInterface.evalScript('$._ext.getCurrentDoc(\''+Constants.APP_NAME+'\')', function(data){
 			if(data=='1'){
 				checkDocXMP();
 			}

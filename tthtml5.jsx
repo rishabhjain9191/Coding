@@ -33,8 +33,14 @@ $._ext = {
         }
     },
 	
-	getCurrentDoc:function(){
-	
+	getCurrentDoc:function(appName){
+	   if(appName=="PPRO"){
+        if(app.isDocumentOpen()){
+            return "1";
+        }
+        return "0";
+       }
+
 		if(app.documents.length==0){
 			//No Document Open
 			return "0";

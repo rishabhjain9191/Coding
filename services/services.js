@@ -330,6 +330,7 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 		    type: 'GET',
 		    url: url,
 		    cache: false,
+		    timeout:3000,
 		    success: function(data, textStatus, jqXHR) {
 	            console.log(data);
 	            console.log(textStatus);
@@ -946,14 +947,60 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 	utils.getSelectedProjectId=function(){
 		return(this.selectedprojectId);
 	};
+	utils.getProjectSortKey=function(project){
+		var key='';
+		if(project.starred)
+			key+='!';
+		//console.log(project.alias.length);
+			if(project.alias.user){
+				project["displayName"]=project.alias.user;
+				//console.log(project.alias.user);
+				//console.log(key+project.alias.user);
+				return (key+project.alias.user).toUpperCase();
+			}
+			if(project.alias.org){
+				project["displayName"]=project.alias.org;
+				//console.log(key+project.alias.org);
+				return (key+project.alias.org).toUpperCase();
+			}
+		project["displayName"]=project.name;
+		//console.log(key+project.name);
+		return (key+project.name).toUpperCase();
+	};
+	utils.sortProjects=function(projectList){
+		//projectList.sort(function(a, b){return (utils.getProjectSortKey(a)>utils.getProjectSortKey(b))});
+		var i,j, min;
+		//Bubble Sort, for checking REPLACE WITH QUICK SORT
+		for(i=0;i<projectList.length;i++){
+			min=i;
+			for(j=i+1;j<projectList.length;j++){
+				//console.log(utils.getProjectSortKey(projectList[j])+"-"+utils.getProjectSortKey(projectList[i])+" : "+(utils.getProjectSortKey(projectList[j])<utils.getProjectSortKey(projectList[i])));
+				if(utils.getProjectSortKey(projectList[j])<utils.getProjectSortKey(projectList[min])){
+					min=j;
+				}
+			}
+			temp=projectList[i];
+			projectList[i]=projectList[min];
+			projectList[min]=temp;
+		}
+	};
 	utils.getProjects=function(username, password, userid){
 		var deferred=$q.defer();
 		APIUtils.getProjects()
 		.then(function(result){
 			console.log(result);
 			var data=result.data.result;
+			for(var j=0;j<data.length;j++){
+				console.log(data[j].name);
+			}
+			utils.sortProjects(data);
+			for(var j=0;j<data.length;j++){
+				console.log(data[j].displayName);
+			}
 			utils.projectIndexes={};
 			utils.projectsCopy=data;				//Save the freshly retrieved project list
+			
+			//Dynamically increase the project project properties size
 			while(data.length>Constants.MAX_PROJECTS){
 				for(var i=Constants.MAX_PROJECTS;i<2*Constants.MAX_PROJECTS+1;i++){
 					$rootScope.projectProperties.push(new projectNo(i));
@@ -961,7 +1008,9 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 				//Plus 1 for incoperating a new project when no. of projects=2^n
 				Constants.MAX_PROJECTS=2*Constants.MAX_PROJECTS+1;
 			}
+
 			for(var i=0;i<data.length;i++){
+				//project's mongo id
 				var pid=data[i]._id;
 				utils.projectIndexes[pid]=i;
 				utils.projectIndexes[data[i].pid]=i;
@@ -997,7 +1046,9 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 
 	utils.selectProject=function(){
 		//Check the current document's XMP
+		console.log(Constants.APP_NAME);
 		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
+			console.log(data);
 			if(data==""||!utils.projectIndexes.hasOwnProperty(data)){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
@@ -1056,6 +1107,30 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 			console.log("APP=INCopy");
 			watcherAICY.setEventListenersExtendScript();
 		}
+		if(Constants.APP_NAME=="PHXS"||Constants.APP_NAME=="PHSP"){
+			watcherPS.init();
+		}
+		//set the file path
+		if(Constants.APP_NAME=="PPRO"){
+			var osInformation = CSInterface.getOSInformation();
+	    	var TrackerFilePath;
+	    if(osInformation.match(/Mac OS/gi)!= null){
+	        TrackerFilePath = CSInterface.getSystemPath(SystemPath.EXTENSION) + "/assets/Images/";
+	    }
+	    else{
+	        if(osInformation.match(/64-bit/gi) != null){
+	            TrackerFilePath = CSInterface.getSystemPath(SystemPath.EXTENSION) + "/assets/Images/";
+	        }
+	        else{
+	            TrackerFilePath = CSInterface.getSystemPath(SystemPath.EXTENSION) + "/assets/Images/";
+	        }
+	    }
+	    TrackerFilePath = escape(TrackerFilePath);
+	    CSInterface.evalScript('$._ext_PPRO_XMP.setTrackerFilePath("' + TrackerFilePath + '")');
+	    CSInterface.evalScript('$._ext_PPRO_XMP.initTT()');
+
+			
+		}
 		//Define Event Listeners
 		CSInterface.addEventListener('documentAfterActivate', onDocumentAfterActivate);
 		CSInterface.addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
@@ -1064,7 +1139,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		CSInterface.addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
 		CSInterface.addEventListener('projectSelected', onProjectSelected);
 		CSInterface.addEventListener('onCreationComplete', onCreationComplete);
-		watcherPS.init();
+		
 	};
 
 	function onDocumentAfterDeactivate(event){
@@ -1488,6 +1563,7 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils
 			case "PHXS":return 'photoshop';
 			case "ILST":return 'illustrator';
 			case "AICY":return 'incopy';
+			case "PPRO":return 'premiere pro';
 			default:return '';
 		}
 	};
@@ -1584,7 +1660,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 			}
 			,function(data){
 				console.log("Error in sending records");
-				console.log(data);
+				console.log(JSON.stringify(data.data));
 				debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
 				logit(batchedRecords);
 			})

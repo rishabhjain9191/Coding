@@ -14,7 +14,7 @@
 		<ul class='projects'>
 			 <li  ng-repeat='project in projects'  ng-click='processProjectClick(project._id, $index)' ng-style='projectProperties[$index].style'  title="Job ID: {{project.jobid}}">
 				<div class="project1" >
-					<div class="pName">{{project.name}}</div>
+					<div class="pName">{{project.displayName}}</div>
 					<span class="progress">{{projectProperties[$index].message}}<span>
 				</div>
 			</li>
