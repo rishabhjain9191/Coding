@@ -1139,6 +1139,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		CSInterface.addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
 		CSInterface.addEventListener('projectSelected', onProjectSelected);
 		CSInterface.addEventListener('onCreationComplete', onCreationComplete);
+		CSInterface.addEventListener('userActive', onUserActive);
 		
 	};
 
@@ -1149,6 +1150,10 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 				projectUtils.selectProject();
 			}
 		});
+	};
+	function onUserActive(event){
+		console.log("\n"+event.type+" dispatched");
+		Logger.log(event.type);
 	};
 
 	function onProjectSelected(event){
@@ -1559,11 +1564,12 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils
 	};
 	getHostName=function(){
 		switch(Constants.APP_NAME){
-			case "IDSN":return 'indesign';
-			case "PHXS":return 'photoshop';
-			case "ILST":return 'illustrator';
-			case "AICY":return 'incopy';
-			case "PPRO":return 'premiere pro';
+			case "IDSN":return 'indesign';break;
+			case "PHXS":return 'photoshop';break;
+			case "PHSP":return 'photoshop';break;
+			case "ILST":return 'illustrator';break
+			case "AICY":return 'incopy';break;
+			case "PPRO":return 'premiere pro';break;
 			default:return '';
 		}
 	};

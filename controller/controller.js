@@ -121,6 +121,9 @@ app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constant
 
 function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface, $templateCache, updateUtils){	
 	
+	//************************************************
+	//*************************************************
+	
 	
 	//Disable right click
 	document.oncontextmenu=new Function("return false");
@@ -131,7 +134,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		event.extensionId = Constants.EXTENSION_ID;
 		console.log("Event ");
 		console.log(event);
-		CSInterface.dispatchEvent(event);
+		//CSInterface.dispatchEvent(event);
 	}
 
 

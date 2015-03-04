@@ -135,7 +135,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
 			<Locale Code="All" />
 		</LocaleList>
 		<RequiredRuntimeList>
-			<RequiredRuntime Name="CSXS" Version="4.0" />
+			<RequiredRuntime Name="CSXS" Version="5.0" />
 
 		</RequiredRuntimeList>
 	</ExecutionEnvironment>
