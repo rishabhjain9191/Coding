@@ -9,16 +9,30 @@
 	<div class="project">
 		<div class="group">
 			<label for="projectName">Project name</label><br/>
-			<input ng-click="message=''" class="ptext" id="editProject_projectName" ng-model="name" />
+			<input ng-click="message=''" class="ptext" id="editProject_projectName" ng-disabled="disabled" ng-model="name" />
 		</div >
+
+		<div class="aliasGroup">
+			<div style="width:50%;float:left">
+			<label for="userNickName">My alias</label><br/>
+			<input ng-click="message=''"  id="editProject_userNickName" ng-model="project.alias.user" />
+			</div>
+			<div ng-show="disabled">
+			<label for="userNickName">Org alias</label><br/>
+			<input ng-click="message=''"  id="editProject_userNickName" ng-disabled="disabled" ng-model="project.alias.user" />
+			</div>
+
+		</div >
+
 		<div class="group">
 			<label for="jobId">Job ID</label><br/>
-			<input ng-click="message=''" class="ptext" id="editProject_jobId" ng-model="project.jobid" />
+			<input ng-click="message=''" class="ptext" ng-disabled="disabled" id="editProject_jobId" ng-model="project.jobid" />
 		</div>
 		<div class="group">
 			<div class="colorDiv" style="float: left; width: 45px;">
 				<span>Color</span>
 				<ui-colorpicker ng-show="showAllColors" ng-model="targetColor"></ui-colorpicker>
+				
 				<div class="colorBtn" ng-hide="showAllColors" ng-model="project.colorcode" ng-style="colorBtnStyle"></div>
 				<div class="colorsPanel" ng-show="showColorPanel">
 					<div class="colorPreview" ng-style="colorPreviewStyle"></div>
@@ -29,7 +43,7 @@
 			</div>
 			<div style="float: left; width: 73%; margin-left: 3px;">
 				<span>Budget (in hours)</span>
-				<input ng-click="message=''" class="budget" id="editProject_budget" ng-model="project.budget" />
+				<input ng-click="message=''" class="budget" ng-disabled="disabled" id="editProject_budget" ng-model="project.budget" />
 			</div>
 		</div>
 		<div class="stretch middle">

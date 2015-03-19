@@ -12,14 +12,18 @@
 	</div>
 	<div class="projectsContainer">
 		<ul class='projects'>
-			 <li  ng-repeat='project in projects'  ng-click='processProjectClick(project._id, $index)' ng-style='projectProperties[$index].style'  title="Job ID: {{project.jobid}}">
-				<div class="project1" >
+			 <li  ng-repeat='project in projects'  ng-click='processProjectClick(project._id, $index)' ng-style='projectProperties[$index].style' class='wrapper'>
+				<div>
 					<div class="pName">{{project.displayName}}</div>
-					<span class="progress">{{projectProperties[$index].message}}<span>
-				</div>
+					<span class="progress">{{projectProperties[$index].message}}</span>
+					<div class='tooltip'>
+						<div ng-bind-html="projectToolTipInfo[$index]"></div>
+					</div>
+
+			
 			</li>
 		</ul>
 		<div ng-show="showNoProjectsMessage" class="pad">{{noProjectsMessage}}</div>
 	</div>
-	<modal-dialog show='modalShown'><p>{{alert_message}}<p></modal-dialog>
+	<modal-dialog show='modalShown'><p>{{alert_message}}</p></modal-dialog>
 </div>

@@ -721,7 +721,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		return deferred.promise;
 	};
 
-	utils.addProject=function(projectName, jobId, budgetHrs, color, colorindex){
+	utils.addProject=function(projectName, userNickName,jobId, budgetHrs, color, colorindex){
 		var deferred=$q.defer();
 		var params={};
 		if(projectName!==undefined){
@@ -733,6 +733,12 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		if(budgetHrs!==undefined){
 			params["budget"]=budgetHrs;
 		}
+		
+		/*if(userNickName!==undefined){
+			params["alias.user"]=userNickName;
+		}*/
+
+
 		/*
 		if(color!==undefined){
 			params["colorcode"]=color;
@@ -755,12 +761,13 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		return deferred.promise;
 	};
 
-	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color, colorindex){
+	utils.editProject=function(projectId, projectName, userNickName, jobId, budgetHrs, color, colorindex){
 		var deferred=$q.defer();
 		var params={};
 		if(projectName!==undefined){
 			params["name"]=projectName;
 		}
+
 		if(projectName!==undefined){
 			params["jobid"]=jobId;
 		}
@@ -770,7 +777,9 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		if(projectName!==undefined){
 			params["color"]=colorindex;
 		}
-
+		if(userNickName!==undefined){
+			param["alias.user"]=userNickName;
+		}
 		var url=Config.serviceAddress+"/project/"+projectId;
 		var method="PUT";
 

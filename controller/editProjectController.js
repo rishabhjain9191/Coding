@@ -18,6 +18,8 @@
 	 
 	 // creating the colors array for the colorbox
 	 $scope.colors=[];
+	 console.log($rootScope.canEdit);
+	 $scope.disabled=!($rootScope.canEdit);
 	 var projectColors = constants.PROJECT_COLORS;
 	 for(var i=0+1; i<projectColors.length; i++){
 		var obj = {};
@@ -49,7 +51,7 @@
 			$scope.colorPreviewStyle.background=$scope.project.colorcode;
 		}
 	};
-	var newName="", newJobId="", newColorCode="", newBudget="", newColorIndex="";
+	var newName="", newJobId="", newColorCode="", newBudget="", newColorIndex="", newUserNickName="";
 	
 	
 //Angular Save Function	
@@ -95,6 +97,8 @@
 		newName=$('#editProject_projectName').val();
 		newJobId=$('#editProject_jobId').val();
 		newBudget=$('#editProject_budget').val();
+		newUserNickName=$('#editProject_userNickName').val();
+
 		console.log($scope.project.color);
 		($scope.project.color)?(newColorIndex=$scope.project.color):(newColorIndex="");
 		
@@ -116,7 +120,7 @@
 			
 			console.log("Editing Project : "+newName+newJobId+newBudget);
 			
-			APIUtils.editProject($scope.project._id, newName, newJobId,  newBudget,newColorCode, newColorIndex)
+			APIUtils.editProject($scope.project._id, newName, newUserNickName, newJobId,  newBudget,newColorCode, newColorIndex)
 			.then(function(data){
 				preloader.hideLoading();
 				console.log(data);
@@ -164,31 +168,8 @@
 	},
 	
 	$scope.showColorBox=function(){
-		/*
-			256*256 colors
-		*/
-		/*
-		var projColor= "0x888888";
-		if($scope.project.colorcode!="" && $scope.project.colorcode)
-			projColor=($scope.project.colorcode).replace("#","0x");
-		var script='var color = $.colorPicker ("'+projColor+'"); if(color == -1){"-1";} var color16 = color.toString(16); color16;';
-		new CSInterface().evalScript(script, function(data){
-			$rootScope.$apply(function(){
-				if(data!=-1){
-					var colorSelected = "";
-					colorSelected=("000000" + data).substr(-6,6);
-					colorSelected="#"+colorSelected;
-					$scope.project.colorcode=colorSelected;
-					$scope.colorBtnStyle.background=colorSelected;
-				}
-			});
-		});
-		*/
-		
-		/*
-			25 colors
-		*/
-		
+		/*if($scope.disabled)
+			return;*/
 		if(event.srcElement.parentElement){
 			if(!event.srcElement.className.match("colorBtn")&& event.srcElement.parentElement.className!="colorsPanel")
 				$scope.showColorPanel = false;

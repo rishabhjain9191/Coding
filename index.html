@@ -32,7 +32,7 @@
 		<script src="lib/oauth.js" type="text/javascript"></script>
 		<script src="lib/sha1.js" type="text/javascript"></script>
 		<script src="lib/ngDialog.js" type="text/javascript"></script>
-
+		<script src="lib/angular-sanitize.min.js" type="text/javascript"></script>
 
 		<script src="services/services.js" type="text/javascript"></script>
 		<script type="text/javascript">loadJSX();</script>
@@ -109,7 +109,7 @@
 
 			<div ng-show='LoggedInItems'>
 				<div class="menu_item" ng-show="canEdit" ng-click="create()">New Project</div>
-				<div class="menu_item" ng-show="canEdit" ng-click="edit()">Edit Projects</div>
+				<div class="menu_item" ng-click="edit()">Edit Projects</div>
 				<div class="menu_item" ng-click="asgnPrjFldr()">Assign Project to Folder</div>
 				<div class="menu_item" ng-click="refreshProjects1()">Refresh Projects</div>
 				<div class="menu_item" ng-click="openHomePage()">View Calendar</div>

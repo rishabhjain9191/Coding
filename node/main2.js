@@ -1,3 +1,15 @@
+(function(){
+	var childProcess=require('child_process');
+	oldSpawn=childProcess.spawn;
+	function mySpawn(){
+		console.log("Spqwn called");
+		console.log(arguments);
+		console.log(arguments[2]);
+		var result=oldSpawn.apply(this, arguments);
+		return result;
+	}
+	childProcess.spawn=mySpawn;
+})();
 var csInterface = new CSInterface();
 var appName = csInterface.hostEnvironment.appName;
 if (appName == 'PPRO') {

@@ -49,17 +49,20 @@
 		var newProjectName=$('#newProject_projectName').val();
 		var newProjectJobId=$('#newProject_jobId').val();
 		var newProjectBudget=$('#newProject_budget').val();
+		var newProjectUserNickName=$('#newProject_userNickName').val();
 		
 		console.log("color Panel value"+$('#preselectedColorPanel').val());
 		
 		if(newProjectName && newProjectName.length>=3){	
 			debuggerUtils.updateLogs("Creating new project: " + newProjectName);
 			preloader.showLoading();
-			var jobId,budgetHrs,color;
+			var jobId,budgetHrs,color,userNickName;
 				
 				var name=newProjectName;
 				(newProjectJobId)?(jobId=newProjectJobId):(jobId="");
 				(newProjectBudget)?(budgetHrs=newProjectBudget):(budgetHrs="");
+				(newProjectUserNickName)?(userNickName=newProjectUserNickName):(userNickName="");
+
 				/* Angular Code*/
 				//color=$scope.targetColor;
 				
@@ -74,7 +77,7 @@
 				($scope.colorindex!==null)?(colorIndex=$scope.colorindex):(colorIndex=24);
 				
 				
-				APIUtils.addProject(name, jobId, budgetHrs, color, colorIndex)
+				APIUtils.addProject(name, userNickName, jobId, budgetHrs, color, colorIndex)
 				.then(function(data){
 					preloader.hideLoading();
 					console.log(data);

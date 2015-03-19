@@ -7,7 +7,7 @@
  * @license    All rights reserved.
  */
 
- var app=angular.module('TimeTracker',['TTServices','ngRoute','ngDialog'],function($httpProvider) {
+ var app=angular.module('TimeTracker',['TTServices','ngRoute','ngDialog','ngSanitize'],function($httpProvider) {
 	// Use x-www-form-urlencoded Content-Type
 	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 
@@ -134,7 +134,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		event.extensionId = Constants.EXTENSION_ID;
 		console.log("Event ");
 		console.log(event);
-		//CSInterface.dispatchEvent(event);
+		CSInterface.dispatchEvent(event);
 	}
 
 

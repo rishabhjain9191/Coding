@@ -15,13 +15,34 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 	$scope.firstname = Config.firstname;
 	$scope.showNoProjectsMessage = false;
 	$scope.noProjectsMessage="You have no projects.";
+	$scope.projectToolTipInfo=new Array();
+	projectToolTipInfo=new Array();
 	var prev_index=-1;
 	$rootScope.userLoggedState=1;
 	$rootScope.refreshProjects=function(){
 		debuggerUtils.updateLogs("Project request attempt for [" +Config.username+ "]");
 		projectUtils.getProjects(Config.username, Config.password, Config.userid)
 		.then(function(data){
+			//Fill-in the tooltip information
+			var tt;
+			for(var i=0;i<data.length;i++){
+				
+				
+				/*$scope.projectToolTipInfo[i]={};
+				$scope.projectToolTipInfo[i]["nickName"]="Nick Name : "+(data[i].alias.user)?data[i].alias.user:""+"<br>";
+				$scope.projectToolTipInfo[i]["name"]="Name : "+data[i].name+"\n\n";
+				$scope.projectToolTipInfo[i]["jobid"]="JobId : "+data[i].jobid+"<br>";*/
 
+				projectToolTipInfo[i]="<div>";
+				if(data[i].alias.user)
+					projectToolTipInfo[i]+="Nick Name : "+data[i].alias.user+"<br>";
+				projectToolTipInfo[i]+="Name : "+data[i].name+"<br>";
+				projectToolTipInfo[i]+="JobId : "+data[i].jobid;
+				projectToolTipInfo[i]+="</div>";
+
+
+			}
+			$scope.projectToolTipInfo=projectToolTipInfo;
 			$scope.projects=data;	// all the project details are saved in $scope.projects
             debuggerUtils.updateLogs("[Project List]: "+ppProjectList($scope.projects).slice(0,-2));
 			projectUtils.selectProject();
@@ -168,4 +189,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			return {'font-weight':'normal'};
 		}
 	};
+	$scope.getToolTipInfo=function(index){
+		return "abc";
+	}
 }]);
