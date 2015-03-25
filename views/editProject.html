@@ -15,16 +15,15 @@
 		<div class="aliasGroup">
 			<div style="width:50%;float:left">
 			<label for="userNickName">My alias</label><br/>
-			<input ng-click="message=''"  id="editProject_userNickName" ng-model="project.alias.user" />
+			<input ng-click="message=''"  id="editProject_userNickName" ng-model="project.alias.user" ng-disabled="true"/>
 			</div>
 			<div ng-show="disabled">
 			<label for="userNickName">Org alias</label><br/>
-			<input ng-click="message=''"  id="editProject_userNickName" ng-disabled="disabled" ng-model="project.alias.user" />
+			<input ng-click="message=''"  id="editProject_userNickName" ng-disabled="true" ng-model="project.alias.user" />
 			</div>
 
 		</div >
-
-		<div class="group">
+		<div class="group" style="clear:both;padding-top:10px">
 			<label for="jobId">Job ID</label><br/>
 			<input ng-click="message=''" class="ptext" ng-disabled="disabled" id="editProject_jobId" ng-model="project.jobid" />
 		</div>
