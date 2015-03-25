@@ -12,13 +12,13 @@
 	</div>
 	<div class="projectsContainer">
 		<ul class='projects'>
-			 <li  ng-repeat='project in projects'  ng-click='processProjectClick(project._id, $index)' ng-style='projectProperties[$index].style' class='wrapper'>
+			 <li  ng-repeat='project in projects'  ng-click='processProjectClick(project._id, $index)' ng-style='projectProperties[$index].style' class='wrapper' title='{{projectToolTipInfo[$index]}}'>
 				<div>
 					<div class="pName">{{project.displayName}}</div>
 					<span class="progress">{{projectProperties[$index].message}}</span>
-					<div class='tooltip'>
-						<div ng-bind-html="projectToolTipInfo[$index]"></div>
-					</div>
+					<!-- <div class='tooltip'>
+						<div title="projectToolTipInfo[$index]"></div>
+					</div> -->
 
 			
 			</li>

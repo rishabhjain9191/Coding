@@ -33,12 +33,13 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 				$scope.projectToolTipInfo[i]["name"]="Name : "+data[i].name+"\n\n";
 				$scope.projectToolTipInfo[i]["jobid"]="JobId : "+data[i].jobid+"<br>";*/
 
-				projectToolTipInfo[i]="<div>";
+				projectToolTipInfo[i]="";
+				//projectToolTipInfo[i]=new Array();
 				if(data[i].alias.user)
-					projectToolTipInfo[i]+="Nick Name : "+data[i].alias.user+"<br>";
-				projectToolTipInfo[i]+="Name : "+data[i].name+"<br>";
+					projectToolTipInfo[i]+="Nick Name : "+data[i].alias.user+"|";
+				projectToolTipInfo[i]+="Name : "+data[i].name+"|";
 				projectToolTipInfo[i]+="JobId : "+data[i].jobid;
-				projectToolTipInfo[i]+="</div>";
+				//projectToolTipInfo[i]+="</div>";
 
 
 			}
