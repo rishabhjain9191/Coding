@@ -4,9 +4,11 @@ var pathToConfigFile = "";
 if(Folder.fs=="Windows"){
  pathToConfigFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxConfigv1.xml";
  pathToDebugFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorx.log";
+ os="Windows";
 }else if(Folder.fs=="Macintosh"){
  pathToConfigFile = "~/Library/Application Support/CreativeWorx/CreativeWorxConfigv1.xml";
  pathToDebugFile = "~/Library/Application Support/CreativeWorx/CreativeWorx.log";
+ os="Mac";
 }
 var XMLHeader = '<\?xml version=\"1.0\" encoding=\"UTF-8\"?>';
 

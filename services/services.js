@@ -1473,6 +1473,8 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 	utils.log=function(event){
 		console.log("Updating App Model...");
 		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
+			console.log(data);
+			console.log(JSON.parse(data).projectID);
 			AppModel.updateModel(JSON.parse(data));
 			event=eventIdToName(event);
 			createLoggingData(event);
@@ -1504,6 +1506,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 
 	var createLoggingData=function(eventType){
 		console.log("Creating Logging Data");
+		console.log(AppModel);
 		var addObj={};
 		//addObj.ID="";
 		addObj.event_type=eventType;
@@ -1521,6 +1524,9 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 		addObj.document_path=AppModel.documentPath;
 		addObj.user_id=AppModel.userID;
 		addObj.project_id=AppModel.projectID;
+		console.log(AppModel.hostName);
+				console.log(addObj);
+		console.log(addObj.host_name);
 		console.log(addObj);
 		DBHelper.addItemToEventLogTable(addObj);
 	};
@@ -1549,6 +1555,7 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils
 
 	/* Call JSX functions to get the required parameters for the document*/
 	utils.updateModel=function(data){
+		console.log(data);
 		this.hostName=getHostName();
 		this.hostVers=CSInterface.hostEnvironment.appVersion;
 		this.projectID=(function(){
@@ -1564,6 +1571,7 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils
 		this.userID=Config.userid;
 		this.eventStartTime = new Date();
 		this.eventEndTime = new Date();
+		console.log(this);
 
 	};
 	/* Return required parameters (getters)*/
@@ -1664,7 +1672,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 	var send=function(batchedRecords){
 		//Send Batched Records to Server
 
-			console.log(batchedRecords);
+			console.log(batchedRecords[0]);
 			APIUtils.sendEvents(batchedRecords[0])/*Temporarily till server is accecpting individual records*/
 			.then(function(data){
 				console.log("[Success]Records Send to server");
@@ -1718,7 +1726,7 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils)
 			//Send to server
 			buffer.push(obj);
 			console.log("Sending buffer");
-			console.log(buffer);
+			console.log(buffer[0]);
 			send(buffer);
 			//empty the buffer
 			buffer=[];
