@@ -8,14 +8,12 @@
  */
 
  app.controller('configureLDAPCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','$q','APIUtils','Messages',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface,$q, APIUtils, Messages){
+function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils,preloader,CSInterface,$q, APIUtils, Messages){
 	console.log("On LDAP Config");
 	preloader.hideLoading();
 	$scope.modalShown = false;
 	$scope.companyEmail="";
 	$scope.message="";
-
-	console.log(Config);
 
 	if(Config.companyEmailValue&&Config.companyEmailValue.length>0){
 		console.log(Config.companyEmailValue);
@@ -32,7 +30,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		$scope.companyEmail="";
 	};
 
-	
+
 	$(function() {
     $("#LDAPcompanyEmail").keypress(function (e) {
         if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
@@ -61,18 +59,18 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 		}else{
 			APIUtils.validateLDAP(companyEmail)
 			.then(function(data){
-			console.log(data);	
-				
+			console.log(data);
+
 				Config.companyEmail=companyEmail;
 				Config.companyName=data.data.result;
 				Config.companyEmailValue=companyEmail;
-							
+
 				CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 					resultWrittentoConfig();
-					
+
 				});
-				
-				
+
+
 			}
 			,function(data){
 				preloader.hideLoading();
@@ -80,7 +78,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 				$scope.message=Messages.authMsg[data.status];
 				//$scope.modalShown=true;
 			})
-			
+
 		}
 	};
 

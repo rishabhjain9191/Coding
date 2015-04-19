@@ -15,7 +15,6 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 			if(data != "false"){
 				//If Config file is old version
 				Config.data=JSON.parse(data);
-				console.log(Config.data);
 				if(!Config.data.configversion||(Config.data.configversion<2)){
 					console.log("old version of config found");
 					CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
@@ -47,7 +46,6 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 				debuggerUtils.updateLogs("Batch Size: " + Config.data.batchSize);
 				debuggerUtils.updateLogs("Threshold Count: " + Config.data.thresholdCount);
 				debuggerUtils.updateLogs("Username: " + Config.data.username);
-				debuggerUtils.updateLogs("Password: " + Config.data.password);
 				debuggerUtils.updateLogs("Logging Enabled: " /*todo*/);
 				debuggerUtils.updateLogs("==============");
 				viewManager.configloaded();

@@ -243,7 +243,6 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	};
 	utils.userLoggedIn=function(){
 		console.log("Config used : ");
-		console.log(Config);
 		console.log("user logged in  "+(new Date()).getTime());
 		//Add Event Listeners
 		AppWatcher.addEventListeners();
@@ -295,7 +294,7 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		this.previousView="freezeScreen";
 		this.loginView="freezeScreen";
 	};
-	
+
 	utils.gotoRestoreTT=function(){
 		this.previousView=$location.path().substr(1);
 		$route.reload();
@@ -639,7 +638,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 	};
 
 	utils.login=function(user_email,hashedPassword,user_password,companyEmail){
-		console.log("Login Called: user_email:",user_email,"hashedPassword:",hashedPassword,"user_password:",user_password,"companyEmail:",companyEmail,"companyEmail.length:",companyEmail.length);
+		console.log("Login Called: user_email:",user_email,"companyEmail:",companyEmail,"companyEmail.length:",companyEmail.length);
 		var deferred=$q.defer();
 
 
@@ -733,7 +732,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		if(budgetHrs!==undefined){
 			params["budget"]=budgetHrs;
 		}
-		
+
 		/*if(userNickName!==undefined){
 			params["alias.user"]=userNickName;
 		}*/
@@ -879,8 +878,6 @@ services.factory('OAuthUtils',['$q',function($q){
 				list.push([p, params[p]]);
 			}
 		}
-		console.log("brouhaha");
-		console.log(list);
 		var message = {
 			method: method,
 			action: url,
@@ -1008,7 +1005,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 			}
 			utils.projectIndexes={};
 			utils.projectsCopy=data;				//Save the freshly retrieved project list
-			
+
 			//Dynamically increase the project project properties size
 			while(data.length>Constants.MAX_PROJECTS){
 				for(var i=Constants.MAX_PROJECTS;i<2*Constants.MAX_PROJECTS+1;i++){
@@ -1138,7 +1135,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	    CSInterface.evalScript('$._ext_PPRO_XMP.setTrackerFilePath("' + TrackerFilePath + '")');
 	    CSInterface.evalScript('$._ext_PPRO_XMP.initTT()');
 
-			
+
 		}
 		//Define Event Listeners
 		CSInterface.addEventListener('documentAfterActivate', onDocumentAfterActivate);
@@ -1149,7 +1146,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		CSInterface.addEventListener('projectSelected', onProjectSelected);
 		CSInterface.addEventListener('onCreationComplete', onCreationComplete);
 		CSInterface.addEventListener('userActive', onUserActive);
-		
+
 	};
 
 	function onDocumentAfterDeactivate(event){
@@ -1473,7 +1470,6 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 	utils.log=function(event){
 		console.log("Updating App Model...");
 		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
-			console.log(data);
 			console.log(JSON.parse(data).projectID);
 			AppModel.updateModel(JSON.parse(data));
 			event=eventIdToName(event);
@@ -1506,7 +1502,6 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 
 	var createLoggingData=function(eventType){
 		console.log("Creating Logging Data");
-		console.log(AppModel);
 		var addObj={};
 		//addObj.ID="";
 		addObj.event_type=eventType;

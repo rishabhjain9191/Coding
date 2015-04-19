@@ -1,7 +1,7 @@
 <!doctype html>
 <html ng-app="TimeTracker">
 	<head>
-	
+
 	<script>
 		  window.Airbrake = [];
 		  window.Airbrake.try = function(fn) { try { fn() } catch(er) { window.Airbrake.push(er); } };
@@ -10,7 +10,7 @@
 		  data-airbrake-project-id="104058"
 		  data-airbrake-project-key="771b6f4190e02788ab99b80d1d5d05da"
 		  data-airbrake-project-environment-name="local"></script>
-		  
+
 		<link href="assets/CSS/jquery-ui.min.css" rel="stylesheet" type="text/css">
 		<link href="assets/CSS/spectrum.css" rel="stylesheet" type="text/css">
 		<link href="assets/CSS/styles.css" rel="stylesheet" type="text/css">
@@ -58,7 +58,7 @@
 
 
 
-		
+
 		<script type="text/javascript">
 			$(function() {
 				$( document ).tooltip({
@@ -67,8 +67,8 @@
 						effect: "fade",
 						delay: 750
 					},
-					content: function(callback) { 
-     				callback($(this).prop('title').replace(/\|/g, '<br />')); 
+					content: function(callback) {
+     				callback($(this).prop('title').replace(/\|/g, '<br />'));
   					}
 				});
 
@@ -95,18 +95,18 @@
 		<div class="flyout" ng-show='showFlyout'>
 			<div ng-hide='LoggedInItems' ng-show="FreezedItems">
 				<div class="menu_item" ng-click="about()">About TimeTracker</div>
-				<div class="menu_item" ng-click="restoreTT()">Prefrences</div>
+				<div class="menu_item" ng-click="restoreTT()">Preferences</div>
 				<div class="menu_item" ng-click="feedback()">Feedback...</div>
 			</div>
 
 			<div ng-hide='LoggedInItems+FreezedItems'>
 				<div class="menu_item" ng-click="configureLDAP()">Configure company login</div>
 				<div class="menu_item" ng-click="about()">About TimeTracker</div>
-				<div class="menu_item" ng-click="restoreTT()">Prefrences</div>
+				<div class="menu_item" ng-click="restoreTT()">Preferences</div>
 
 				<div class="menu_item" ng-click="checkUpdate()">Check for updates...</div>
 				<div class="menu_item" ng-click="feedback()">Feedback...</div>
-				
+
 <!-- 				<div class="menu_item" ng-click="support()">Support</div>
  -->			</div>
 
@@ -118,10 +118,10 @@
 				<div class="menu_item" ng-click="openHomePage()">View Calendar</div>
 				<div class="separator"></div>
 				<div class="menu_item" ng-click="about()">About TimeTracker</div>
-				
+
 				<div class="menu_item" ng-click="checkUpdate()">Check for updates...</div>
 				<div class="menu_item" ng-click="feedback()">Feedback...</div>
-				<div class="menu_item" ng-click="restoreTT()">Prefrences</div>
+				<div class="menu_item" ng-click="restoreTT()">Preferences</div>
 
 				<!-- <div class="menu_item" ng-click="support()">Support</div> -->
 				<div class="separator"></div>

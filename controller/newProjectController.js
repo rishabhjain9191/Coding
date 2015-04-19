@@ -6,18 +6,18 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
+
  app.controller('createNewProject',['$scope','$rootScope','$location','projectUtils','preloader','debuggerUtils','Constants','Messages', 'APIUtils',function($scope, $rootScope, $location,projectUtils,preloader,debuggerUtils,constants,Messages, APIUtils){
 	preloader.hideLoading();
-	
-	
+
+
 	(constants.COLOR_MODE=="user_selectable")?$scope.showAllColors=true:$scope.showAllColors=false;
-		
+
 	$scope.project={};
 	$scope.project.name="";
 	$scope.project.jobId="";
 	$scope.project.budgetHrs="";
-	
+
 	$scope.colorBtnStyle={};
 	$scope.colorPreviewStyle={};
 	/*Default Color Settings*/
@@ -28,7 +28,7 @@
 	/*End default color setting*/
 
 	$scope.showColorPanel=false;
-	
+
 	// creating the colors array for the colorbox
 	$scope.colors=[];
 	 var projectColors = constants.PROJECT_COLORS;
@@ -38,26 +38,26 @@
 		obj.colorcode=projectColors[i];
 		$scope.colors.push(obj);
 	 }
-	
-		
+
+
 	$scope.create=function(){
 		if($scope.project){
 			console.log("1 Project Found  " + $scope.project.name);
 		}
 		//exploreScope($scope);
-		
+
 		var newProjectName=$('#newProject_projectName').val();
 		var newProjectJobId=$('#newProject_jobId').val();
 		var newProjectBudget=$('#newProject_budget').val();
 		var newProjectUserNickName=$('#newProject_userNickName').val();
-		
+
 		console.log("color Panel value"+$('#preselectedColorPanel').val());
-		
-		if(newProjectName && newProjectName.length>=3){	
+
+		if(newProjectName && newProjectName.length>=3){
 			debuggerUtils.updateLogs("Creating new project: " + newProjectName);
 			preloader.showLoading();
 			var jobId,budgetHrs,color,userNickName;
-				
+
 				var name=newProjectName;
 				(newProjectJobId)?(jobId=newProjectJobId):(jobId="");
 				(newProjectBudget)?(budgetHrs=newProjectBudget):(budgetHrs="");
@@ -65,18 +65,18 @@
 
 				/* Angular Code*/
 				//color=$scope.targetColor;
-				
+
 				/* JQuery Code for picking the color from full RGB Box*/
 				var color="";
 				if($(".sp-preview-inner")){
-				
+
 				var colorRGB = $(".sp-preview-inner").css('backgroundColor');
 				color=hexc(colorRGB);
 				}
 				/* end JQuery Code*/
 				($scope.colorindex!==null)?(colorIndex=$scope.colorindex):(colorIndex=24);
-				
-				
+
+
 				APIUtils.addProject(name, userNickName, jobId, budgetHrs, color, colorIndex)
 				.then(function(data){
 					preloader.hideLoading();
@@ -94,35 +94,35 @@
 					if(data.status==400){
 						console.log(Messages.addProjectMessages["JobIdEmpty"]);
 						if(data.data.msg.jobid && data.data.msg.name){
-							$scope.message=Messages.addProjectMessages["nameEmpty"]+", "+ Messages.addProjectMessages["JobIdEmpty"];	
+							$scope.message=Messages.addProjectMessages["nameEmpty"]+", "+ Messages.addProjectMessages["JobIdEmpty"];
 						}
 						else if(data.data.msg.jobid){
 							console.log("In if");
 							$scope.message="ABCd";
 
-							$scope.message=Messages.addProjectMessages["jobIdEmpty"];	
+							$scope.message=Messages.addProjectMessages["jobIdEmpty"];
 						}
 						else if(data.data.msg.name){
 							$scope.message=Messages.addProjectMessages["nameEmpty"];
 						}
 						else{
-							$scope.message=Messages.addProjectMessages["unknown"];	
+							$scope.message=Messages.addProjectMessages["unknown"];
 						}
 					}
 					else{
 						$scope.message=Messages.addProjectMessages[data.status];
 					}
 				});
-			
+
 		}
 		else{
 			$scope.message="Project name requires 3 characters."
 		}
-		
-		
+
+
 		//Angular Code
 		/*
-		if($scope.project.name && $scope.project.name.length>=3){	
+		if($scope.project.name && $scope.project.name.length>=3){
 			debuggerUtils.updateLogs("Creating new project: " + $scope.project.name);
 			preloader.showLoading();
 			var jobId,budgetHrs,color;
@@ -153,13 +153,13 @@
 		else{
 			$scope.message="Project name requires 3 characters."
 		}
-		
+
 		*/
 	},
 	$scope.cancel=function(){
 		$location.path('projects');
 	},
-	
+
 	$scope.showColorBox=function(){
 		/*
 			256*256 colors
@@ -181,7 +181,7 @@
 			});
 		});
 		*/
-		
+
 		/*
 			25 colors
 		*/
@@ -194,11 +194,11 @@
 				$scope.showColorPanel=true;
 		}
 	},
-	
+
 	$scope.showPreview=function(index){
 		$scope.colorPreviewStyle.background=$scope.colors[index].colorcode;
 	},
-	
+
 	$scope.selectColor=function(index){
 		$scope.showColorPanel=false;
 		$scope.project.colorcode=$scope.colors[index].colorcode;
@@ -206,9 +206,8 @@
 		$scope.colorindex=$scope.colors[index].colorindex;
 		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
 	}
-	
+
 	var exploreScope=function($scope){
-		console.log($scope);
 		console.log("1");
 		if(!$scope){
 			return;
@@ -239,7 +238,7 @@
 		if($scope.$parent)
 			exploreScope($scope.$parent);
 	};
-	
+
 }]);
 
 
