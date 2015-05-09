@@ -1,0 +1,25 @@
+int search(Node *root, int key){
+    if(root==NULL)
+        return 0;
+    if(root->key==key)
+        return 1;
+    //if(root->left)
+         if(!search(root->left, key)){
+    //if(root->right)
+         if(!search(root->right, key)){
+            return 0;
+        }
+        return 1;
+    }
+    return 1;
+}
+
+int maxElem(Node *root){
+    int max1=0, max2=0, max3=0;
+    if(root==NULL)
+        return 0;
+    max1=root->key;
+    max2=maxElem(root->left);
+    max3=maxElem(root->right);
+    return max(max1, max(max2, max3));
+}
