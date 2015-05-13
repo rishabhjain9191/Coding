@@ -13,14 +13,16 @@
 		</div >
 
 		<div class="aliasGroup">
-			<div style="width:50%;float:left">
+			<div ng-show="disabled" class="aliasItem">
+			<label for="orgNickName">Org alias</label><br/>
+			<input class="aliasInput" ng-click="message=''"  id="editProject_orgNickName" ng-disabled="true" ng-model="project.alias.user" />
+			</div>
+
+			<div class="aliasItem">
 			<label for="userNickName">My alias</label><br/>
-			<input ng-click="message=''"  id="editProject_userNickName" ng-model="project.alias.user" ng-disabled="true"/>
+			<input class="aliasInput" ng-click="message=''"  id="editProject_userNickName" ng-model="project.alias.user" ng-disabled="true"/>
 			</div>
-			<div ng-show="disabled">
-			<label for="userNickName">Org alias</label><br/>
-			<input ng-click="message=''"  id="editProject_userNickName" ng-disabled="true" ng-model="project.alias.user" />
-			</div>
+			
 
 		</div >
 		<div class="group" style="clear:both;padding-top:10px">

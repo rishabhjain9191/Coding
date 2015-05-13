@@ -168,8 +168,8 @@
 	},
 	
 	$scope.showColorBox=function(){
-		/*if($scope.disabled)
-			return;*/
+		if($scope.disabled)
+			return;
 		if(event.srcElement.parentElement){
 			if(!event.srcElement.className.match("colorBtn")&& event.srcElement.parentElement.className!="colorsPanel")
 				$scope.showColorPanel = false;

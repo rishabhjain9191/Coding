@@ -280,10 +280,28 @@ li{
 }
 
 .aliasGroup{
-	padding-bottom: 7px;
-	
+	padding-bottom: 7px;	
 }
 
+.aliasInput{
+	width:98%;
+}
+/*.aliasItem{
+	width:40%;
+			border:solid black;
+
+}*/
+.aliasItem{
+			float: left;
+			width:47%;
+			padding-right: 3%;
+}
+.leftFloat{
+	float:left;
+	width:10px;
+		border:solid black;
+
+}
 .ptext{
 	/*font-family:"Verdana";*/
 	font-size:11px;
