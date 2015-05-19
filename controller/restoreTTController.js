@@ -9,7 +9,7 @@
 
 app.controller('restoreTTController',['$scope','$rootScope', '$location', 'Constants', '$window','CSInterface','Config', 'viewManager', 'ngDialog',
 function($scope, $rootScope, $location, Constants, $window, CSInterface, Config, viewManager, ngDialog){
-	
+
 	$scope.deleteDBWarning=false;
 	$scope.deleteDBWarningMessage="This action will reset your extension config file, thereby wiping out any saved passwords, and settings. After reseting, please restart any Adobe apps that are currently running TimeTracker.";
 
@@ -30,7 +30,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 	};
 
 	$scope.showDeleteDBWarning=function(){
-			
+
 			ngDialog.openConfirm({
 				template:'messageDialogId',
 				controller: 'InsideCtrl',
@@ -41,8 +41,8 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 					command:"Flush"
 				}
 
-			});	
-			
+			});
+
 		};
 
 	$scope.abortDeleteDB=function(){
@@ -55,11 +55,11 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 	};
 
 	$scope.clearDB=function(){
-		
+
 			Config.clearUserDetails();
 			CSInterface.evalScript('$._extFile.deleteDBFile()', function(result){
 			console.log("result of delete DB"+result);
-			if(result=='true'){	
+			if(result=='true'){
 				//logout user
 				viewManager.moveToFreezeScreen("Cache Flushed");
 				$rootScope.FreezedItems=true;
@@ -89,7 +89,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 		ngDialog.close();
 		Config.clearUserDetails();
 		CSInterface.evalScript('$._extXML.deleteConfigFile()', function(result){
-			if(result=='true'){	
+			if(result=='true'){
 				//logout user
 				viewManager.moveToFreezeScreen("Factory restored");
 				$rootScope.FreezedItems=true;
@@ -116,7 +116,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 		Config.clearUserDetails();
 			CSInterface.evalScript('$._extFile.deleteDBFile()', function(result){
 			console.log("result of delete DB"+result);
-			if(result=='true'){	
+			if(result=='true'){
 				//logout user
 				viewManager.moveToFreezeScreen("Cache flushed");
 				$rootScope.FreezedItems=true;
@@ -139,7 +139,6 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 	function displayError(command){
 		var message="";
 		console.log("In display error");
-		console.log($scope);
 		if($scope.ngDialogData.command=="Reset"){
 			message="restoring factory";
 		}
@@ -159,7 +158,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 					message:"An error occured while "+message,
 				}
 
-			});	
+			});
 	}
 
 	$scope.confirm=function(){
@@ -170,7 +169,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 		else{
 			clearDB();
 		}
-		
+
 	};
 
 	$scope.openFAQ=function(){

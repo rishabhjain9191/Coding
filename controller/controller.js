@@ -119,12 +119,12 @@ app.config(['$routeProvider', function($routeProvider){
 
 app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route','Config','CSInterface','$templateCache','updateUtils',
 
-function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface, $templateCache, updateUtils){	
-	
+function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface, $templateCache, updateUtils){
+
 	//************************************************
 	//*************************************************
-	
-	
+
+
 	//Disable right click
 	document.oncontextmenu=new Function("return false");
 
@@ -203,13 +203,11 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		else{
 			console.log(makeObjectToWrite());
 			CSInterface.evalScript('$._extCWFile.updateOrCreateFile('+JSON.stringify(makeObjectToWrite())+')', function(data){
-				console.log($rootScope);
-				console.log($scope);
 				if(data=="PRMDND"){
 					//Permission denied !
 					$scope.$apply(function(){
 						$scope.alert_message="Unable to assign project to current folder. Your administrator may have locked project assignment to this folder";
-						$scope.modalShown=true;	
+						$scope.modalShown=true;
 					});
 				}
 				else if(data == "false"){
@@ -221,7 +219,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 				$scope.$apply(function(){
 					if(projectUtils.currentProjectId==0)
 						$scope.alert_message="The project assignment is cleared from current folder";
-					else	
+					else
 						$scope.alert_message="The current project has been assigned to the current folder.";
 					$scope.modalShown=true;
 				});
@@ -271,7 +269,6 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		//preloader.showLoading();
 		$rootScope.refreshProjects();
 		//preloader.hideLoading();
-		console.log($rootScope);
 	};
 	$rootScope.checkUpdate=function(){
 		//updateUtils.checkForUpdate(function(data){console.log(data);}, function(){});

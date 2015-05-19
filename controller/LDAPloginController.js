@@ -81,7 +81,6 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 						console.log("User Details Fetched");
 						preloader.hideLoading();
 						var data=result.data.result;
-						console.log(data);
 						if(data.oid){
 							Config.oid=data.oid;
 							$rootScope.canEdit=canEdit(data.oid, data.org_settings);
@@ -95,7 +94,6 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 						Config.keepMeLoggedIn=$scope.checked;
 						Config.userid=Config.data._id;
 						Config.firstname=Config.data.firstname;
-						console.log(Config);
 						CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 						});
 						Constants.update(Config);

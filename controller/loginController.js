@@ -40,10 +40,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		//console.log($scope);
 		//console.log($scope.user.email);
 		debuggerUtils.updateLogs("Login Attempt With User: " + $scope.user.email);
-		//console.log($scope.user.password);
-		debuggerUtils.updateLogs("Login Attempt With Password: " + $scope.user.password);
 		/*if($scope.user.email!="" && $scope.user.password!=""){
-		debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
 			preloader.showLoading();
 			var hashedPassword=MD5($scope.user.password);
 			Config.username = $scope.user.email;
@@ -77,7 +74,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		var keepMeLoggedIn=$('#keepMeLoggedIn').prop('checked');
 
 		if(user_email!="" && user_password!=""){
-            debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
+            // debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
 			preloader.showLoading();
 			var hashedPassword=MD5(user_password);
 			Config.username = user_email;
@@ -91,7 +88,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 					APIUtils.getUsers().then(function(result){
 						console.log("User Details Fetched");
 
-						preloader.hideLoading();					
+						preloader.hideLoading();
 						var data=result.data.result;
 						console.log(data);
 						if(data.oid){
@@ -110,7 +107,6 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 						Config.keepMeLoggedIn=$scope.checked;
 						Config.userid=Config.data._id;
 						Config.firstname=Config.data.firstname;
-						console.log(Config);
 						CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 						});
 						Constants.update(Config);
@@ -156,7 +152,6 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 
 
 		var exploreScope=function($scope){
-		console.log($scope);
 		console.log("1");
 		if(!$scope){
 			return;
