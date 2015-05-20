@@ -776,9 +776,9 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		if(projectName!==undefined){
 			params["color"]=colorindex;
 		}
-		/*if(userNickName!==undefined){
-			param["alias.user"]=userNickName;
-		}*/
+		if(userNickName!==undefined){
+			params["alias"]=userNickName;
+		}
 		var url=Config.serviceAddress+"/project/"+projectId;
 		var method="PUT";
 
