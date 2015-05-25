@@ -20,6 +20,17 @@
 	 $scope.colors=[];
 	 console.log($rootScope.canEdit);
 	 $scope.disabled=!($rootScope.canEdit);
+	 $scope.colorBtnStyle123={};
+	 $scope.colorBtnStyle123={
+			width: "15px",
+			cursor: "pointer",
+			'margin-left': "3px",
+			height: "14px",
+			border: "2px solid rgb(151, 151, 151)"
+		};
+	 if($scope.disabled){
+	 	$scope.colorBtnStyle123.cursor="default";
+	 }
 	 var projectColors = constants.PROJECT_COLORS;
 	 for(var i=0+1; i<projectColors.length; i++){
 		var obj = {};
@@ -47,7 +58,7 @@
 		}
 		else{
 			$scope.targetColor=$scope.project.colorcode;
-			$scope.colorBtnStyle.background=$scope.project.colorcode;
+			$scope.colorBtnStyle123.background=$scope.project.colorcode;
 			$scope.colorPreviewStyle.background=$scope.project.colorcode;
 		}
 	};
@@ -162,7 +173,7 @@
 		}
 		else{
 			$scope.targetColor=p.colorcode;
-			$scope.colorBtnStyle.background=p.colorcode;
+			$scope.colorBtnStyle123.background=p.colorcode;
 			$scope.colorPreviewStyle.background=p.colorcode;
 		}
 	},
@@ -189,7 +200,7 @@
 		$scope.project.colorcode=$scope.colors[index].colorcode;
 		$scope.targetColor=$scope.colors[index].colorcode;
 		$scope.project.color=$scope.colors[index].colorindex;
-		$scope.colorBtnStyle.background=$scope.colors[index].colorcode;
+		$scope.colorBtnStyle123.background=$scope.colors[index].colorcode;
 	}
 }]);
 

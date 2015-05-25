@@ -15,12 +15,12 @@
 		<div class="aliasGroup">
 			<div ng-show="disabled" class="aliasItem">
 			<label for="orgNickName">Org alias</label><br/>
-			<input class="aliasInput" ng-click="message=''"  id="editProject_orgNickName" ng-disabled="true" ng-model="project.alias.user" />
+			<input class="aliasInput" ng-click="message=''"  id="editProject_orgNickName" ng-disabled="true" ng-model="project.alias.org" />
 			</div>
 
 			<div class="aliasItem">
 			<label for="userNickName">My alias</label><br/>
-			<input class="aliasInput ptext" ng-click="message=''"  id="editProject_userNickName" ng-model="project.alias.user" ng-disabled="false"/>
+			<input class="aliasInput ptext" ng-click="message=''"  id="editProject_userNickName" ng-model="project.alias.user" ng-disabled="false" style="height:9px"/>
 			</div>
 			
 
@@ -34,7 +34,7 @@
 				<span>Color</span>
 				<ui-colorpicker ng-show="showAllColors" ng-model="targetColor"></ui-colorpicker>
 				
-				<div class="colorBtn" ng-hide="showAllColors" ng-model="project.colorcode" ng-style="colorBtnStyle"></div>
+				<div ng-style="colorBtnStyle123" ng-hide="showAllColors" ng-model="project.colorcode" class="colorBtn"></div>
 				<div class="colorsPanel" ng-show="showColorPanel">
 					<div class="colorPreview" ng-style="colorPreviewStyle"></div>
 					<div class="colors">
