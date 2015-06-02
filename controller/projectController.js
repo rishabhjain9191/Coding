@@ -7,12 +7,12 @@
  * @license    All rights reserved.
  */
 
- app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q',  'preloader','debuggerUtils','CSInterface','$interval',
-function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  preloader,debuggerUtils,CSInterface,$interval){
+ app.controller('projectCtrl', ['Constants','$scope','$rootScope', '$location', 'Config', 'projectUtils','$q',  'preloader','debuggerUtils','CSInterface','$interval','UserUtils',
+function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  preloader,debuggerUtils,CSInterface,$interval, UserUtils){
 	console.log("Projects view loaded");
 	preloader.showLoading();
 	$scope.modalShown = false;
-	$scope.firstname = Config.firstname;
+	$scope.firstname = UserUtils.firstname;
 	$scope.showNoProjectsMessage = false;
 	$scope.noProjectsMessage="You have no projects.";
 	$scope.projectToolTipInfo=new Array();
@@ -20,8 +20,8 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 	var prev_index=-1;
 	$rootScope.userLoggedState=1;
 	$rootScope.refreshProjects=function(){
-		debuggerUtils.updateLogs("Project request attempt for [" +Config.username+ "]");
-		projectUtils.getProjects(Config.username, Config.password, Config.userid)
+		debuggerUtils.updateLogs("Project request attempt for [" +UserUtils.username+ "]");
+		projectUtils.getProjects(UserUtils.username, UserUtils.password, UserUtils.userid)
 		.then(function(data){
 			//Fill-in the tooltip information
 			var tt;

@@ -150,5 +150,38 @@
 			return "true";
 		}
 
-	}
+	},
+	isExistsUserFile : function() {
+		var userInformationFile = new File(pathToUserInformationFile);
+		var userInformationFolder=userInformationFile.parent;
+		if(!userInformationFolder.exists){
+			userInformationFolder.create();
+		}
+        if(userInformationFile.exists)
+            return true;
+        else
+            return false;
+    },
+	readUserInformation:function(){
+		if(!this.isExistsUserFile())
+			return false;
+		else{
+			var userInformationFile=new File(pathToUserInformationFile);
+			userInformationFile.open('r');
+			var content=userInformationFile.read();
+			userInformationFile.close();
+			return content;
+		}
+	},
+	writeUserInformation:function(data){
+		this.isExistsUserFile();
+		var file=new File(pathToUserInformationFile);
+		file.encoding = "UTF8";
+		file.open("w", "TEXT", "????");
+		file.write("\uFEFF");
+		file.lineFeed = "unix";
+        file.writeln (data);
+		//file.write(xml.toXMLString());
+		file.close();
+	},
 };

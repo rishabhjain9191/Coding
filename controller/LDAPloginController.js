@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
 
- app.controller('LDAPloginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','APIUtils','Messages',
-function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface, APIUtils, Messages){
+ app.controller('LDAPloginCtrl',['viewManager','$scope', '$rootScope', '$location','$http', 'Config','Constants', 'loginUtils','preloader','CSInterface','APIUtils','Messages', 'UserUtils',
+function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, loginUtils,preloader,CSInterface, APIUtils, Messages, UserUtils){
 
 
 	console.log("On Login Page");
@@ -27,13 +27,13 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 	var image_error="./assets/images/question_mark.gif";
 	var image_success="./assets/images/check.png";
 
-	if(Config.companyEmail=="0"){
+	if(UserUtils.companyEmail=="0"){
 			$scope.ldap_message_image=image_error;
 			$scope.ldap_message="Company login credentials not found";
 		}
-		else if(Config.companyEmail.length>1){
+		else if(UserUtils.companyEmail.length>1){
 			$scope.ldap_message_image=image_success;
-			$scope.ldap_message=Config.companyName;
+			$scope.ldap_message=UserUtils.companyName;
 		}
 
 	if(!viewManager.loggedOut){
@@ -69,11 +69,11 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			preloader.showLoading();
 			//No hashing in case of LDAP Login
 			var password=company_password;
-			Config.username = company_email;
-			Config.password = password;
+			UserUtils.username = company_email;
+			UserUtils.password = password;
 
 
-			APIUtils.login(company_email, password,company_password, Config.companyEmail)
+			APIUtils.login(company_email, password,company_password, UserUtils.companyEmail)
 						.then(function(result){
 				if(result.status=="200"){
 					console.log("auth success")
@@ -82,7 +82,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 						preloader.hideLoading();
 						var data=result.data.result;
 						if(data.oid){
-							Config.oid=data.oid;
+							UserUtils.oid=data.oid;
 							$rootScope.canEdit=canEdit(data.oid, data.org_settings);
 						}
 						else
@@ -90,12 +90,13 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 						Config.data=data;
 
 						console.log(keepMeLoggedIn);
-						Config.keepMeLoggedIn=keepMeLoggedIn;
-						Config.keepMeLoggedIn=$scope.checked;
-						Config.userid=Config.data._id;
-						Config.firstname=Config.data.firstname;
+						UserUtils.keepMeLoggedIn=keepMeLoggedIn;
+						UserUtils.keepMeLoggedIn=$scope.checked;
+						UserUtils.userid=Config.data._id;
+						UserUtils.firstname=Config.data.firstname;
 						CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 						});
+						UserUtils.writeUserInformation();
 						Constants.update(Config);
 						$rootScope.LoggedInItems=true;
 						viewManager.userLoggedIn();

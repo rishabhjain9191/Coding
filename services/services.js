@@ -191,7 +191,7 @@ services.factory('CSInterface',[function(){
 }]);
 
 
-services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher','Config', function($location,$route, CSInterface, AppWatcher, Config){
+services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher','Config', 'UserUtils',function($location,$route, CSInterface, AppWatcher, Config, UserUtils){
 	var utils={};
 
 	utils.loggedOut=false;
@@ -231,6 +231,12 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	utils.configloaded=function(){
 		console.log("Config Loaded  "+(new Date()).getTime());
 		//console.log(Config.serviceAddress);
+		UserUtils.loadUserInformation(function(){
+			console.log("User Information loaded");
+			utils.userInformationLoaded();
+		});
+	};
+	utils.userInformationLoaded=function(){
 		$route.reload();
 		if(Config.companyEmail&&Config.companyEmail.length>0&&Config.companyEmail!=0){
 			$location.path('LDAPLogin');
@@ -239,7 +245,6 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 			console.log(Config.serviceAddress);
 			$location.path('login');
 		}
-
 	};
 	utils.userLoggedIn=function(){
 		console.log("Config used : ");
@@ -309,7 +314,69 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 }]);
 
 
+services.factory('UserUtils',['CSInterface', 'Config', 'EncryptionUtils', function(CSInterface, Config, EncryptionUtils){
+	var utils={};
 
+	utils.username="";
+	utils.password="";
+	utils.keepMeLoggedIn="";
+	utils.firstname="";
+	utils.userid="";
+	utils.companyEmail="";
+	utils.companyName="";
+	utils.companyEmailValue="";
+	utils.oid="";
+	utils.userParams=['username', 'password', 'keepMeLoggedIn', 'firstname', 'userid', 'companyEmail', 'companyName', 'companyEmailValue', 'oid'];
+	utils.update=function(data){
+		console.log("updating user information with ");
+		var obj=JSON.parse(data);
+		for(var i in obj){
+			this[i]=obj[i];
+		}
+	};
+	utils.loadUserInformation=function(done){
+		console.log("Loading user information");
+		CSInterface.evalScript('$._extXML.readUserInformation()', function(data){
+			if(data!="false"){
+				var info=EncryptionUtils.parseData(data);
+				console.log("user information");
+				utils.update(info);
+			}
+			done();
+		});
+	};
+	utils.writeUserInformation=function(){
+		var obj={};
+		console.log(utils);
+		for(var i in utils){
+			if(typeof obj[i] != "function"){
+				obj[i]=utils[i];
+			}
+		}
+		console.log("writing");
+		console.log(obj);
+		var data=EncryptionUtils.encryptData(JSON.stringify(obj));
+		var data1=data.replace(/"/g,'\\"');
+		CSInterface.evalScript('$._extXML.writeUserInformation('+'"'+data1+'"'+')', function(){
+			console.log("user data written successfully");
+		});
+	};
+	return utils;
+}]);
+
+services.factory('EncryptionUtils', [function(){
+	var utils={};
+	utils.parseData=function(data){
+		var dta=sjcl.decrypt("HB0'FD~oYn1D4@e6V^h/@N;4QImPcNB3RSk1%Cl[RD0`3Yqwz7", data);
+		return dta;
+	};
+	utils.encryptData=function(data){
+		console.log(data);
+		var res=sjcl.encrypt("HB0'FD~oYn1D4@e6V^h/@N;4QImPcNB3RSk1%Cl[RD0`3Yqwz7", data);
+		return res;
+	}
+	return utils;
+}]);
 
 
 services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$http,$q){
@@ -472,12 +539,21 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.fileUploadAddress = Constants.FILE_UPLOAD_ADDRESS;
 	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
 	config.logEnabled_html5 = Constants.LOG_ENABLE;
-	config.configversion = 2;
+	config.configversion = 3;
 	config.homePage = Constants.HOME_PAGE;
 
 	/*
 		Read from the config file and update config values
 	*/
+	config.update=function(model){
+		console.log("updating config with ");
+		console.log(model);
+		var obj=JSON.parse(model);
+		console.log(obj);
+		for(var i in obj){
+			this[i]=obj[i];
+		}
+	};
 	config.clearUserDetails=function(){
 		this.username="";
 		this.password="";
@@ -504,20 +580,22 @@ function($rootScope){
 	return utils;
 }]);
 
-services.factory('loginUtils',['debuggerUtils','Constants', '$location','$rootScope','Config','$http','$q', 'APIUtils',
-function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUtils){
+services.factory('loginUtils',['debuggerUtils','Constants', '$location','$rootScope','Config','$http','$q', 'APIUtils','UserUtils',
+function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUtils, UserUtils){
 	var utils={};
 	utils.loginResult='aa';
+	console.log(Config);
 	utils.tryLoginFromConfig=function(){
+		console.log(UserUtils);
 		var deferred=$q.defer();
-		if(Config.keepMeLoggedIn=="false"){
+		if(UserUtils.keepMeLoggedIn==false||UserUtils.keepMeLoggedIn=="false"){
 			/*
 				Fresh Login Required, 100-Fresh Login
 			*/
 			deferred.resolve(100);
 		}
-		else if(Config.keepMeLoggedIn=="true"){
-			APIUtils.login(Config.username, Config.password, Config.password,Config.companyEmail)
+		else if(UserUtils.keepMeLoggedIn==true||UserUtils.keepMeLoggedIn=="true"){
+			APIUtils.login(UserUtils.username, UserUtils.password, UserUtils.password,UserUtils.companyEmail)
 			.then(function(data){
 				APIUtils.getUsers()
 				.then(function(result){
@@ -527,8 +605,8 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUti
 							$rootScope.canEdit=canEdit(data.oid, data.org_settings);
 						else
 							$rootScope.canEdit=true;
-						Config.firstname=data.firstname;
-						Config.userid=data._id;
+						UserUtils.firstname=data.firstname;
+						UserUtils.userid=data._id;
 						$rootScope.LoggedInItems=true;
 						deferred.resolve(200);
 				}
@@ -557,7 +635,7 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUti
 	return utils;
 }]);
 
-services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',function(Constants, $q, Config, $http, OAuthUtils){
+services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils', 'UserUtils', function(Constants, $q, Config, $http, OAuthUtils, UserUtils){
 
 	var utils={};
 
@@ -663,7 +741,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 			if(result.status="200"){
 			//Save user's key and secret
 				OAuthUtils.setConsumerCredentials(result.data.keys.pk,result.data.keys.sk);
-				Config.userid=result.data.keys.uid;
+				UserUtils.userid=result.data.keys.uid;
 				deferred.resolve(result);
 			}
 			else
@@ -690,7 +768,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils',func
 		var deferred=$q.defer();
 
 
-		var url=Config.serviceAddress+"/user"+"/"+Config.userid;
+		var url=Config.serviceAddress+"/user"+"/"+UserUtils.userid;
 
 		var method="GET";
 		var params="";
@@ -1528,7 +1606,7 @@ services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInter
 	return utils;
 }]);
 
-services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils', function(Config, Constants, CSInterface, projectUtils){
+services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils', 'UserUtils', function(Config, Constants, CSInterface, projectUtils, UserUtils){
 	var utils={};
 		 utils.defaultDocumentID = ""; //Used No where
 		 utils.userID = "";
@@ -1563,7 +1641,7 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils
 		this.documentName=data.docName;
 		this.documentPath=data.docPath;
 		this.documentID=data.docID;
-		this.userID=Config.userid;
+		this.userID=UserUtils.userid;
 		this.eventStartTime = new Date();
 		this.eventEndTime = new Date();
 		console.log(this);

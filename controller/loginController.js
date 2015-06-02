@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
 
- app.controller('loginCtrl',['viewManager','$scope','$rootScope','$location','$http','Config','Constants','loginUtils','preloader','CSInterface','debuggerUtils','APIUtils', 'Messages',
-function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface, debuggerUtils, APIUtils, Messages){
+ app.controller('loginCtrl',['viewManager','$scope','$rootScope','$location','$http','Config','Constants','loginUtils','preloader','CSInterface','debuggerUtils','APIUtils', 'Messages','UserUtils',
+function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, loginUtils, preloader, CSInterface, debuggerUtils, APIUtils, Messages, UserUtils){
 	console.log("On Login Page");
 	preloader.hideLoading();
 	$scope.alert_message="Unknown error. Please contact us at support@creativeworx.com.";
@@ -77,8 +77,8 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
             // debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
 			preloader.showLoading();
 			var hashedPassword=MD5(user_password);
-			Config.username = user_email;
-			Config.password = hashedPassword;
+			UserUtils.username = user_email;
+			UserUtils.password = hashedPassword;
 
 
 			APIUtils.login(user_email, hashedPassword,user_password, "")
@@ -94,7 +94,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 						if(data.oid){
 
 							//console.log("oid present"+data.oid);
-							Config.oid=data.oid;
+							UserUtils.oid=data.oid;
 							$rootScope.canEdit=canEdit(data.oid, data.org_settings);
 						}
 						else
@@ -103,12 +103,13 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 						Config.data=data;
 
 						console.log(keepMeLoggedIn);
-						Config.keepMeLoggedIn=keepMeLoggedIn;
-						Config.keepMeLoggedIn=$scope.checked;
-						Config.userid=Config.data._id;
-						Config.firstname=Config.data.firstname;
+						UserUtils.keepMeLoggedIn=keepMeLoggedIn;
+						UserUtils.keepMeLoggedIn=$scope.checked;
+						UserUtils.userid=Config.data._id;
+						UserUtils.firstname=Config.data.firstname;
 						CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 						});
+						UserUtils.writeUserInformation();
 						Constants.update(Config);
 						$rootScope.LoggedInItems=true;
 						viewManager.userLoggedIn();
