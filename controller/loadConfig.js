@@ -11,11 +11,13 @@ app.controller('configLoader',['viewManager','$scope', '$rootScope', 'Constants'
 function(viewManager, $scope, $rootScope, Constants, preloader, Config, debuggerUtils,CSInterface, UserUtils){
 	console.log("In Load Config");
 	CSInterface.evalScript('$._extXML.readConfig()', function(data){
-
+		console.log(data);
 			if(data != "false"){
 				//If Config file is old version
 				Config.data=JSON.parse(data);
-
+				if(Config.data.serviceAddress==""&&Config.data.serviceAddress==""){
+					Config.data.serviceAddress=Constants.URL_SERVICE_NEW;
+				}
 				if(!Config.data.configversion||(Config.data.configversion<3)){
 					console.log("old version of config found v2");
 					var obj={};

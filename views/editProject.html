@@ -1,7 +1,7 @@
 <div ng-click="showColorBox()">
 	<div class="pheader2">
 		<span><b>Select existing project to edit</b></span>
-		<select ng-click="message=''" ng-model='project' ng-change='changeProject(project)' ng-options="p.name for p in projects">
+		<select ng-click="message=''" ng-model='project' ng-change='changeProject(project)' ng-options="p.displayName for p in projects">
 		<!-- Filter in ng-options |filter:{edit:'!false'}-->
 		</select>
 		<hr>
