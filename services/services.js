@@ -348,10 +348,17 @@ services.factory('UserUtils',['CSInterface', 'Config', 'EncryptionUtils', functi
 	utils.writeUserInformation=function(){
 		var obj={};
 		console.log(utils);
+		var keysToRemove=[];
+		if(utils.keepMeLoggedIn==false){
+			keysToRemove=["password", "userid", "oid"];
+		}
 		for(var i in utils){
-			if(typeof obj[i] != "function"){
+			if(typeof utils[i] != "function"){
 				obj[i]=utils[i];
 			}
+		}
+		for(var i=0;i<keysToRemove.length;i++){
+			delete obj[keysToRemove[i]];
 		}
 		console.log("writing");
 		console.log(obj);
@@ -715,7 +722,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils', 'Us
 		return deferred.promise;
 	};
 
-	utils.login=function(user_email,hashedPassword,user_password,companyEmail){
+	utils.login=function(user_email,password,user_password,companyEmail){
 		console.log("Login Called: user_email:",user_email,"companyEmail:",companyEmail,"companyEmail.length:",companyEmail.length);
 		var deferred=$q.defer();
 
@@ -726,12 +733,12 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils', 'Us
 		var params={};
 		if(companyEmail.length>1){
 			params.email=companyEmail;
-			params.password=hashedPassword;
+			params.password=password;
 			params.username=user_email;
 		}else{
 			params.email=user_email;
-			params.password=hashedPassword;
-			params.hashed=true;
+			params.password=password;
+			params.hashed=false;
 		}
 		utils.SendRequest(url,params,method,false)
 

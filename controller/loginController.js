@@ -76,12 +76,12 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		if(user_email!="" && user_password!=""){
             // debuggerUtils.updateLogs("Login Attempt With User: " + JSON.stringify($scope.user));
 			preloader.showLoading();
-			var hashedPassword=MD5(user_password);
+			var pswrd=user_password;
 			UserUtils.username = user_email;
-			UserUtils.password = hashedPassword;
+			UserUtils.password = pswrd;
 
 
-			APIUtils.login(user_email, hashedPassword,user_password, "")
+			APIUtils.login(user_email, pswrd,user_password, "")
 			.then(function(result){
 				if(result.status=="200"){
 					console.log("auth success")
