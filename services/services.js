@@ -575,7 +575,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 			this[i]=obj[i];
 		}
 	};
-	
+
 	return config;
 }]);
 
@@ -1048,24 +1048,20 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 	};
 	utils.getProjectSortKey=function(project){
 		var key='';
-		if(project.starred)
-			key+='!';
-		//console.log(project.alias.length);
-			if(project.alias.user){
-				project["displayName"]=project.alias.user;
-				//console.log(project.alias.user);
-				//console.log(key+project.alias.user);
-				return (key+project.alias.user).toUpperCase();
-			}
-			if(project.alias.org){
-				project["displayName"]=project.alias.org;
-				//console.log(key+project.alias.org);
-				return (key+project.alias.org).toUpperCase();
-			}
-		project["displayName"]=project.name;
-		//console.log(key+project.name);
+		// FIX: It should be like a `0` or something higher level than `!`, no?
+		if(project.starred) key+='!';
+		if(project.alias && project.alias.user) return (key+project.alias.user).toUpperCase();
+		if(project.alias && project.alias.org) return (key+project.alias.org).toUpperCase();
 		return (key+project.name).toUpperCase();
 	};
+	utils.returnAllProjectsWithDisplayNames=function(projectList){
+		return projectList.map(function(project){
+			project.displayName=project.name;
+			if(project.alias && project.alias.org) project.displayName=project.alias.org;
+			if(project.alias && project.alias.user) project.displayName=project.alias.user;
+			return project;
+		});
+	}
 	utils.sortProjects=function(projectList){
 		//projectList.sort(function(a, b){return (utils.getProjectSortKey(a)>utils.getProjectSortKey(b))});
 		var i,j, min;
@@ -1092,6 +1088,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 			for(var j=0;j<data.length;j++){
 				console.log(data[j].name);
 			}
+			data = utils.returnAllProjectsWithDisplayNames(data);
 			utils.sortProjects(data);
 			for(var j=0;j<data.length;j++){
 				console.log(data[j].displayName);

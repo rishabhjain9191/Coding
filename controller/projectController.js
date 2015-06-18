@@ -26,8 +26,8 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 			//Fill-in the tooltip information
 			var tt;
 			for(var i=0;i<data.length;i++){
-				
-				
+
+
 				/*$scope.projectToolTipInfo[i]={};
 				$scope.projectToolTipInfo[i]["nickName"]="Nick Name : "+(data[i].alias.user)?data[i].alias.user:""+"<br>";
 				$scope.projectToolTipInfo[i]["name"]="Name : "+data[i].name+"\n\n";
@@ -35,10 +35,13 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 
 				projectToolTipInfo[i]="";
 				//projectToolTipInfo[i]=new Array();
-				if(data[i].alias.user)
-					projectToolTipInfo[i]+="Nick Name : "+data[i].alias.user+"|";
+				if(data[i].alias) {
+					if(data[i].alias.user) projectToolTipInfo[i]+="My Alias : "+data[i].alias.user+"|";
+					if(data[i].alias.org) projectToolTipInfo[i]+="Org Alias : "+data[i].alias.org+"|";
+				}
+				if(data[i].client) projectToolTipInfo[i]+="Client : "+data[i].client+"|";
 				projectToolTipInfo[i]+="Name : "+data[i].name+"|";
-				projectToolTipInfo[i]+="JobId : "+data[i].jobid;
+				projectToolTipInfo[i]+="JobId : "+(data[i].jobid || '');
 				//projectToolTipInfo[i]+="</div>";
 
 
@@ -53,7 +56,7 @@ function(Constants, $scope, $rootScope, $location, Config, projectUtils,$q,  pre
 				$scope.showNoProjectsMessage = true;
 			}
 			else{
-				$scope.showNoProjectsMessage = false;	
+				$scope.showNoProjectsMessage = false;
 			}
 		}, function(data){
 			//On network Failure, show previous copy of projects
