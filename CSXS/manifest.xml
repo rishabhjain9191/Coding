@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ExtensionManifest Version="4.0" ExtensionBundleId="TimeTracker-CC" ExtensionBundleVersion="2.0.8"
+<ExtensionManifest Version="4.0" ExtensionBundleId="TimeTrackerCC" ExtensionBundleVersion="2.4.0"
 		ExtensionBundleName="tthtml5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 		<Author>
@@ -120,25 +120,27 @@ If you have any questions about this Privacy Policy, please contact us at privac
 
 
 	<ExtensionList>
-		<Extension Id="TimeTracker-CC.extension1" Version="2.0.8" />
+		<Extension Id="TimeTrackerCC.extension1" Version="2.4.0" />
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
-			<Host Name="IDSN" Version="[9.1,10.9]" />
-			<Host Name="ILST" Version="[17.0,18.9]" />
-			<Host Name="PHXS" Version="[14.0,15.9]" />
-			<Host Name="PHSP" Version="[14.0,15.9]" />
+			<Host Name="IDSN" Version="[9.1,11.9]" />
+			<Host Name="AICY" Version="[9.1,11.9]" />
+			<Host Name="ILST" Version="[17.0,19.9]" />
+			<Host Name="PHXS" Version="[14.0,16.9]" />
+			<Host Name="PHSP" Version="[14.0,16.9]" />
+			<Host Name="PPRO" Version="[7.0,16.9]" />
 		</HostList>
 		<LocaleList>
 			<Locale Code="All" />
 		</LocaleList>
 		<RequiredRuntimeList>
-			<RequiredRuntime Name="CSXS" Version="4.0" />
+			<RequiredRuntime Name="CSXS" Version="5.0" />
 
 		</RequiredRuntimeList>
 	</ExecutionEnvironment>
 	<DispatchInfoList>
-		<Extension Id="TimeTracker-CC.extension1">
+		<Extension Id="TimeTrackerCC.extension1">
 			<DispatchInfo >
 				<Resources>
 				<MainPath>./index.html</MainPath>
@@ -146,17 +148,20 @@ If you have any questions about this Privacy Policy, please contact us at privac
 				</Resources>
 				<Lifecycle>
 					<AutoVisible>true</AutoVisible>
+					 <StartOn>
+      				 <Event></Event>
+ 					 </StartOn>
 				</Lifecycle>
 				<UI>
 					<Type>Panel</Type>
 					<Menu>TimeTracker</Menu>
 					<Geometry>
 						<Size>
-							<Height>310</Height>
+							<Height>340</Height>
 							<Width>235</Width>
 						</Size>
 						<MinSize>
-							<Height>310</Height>
+							<Height>340</Height>
 							<Width>235</Width>
 						</MinSize>
 					</Geometry>

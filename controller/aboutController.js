@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
  
-app.controller('aboutCtrl',['$scope', '$location', 'Constants', '$window','CSInterface','Config', 'viewManager',
-function($scope, $location, Constants, $window, CSInterface, Config, viewManager){
+app.controller('aboutCtrl',['$scope', '$location', 'Constants', '$window','CSInterface','Config', 'viewManager', 'UserUtils',
+function($scope, $location, Constants, $window, CSInterface, Config, viewManager, UserUtils){
 	
 	//Removing build from version number
 	var res=Constants.EXTENSION_VERSION_NUMBER.split('.');
@@ -16,16 +16,22 @@ function($scope, $location, Constants, $window, CSInterface, Config, viewManager
 	for(var i=0;i<3;i++){
 		str =str + res[i]+'.';
 	}
-	$scope.app_version_no=str.substring(0,str.length-1);
+	var version=str.substring(0,str.length-1);
+	if(Constants.ISEXCHANGE)
+		version=version+'e';
 	
-	if(Config.username && Config.username!=""&&viewManager.loggedIn){
-		$scope.message="Logged in as: "+Config.username;
+	$scope.app_version_no=version;
+	
+	if(UserUtils.username && UserUtils.username!=""&&viewManager.loggedIn){
+		$scope.message="Logged in as: "+UserUtils.username;
 	}
 	else{
 		$scope.message="Currently not logged in";
 	}
 	$scope.return1=function(){
+		
 		$window.history.back();
+		//viewManager.gotoPreviousView();
 	};
 	
 	$scope.terms=function(){
@@ -44,3 +50,7 @@ function($scope, $location, Constants, $window, CSInterface, Config, viewManager
 		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE);
 	};
 }]);
+
+
+
+

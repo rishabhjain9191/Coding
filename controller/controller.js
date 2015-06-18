@@ -6,16 +6,16 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
- var app=angular.module('TimeTracker',['TTServices','ngRoute'],function($httpProvider) {
+
+ var app=angular.module('TimeTracker',['TTServices','ngRoute','ngDialog','ngSanitize'],function($httpProvider) {
 	// Use x-www-form-urlencoded Content-Type
 	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
- 
+
 	/**
 	* Converts an object to x-www-form-urlencoded serialization.
 	* @param {Object} obj
 	* @return {String}
-	*/ 
+	*/
 	var param = function(obj) {
 		var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
 		for(name in obj) {
@@ -44,7 +44,7 @@
 		}
         return query.length ? query.substr(0, query.length - 1) : query;
 	};
- 
+
 	// Override $http service's default transformRequest
 	$httpProvider.defaults.transformRequest = [function(data) {
 		return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
@@ -88,7 +88,7 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'flashVersionChecker',
 			templateUrl:'./views/flashVersionCheck.html'
 		})
-		.when('/configureLDAP/:error',{
+		.when('/configureLDAP',{
 			controller:'configureLDAPCtrl',
 			templateUrl:'./views/configureLDAP.html'
 		})
@@ -96,85 +96,146 @@ app.config(['$routeProvider', function($routeProvider){
 			controller:'LDAPloginCtrl',
 			templateUrl:'./views/LDAPLogin.html'
 		})
+		.when('/support',{
+			controller:'supportCtrl',
+			templateUrl:'./views/support.html'
+		})
+		.when('/repairDB',{
+			controller:'repairDBCtrl',
+			templateUrl:'./views/repairDB.html'
+		})
+		.when('/restoreTT',{
+			controller:'restoreTTController',
+			templateUrl:'./views/restoreTT.html'
+		})
+		.when('/freezeScreen',{
+			controller:'freezeScreenController',
+			templateUrl:'./views/freezeScreen.html'
+		})
+
 		.otherwise({redirectTo:'/',template:'<div class="loading-spinner" ng-show="true"></div>'});
 }]);
 
 
-app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route','Config','CSInterface',
-function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface){	
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route','Config','CSInterface','$templateCache','updateUtils', 'UserUtils',
+
+function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface, $templateCache, updateUtils, UserUtils){
+
+	//************************************************
+	//*************************************************
+
+
+	//Disable right click
+	document.oncontextmenu=new Function("return false");
+
+	//Make Panel Persistant in Photoshop
+	if(CSInterface.hostEnvironment.appName == "PHXS"){
+		var event=new CSEvent("com.adobe.PhotoshopPersistent", "APPLICATION");
+		event.extensionId = Constants.EXTENSION_ID;
+		console.log("Event ");
+		console.log(event);
+		CSInterface.dispatchEvent(event);
+	}
+
+
 	// Initialize $rootScope variables
 	$rootScope.showFlyout=false;
 	$rootScope.logs="";
 	$rootScope.loading=false;
 	$rootScope.opaqueStyle={};
 	$rootScope.LoggedInItems=false;
+	$rootScope.FreezedItems=false;
+
 	$rootScope.projectProperties=new Array();
 	$rootScope.userLoggedState=1;
 	$rootScope.checkUpdateFromMenuClick=0;
-	
+
 	for(i=0;i<Constants.MAX_PROJECTS;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
-	}	
-	
+	}
+
 	$rootScope.toggleFlyout=function(){
 		$rootScope.showFlyout = !$rootScope.showFlyout;
 	};
-	
+
 	$window.onclick = function (event) {
 		$rootScope.$apply(function(){
 			if(event.srcElement.className!="nav")
 				$rootScope.showFlyout = false;
 		});
-	}; 
-			
+	};
+
 	$rootScope.create=function(){
 		$rootScope.showFlyout = false;
 		$location.path('createNew');
 	};
-	
+
 	$rootScope.edit=function(){
 		$rootScope.showFlyout = false;
 		$location.path('editProject');
 	};
-	
+
 		$rootScope.asgnPrjFldr=function(){
+			function getApprId(){
+				if(UserUtils.oid)
+					return "oid"
+				else
+					return "userid";
+			}
+			function makeObjectToWrite(){
+				var obj={};
+				obj["id"]=getApprId();
+				obj[getApprId()]=UserUtils[getApprId()];
+				obj["projectid"]=projectUtils.currentProjectId;
+				return obj;
+			}
+
 	 	$rootScope.showFlyout = false;
 		//1. Check the Current Document is saved or not
 		//If no project is selected, alert-No Project Selected
-		if(projectUtils.currentProjectId==0||projectUtils.currentProjectId==-1){
+		if(projectUtils.currentProjectId==-1){
 		//$rootScope.apply(function(){
-			$scope.alert_message = "Assign Project requires an open document that has already been saved.";
+			$scope.alert_message = "No project selected";
 			$scope.modalShown=true;
 			//});
 		}
 		//If the document is saved and a project is selected, Create .creativeworxproject XML file and save userid and project id into it.
 		else{
-			CSInterface.evalScript('$._extCWFile.updateOrCreateFile(\''+projectUtils.currentProjectId+'\', \''+Config.userid+'\')', function(data){
-				console.log($rootScope);
-				console.log($scope);
-				if(data == "false"){
+			console.log(makeObjectToWrite());
+			CSInterface.evalScript('$._extCWFile.updateOrCreateFile('+JSON.stringify(makeObjectToWrite())+')', function(data){
+				if(data=="PRMDND"){
+					//Permission denied !
+					$scope.$apply(function(){
+						$scope.alert_message="Unable to assign project to current folder. Your administrator may have locked project assignment to this folder";
+						$scope.modalShown=true;
+					});
+				}
+				else if(data == "false"){
 					$scope.$apply(function(){
 						$scope.alert_message="Assign Project requires an open document that has already been saved.";
 						$scope.modalShown=true;
 					});
 				}else{
 				$scope.$apply(function(){
-					$scope.alert_message="The current project has been assigned to the current folder.";
+					if(projectUtils.currentProjectId==0)
+						$scope.alert_message="The project assignment is cleared from current folder";
+					else
+						$scope.alert_message="The current project has been assigned to the current folder.";
 					$scope.modalShown=true;
 				});
 				}
 			});
-		} 
+		}
 	};
-	
+
 	/* $rootScope.$on("$routeChangeStart", function(event, next, current) {
 		if(!$rootScope.userLoggedState){
 			$location.path('login');
 			//$route.reload();
-		}	
-			
+		}
+
 	}); */
-	
+
 	$rootScope.logout=function(){
 		 $rootScope.showFlyout = false;
 		AppWatcher.removeEventListeners();
@@ -183,17 +244,18 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		for(i=0;i<Constants.MAX_PROJECTS;i++){
 			$rootScope.projectProperties.push(new projectNo(i));
 		}
-		$rootScope.LoggedInItems=false;		
+		$rootScope.LoggedInItems=false;
 		$rootScope.userLoggedState=0;
-		Config.clearUserDetails();
+		UserUtils.clearUserDetails();
 		viewManager.userLoggedOut();
 	};
-	
+
 	$rootScope.configureLDAP=function(){
 		$rootScope.showFlyout = false;
 		viewManager.configureLDAP();
 	};
-	
+
+
 	$rootScope.feedback=function(){
 		$rootScope.showFlyout = false;
 		CSInterface.openURLInDefaultBrowser(Constants.URL_SITE + Constants.URL_BETA_FEEDBACK);
@@ -207,18 +269,33 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		//preloader.showLoading();
 		$rootScope.refreshProjects();
 		//preloader.hideLoading();
-		console.log($rootScope);
 	};
 	$rootScope.checkUpdate=function(){
-		$location.path('update');
-		$rootScope.checkUpdateFromMenuClick=1;
-		if($location.path()=='/update')
-			$route.reload();
+		//updateUtils.checkForUpdate(function(data){console.log(data);}, function(){});
+		if(viewManager.isFreezed){
+
+		}
+		else if($location.path()=='/update'){
+			$route.reload()
+		}
+		else{
+			$location.path('update');
+			$rootScope.checkUpdateFromMenuClick=1;
+		}
+
+	}
+	$rootScope.restoreTT=function(){
+		viewManager.gotoRestoreTT();
+		//$location.path('restoreTT');
+	}
+	$rootScope.support=function(){
+		$rootScope.showFlyout = false;
+		$location.path('support');
 	}
 	CSInterface.evalScript('$._extcommon.createDebugFile()',function(){
 		viewManager.initializationDone();
 	});
-	
+
 }]);
 
 
@@ -262,11 +339,11 @@ app.directive('uiColorpicker', function() {
                     });
                 }
             }, scope.$eval(attrs.options));
-            
+
             ngModel.$render = function() {
               input.spectrum('set', ngModel.$viewValue || '');
             };
-            
+
             input.spectrum(options);
         }
     };
@@ -284,29 +361,29 @@ function canEdit(oid, orgSetting){
 		console.log("Oid not present");
 		return true;
 	}
-	else if(oid && orgSetting && orgSetting.user_add_projects){
-		console.log("oid and user can add project");
-		return true;
-	}
+	// else if(oid && orgSetting && orgSetting.user_add_projects){
+	// 	console.log("oid and user can add project");
+	// 	return true;
+	// }
 	else{
 		return false;
 	}
 }
 
 function getAppForegroundColor(setColor){
-	
+
 	if(new CSInterface().hostEnvironment.appName == "IDSN")
 		script = "$._extcommon.getAppForegroundColor_ID()";
 	else if(new CSInterface().hostEnvironment.appName == "PHXS")
 		script = "$._extcommon.getAppForegroundColor_PS()";
-	
+
 	else if(new CSInterface().hostEnvironment.appName == "ILST")
 		script = "$._extcommon.getAppForegroundColor_IL()";
-	
+
 	new CSInterface().evalScript(script, function(data){
-		
+
 		if(data != ""){
-			
+
 			$(".userForegroundContainerIcon")[$(".sp-input").length-1].style.backgroundColor =data;
 			if(setColor){
 				$(".sp-input")[$(".sp-input").length-1].value =data;

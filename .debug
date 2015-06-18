@@ -4,7 +4,9 @@
         <HostList>
             <Host Name="PHXS" Port="8088"/>
             <Host Name="IDSN" Port="8088"/>
-            <Host Name="ILST" Port="8088"/>
+	    <Host Name="ILST" Port="8088"/>
+	    <Host Name="AICY" Port="8188"/>
+   	    <Host Name="PPRO" Port="8188"/>
         </HostList>
     </Extension>
 </ExtensionList>

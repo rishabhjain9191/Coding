@@ -2,11 +2,15 @@
 
 var pathToConfigFile = "";
 if(Folder.fs=="Windows"){
- pathToConfigFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxConfig.xml";
+ pathToConfigFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorxConfigv1.xml";
+ pathToUserInformationFile=Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\user.xml";
  pathToDebugFile = Folder("~/Desktop").parent.fsName + "\\AppData\\Roaming\\CreativeWorx\\CreativeWorx.log";
+ os="Windows";
 }else if(Folder.fs=="Macintosh"){
- pathToConfigFile = "~/Library/Application Support/CreativeWorx/CreativeWorxConfig.xml";
+ pathToConfigFile = "~/Library/Application Support/CreativeWorx/CreativeWorxConfigv1.xml";
+ pathToUserInformationFile="~/Library/Application Support/CreativeWorx/user.xml";
  pathToDebugFile = "~/Library/Application Support/CreativeWorx/CreativeWorx.log";
+ os="Mac";
 }
 var XMLHeader = '<\?xml version=\"1.0\" encoding=\"UTF-8\"?>';
 
@@ -33,8 +37,14 @@ $._ext = {
         }
     },
 	
-	getCurrentDoc:function(){
-	
+	getCurrentDoc:function(appName){
+	   if(appName=="PPRO"){
+        if(app.isDocumentOpen()){
+            return "1";
+        }
+        return "0";
+       }
+
 		if(app.documents.length==0){
 			//No Document Open
 			return "0";

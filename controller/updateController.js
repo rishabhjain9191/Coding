@@ -6,73 +6,99 @@
  * @copyright  Copyright (c) 2014 CreativeWorx Corp. (http://www.creativeworx.com)
  * @license    All rights reserved.
  */
- 
+
 app.controller('updateCtrl',['viewManager','$scope', '$rootScope','$http','Constants','preloader', 'updateUtils','$interval','$timeout','CSInterface','$rootScope',
 function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUtils,$interval, $timeout, CSInterface,$rootScope){
-		
+
 		var updateType;
+		var exchangeMsg={"msg1":"Please","msg2":" Enable File Sharing", "msg3":" for automatic updates."};
+		console.log("In Update View");
+		$scope.updateMessage="Update";
+		$scope.downloading=false;
+		$scope.showUpdateView=true;
+		$scope.progressBarValue=0;
+		$scope.updateBtn=true;
+		$scope.returnMessage='Not Now';
+		$scope.showLearnHow=false;
+		var downloadFilePaths;
+
+		var promise_downloadComplete;
+		var result=0;
+		var downloaded=false;
+		$scope.disableUpdateBtn=false;
+		var promise_checkDownloaded;
+
+
 		updateUtils.checkForUpdate()
 		.then(function(updateReq){
 			console.log(updateReq);
 			if(updateReq){
-			updateType=updateReq;
-			switch(updateReq){
-				case 100:updateNecessary();break;
-				case 200:updateOptional();break;
-				case 300:noUpdateRequired();break;
-				default:viewManager.updateDone();break;
-				
-				
-			}
-		}
-		})
-	
-	console.log("In Update View");
-	$scope.updateMessage="Update";
-	$scope.downloading=false;
-	$scope.showUpdateView=true;
-	$scope.ttDownloadLocation=Constants.URL_UPDATE+Constants.URL_ZXP_DOWNLOAD;
-	$scope.progressBarValue=0;
-	$scope.updateBtn=true;
-	$scope.returnMessage='Not Now';
-	var downloadFilePaths;
-	
-	var promise_downloadComplete;
-	var result=0;
-	var downloaded=false;
-	$scope.disableUpdateBtn=false;
-	var promise_checkDownloaded;
-	
+    			updateType=updateReq;
+    			switch(updateReq){
+    				case 100:updateNecessary();break;
+    				case 200:updateOptional();break;
+    				case 300:noUpdateRequired();break;
+    				default:viewManager.updateDone();break;
+                }
+            }
+		}, function(){viewManager.updateDone();});
+
+
 	var updateNecessary=function(){
+		console.log("in no update necessary");
+		if(Constants.ISEXCHANGE){
+			$scope.message="A new version is available. Your current version is no longer supported. Please upgrade.";
+				$scope.updateBtn=false;
+			
+			exchangeMsg.msg1="";
+			exchangeMsg.msg2="Enable File Sharing";
+			$scope.exchangeMsg=exchangeMsg;
+
+			$scope.showLearnHow=true;
+		}
+		else{
+			$scope.message="A newer extension is available. \n\nYour current version is no longer supported. Please update.";
+		}
 		$scope.showUpdateView=false;
-		$scope.message="A newer extension is available. \n\nUpdate required.";
 		$scope.canReturn=false;
 	};
-	
+
 	var updateOptional=function(){
+		if(Constants.ISEXCHANGE){
+			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.";
+				exchangeMsg.msg2=" enable File Sharing";
+				$scope.exchangeMsg=exchangeMsg;
+				$scope.updateBtn=false;
+			$scope.showLearnHow=true;
+		}
+		else{
+			$scope.message="A new version is available.\n\nWould you like to update now?";
+		}
+		console.log("in no update optional");
 		$scope.showUpdateView=false;
-		$scope.message="A newer extension is available.\n\nWould you like to update now?";
+
 		$scope.canReturn=true;
 	};
-	
+
 	var noUpdateRequired=function(){
+			console.log("in no update required");
 		if($rootScope.checkUpdateFromMenuClick==1){
 			$scope.showUpdateView=false;
-			$scope.message="This Extension is up-to-date";
+			$scope.message="This extension is up-to-date";
 			$scope.canReturn=true;
-			$scope.updateBtn=false;
+						$scope.updateBtn=false;
 			$scope.returnMessage="Return";
 		}
 		else{
 			viewManager.updateDone(updateType);
 		}
 	};
-	
+
 	$scope.done=function(){
 		//After ZXP downloaded or user don't want to update
 		viewManager.updateDone(updateType);
 	}
-	
+
 	$scope.download=function(){
 		$scope.canReturn=true;
 		$scope.disableUpdateBtn=true;
@@ -81,26 +107,27 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 		//$scope.message ="Downloading Extension...";
 		//$scope.message="Extention Download Complete\n";
 		$scope.message="Extension Manager will launch after download. After installing, quit and restart this application.";
-		
-		CSInterface.evalScript('$._extcommon.createDowloadFileProcess()',function(paths){
+
+		CSInterface.evalScript('$._extcommon.createDownloadFileProcess(\"'+updateUtils.downloadPath+'\")',function(paths){
+            // alert(paths);
 			downloadFilePaths=JSON.parse(paths.split('\\').join('\\\\'));
 			console.log(downloadFilePaths);
 			if(Constants.OS=="Windows"){
-			result =window.cep.process.createProcess(downloadFilePaths.tmpFilePath);
+    			result=window.cep.process.createProcess(downloadFilePaths.tmpFilePath);
 			}
 			else if(Constants.OS=="Macintosh"){
-				result =window.cep.process.createProcess("/bin/sh",downloadFilePaths.tmpFilePath);
+				result=window.cep.process.createProcess("/bin/sh",downloadFilePaths.tmpFilePath);
 			}
 			downloaded=false;
-			
+
 			promise_downloadComplete= $interval(checkProcessRunning,2*1000,45); //Will check whether the download is completed for 2 minutes.
 			promise_checkDownloaded=$timeout(checkDownloaded,2*45*1000+1000);
-		
+
 		});
-		
+
 	};
-		
-		
+
+
 	var checkProcessRunning=function(){
 		var isRunning=window.cep.process.isRunning(result.data);
 		console.log("checkProcessRunning");
@@ -117,11 +144,14 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 			launchEM();
 		}
 	};
-	
-	$scope.openUpdateSite=function(){
-		CSInterface.openURLInDefaultBrowser(Constants.URL_UPDATE+Constants.URL_DOWNLOAD);
+
+    $scope.openDownloadCenter=function(){
+        CSInterface.openURLInDefaultBrowser(Constants.HOME_PAGE+Constants.URL_DOWNLOAD_CENTER);
+    };
+	$scope.gotoExchange=function(){
+		CSInterface.openURLInDefaultBrowser(Constants.URL_EXCHANGE);
 	}
-	
+
 	var checkDownloaded=function(downloaded){
 		if(!downloaded){
 			//alert("Download Failed");
@@ -133,17 +163,17 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 			//Launch Extention Manager
 			launchEM();
 	};
-		
+
 	var launchEM=function(){
-		
+
 		var specifier = "exman";
 		new Vulcan().launchApp(specifier, false, ' /install "'+downloadFilePaths.zxpFilePath+'"');
 		//deleteTempFile();
-			
+
 	};
-	
+
 	var deleteTempFile=function (){
-		CSInterface.evalScript('$._extcommon.deleteTemp()');	
+		CSInterface.evalScript('$._extcommon.deleteTemp()');
 	}
-		
+
 }]);

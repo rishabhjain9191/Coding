@@ -14,12 +14,16 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
-		constants.EXTENSION_VERSION_NUMBER = "2.0.8.2";
+		constants.EXTENSION_ID = "com.creativeworx.tthtml";
+
+		constants.EXTENSION_VERSION_NUMBER = "2.4.0";
+
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
 		constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
-
+		constants.URL_EXCHANGE="https://www.adobeexchange.com/resources/19";
+		constants.ISEXCHANGE=false;
 		constants.STATUS_NEW = "NEW";
 		constants.STATUS_ATTEMPTED = "ATTEMPTED";
 		constants.STATUS_TRANSFERRED = "TRANSFERRED";
@@ -27,7 +31,8 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.IMAGE_STATUS_TRANSFERRED = "TRANSFERRED";
 		constants.IMAGE_STATUS_NOIMAGE = "NONE";
 		constants.IMAGE_STATUS_ERROR = "ERROR";
-		constants.COLOR_MODE = "user_selectable";
+		constants.COLOR_MODE = "preselected";
+		constants.API_TYPE="OAuth1";		//OAuth1 or legacy
 		constants.PROJECT_COLORS= [
 			"#888888", //0
 			"#FFF772", //1
@@ -63,14 +68,21 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.BATCH_SIZE_MIN = 1; 			// Minimum number of events to send, send at least 1
 		constants.BATCH_SIZE_MAX = 1000; 		// Maxiumn number of events to send, 1000
 		constants.CHECK_ONLINE_TIMEINTERVAL = 20000;
+
 		constants.IMAGE_TIMEINTERVAL = 50000;
 		constants.THRESHOLD_COUNT = 100;
 		constants.APP_EVENT_POLL = 5000; 		// How frequently to check for events in the app
 		constants.REFRESH_PROJECT_INTERVAL = 5*60*1000;
+		constants.SEND_UNSENT_EVENTS_TIMER=5*60*1000;
 
 		constants.URL_SERVICE = "https://timetracker.creativeworx.com";
+		constants.URL_SERVICE_OLD = "https://timetracker.creativeworx.com";
 
-		constants.BATCHDATA_SEND_ADDRESS = "/service/log12";
+		constants.HOME_PAGE = "https://timetracker.creativeworx.com";
+
+		constants.URL_SERVICE_NEW = "https://api.creativeworx.com/v1";
+
+		constants.BATCHDATA_SEND_ADDRESS = "/service/log";
 		constants.CHECK_STATUS_ADDRESS = "/service/checkstatus";
 		constants.FILE_UPLOAD_ADDRESS = "/service/fileupload";
 		constants.LOGIN_ADDRESS = "/service/getuserdetails";
@@ -78,7 +90,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.CHECK_USER_DETAILS_ADDRESS = "/service/userdetails";
 		constants.PROJECT_UPDATE_ADDRESS = "/service/addeditproject";
 
-		constants.VALIDATE_LDAP_EMAIL = "/service/validate-ldap-email";
+		constants.VALIDATE_LDAP_EMAIL = "/util/validate-ldap";
 
 
 		constants.CONFIGURATION_FILE = "CreativeWorxConfig.xml";
@@ -103,15 +115,11 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 		constants.FILENAME_EXTENSION =   "TimeTracker.zxp";
 
-		constants.URL_UPDATE = "http://www.creativeworx.com";
-		constants.URL_DOWNLOAD = "/downloads/timetracker/TimeTracker";
-		constants.URL_ZXP_DOWNLOAD = "/downloads/timetracker/" + constants.FILENAME_EXTENSION;
-		constants.URL_ZIP_DOWNLOAD = "/downloads/timetracker/TimeTracker.zip";
-		constants.URL_VERSION = "/downloads/timetracker/TimeTrackerUpdate.xml";
-
+		constants.URL_UPDATE = "http://downloads.creativeworx.com/TimeTrackerDownloads.json";
+		constants.URL_DOWNLOAD_CENTER = "/user/settings#/download";
+		constants.UPDATE_URL_JSON = "http://downloads.creativeworx.com/TimeTrackerDownloads.json";
 		constants.APP_NAME=CSInterface.hostEnvironment.appName;
 		constants.EXTENSION_ID=CSInterface.getExtensionID();
-		constants.TIME_WINDOW_ARRAY_SIZE=10;
 		constants.MAX_PROJECTS=100;
 
 
@@ -119,8 +127,12 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 
 
 	constants.update=function(configData){
-		if(configData.serviceAddress) this.URL_SERVICE=configData.serviceAddress;
+		if(configData.serviceAddress){
+			this.URL_SERVICE=configData.serviceAddress;
+			this.URL_SERVICE_NEW=configData.serviceAddress;
+		}
 		if(configData.siteAddress) this.URL_SITE=configData.siteAddress;
+		if(configData.homePage) this.HOME_PAGE=configData.homePage;
 		if(configData.updateAddress) this.URL_UPDATE=configData.updateAddress;
 		if(configData.timeInterval_html5) this.TIMEINTERVAL=configData.timeInterval_html5;
 		if(configData.checkOnlineTimeInterval_html5) this.CHECK_ONLINE_TIMEINTERVAL=configData.checkOnlineTimeInterval_html5;
@@ -131,6 +143,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		if(configData.checkStatusAddress) this.CHECK_STATUS_ADDRESS=configData.checkStatusAddress;
 		if(configData.fileUploadAddress) this.FILE_UPLOAD_ADDRESS=configData.fileUploadAddress;
 		if(configData.logEnabled_html5) this.LOG_ENABLE=configData.logEnabled_html5;
+		//if(configData.oid) this.oid=configData.oid;
 		//(configData.configversion)?this.URL_SERVICE=configData.configversion;
 	};
 
@@ -151,6 +164,24 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 services.factory('Messages',[function(){
 	var messages={};
 	messages.networkError="Cannot Connect to Internet. Please Check your internet connection."
+	messages.authMsg={
+		"0":"Cannot Connect to Internet. Please Check your internet connection",
+		"401":"Authentication Failed",
+		"404":"User Not Found",
+		"400":"Username/Password Invalid",
+		"500":"Authorization Failed"
+	};
+	messages.getUserListMsg={
+		"0":"Cannot Connect to Internet. Please Check your internet connection",
+		"401":"Authentication Failed"
+	};
+	messages.addProjectMessages={
+		"0":"Cannot Connect to Internet. Please Check your internet connection",
+		"401":"Authentication Failed",
+		"nameEmpty":"Name of the Project cannot be empty",
+		"jobIdEmpty":"Job id of the project cannot be empty",
+		"unknown":"Error in creating new project"
+	}
 	return messages;
 }]);
 
@@ -160,7 +191,7 @@ services.factory('CSInterface',[function(){
 }]);
 
 
-services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher','Config', function($location,$route, CSInterface, AppWatcher, Config){
+services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatcher','Config', 'UserUtils',function($location,$route, CSInterface, AppWatcher, Config, UserUtils){
 	var utils={};
 
 	utils.loggedOut=false;
@@ -168,7 +199,8 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 
 	utils.previousView="";
 	utils.loginView="";
-
+	utils.isFreezed=false;
+	utils.freezeScreenMessage="";
 
 	utils.initializationDone=function(){
 
@@ -198,18 +230,24 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	};
 	utils.configloaded=function(){
 		console.log("Config Loaded  "+(new Date()).getTime());
+		//console.log(Config.serviceAddress);
+		UserUtils.loadUserInformation(function(){
+			console.log("User Information loaded");
+			utils.userInformationLoaded();
+		});
+	};
+	utils.userInformationLoaded=function(){
 		$route.reload();
-		if(Config.companyEmail&&Config.companyEmail.length>0){
+		if(UserUtils.companyEmail&&UserUtils.companyEmail.length>0&&UserUtils.companyEmail!=0){
 			$location.path('LDAPLogin');
 		}
 		else{
+			console.log(UserUtils.serviceAddress);
 			$location.path('login');
 		}
-
 	};
 	utils.userLoggedIn=function(){
 		console.log("Config used : ");
-		console.log(Config);
 		console.log("user logged in  "+(new Date()).getTime());
 		//Add Event Listeners
 		AppWatcher.addEventListeners();
@@ -219,23 +257,23 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		event.data="<onCreationComplete />";
 		CSInterface.dispatchEvent(event);
 		this.loggedOut=false;
-		this.loggedIn=true;
+		utils.loggedIn=true;
 		console.log('user Logged in');
 		this.loginView=$location.path().substr(1);
 		$location.path('projects');
 	};
 
 	utils.userLoggedOut=function(){
+		utils.loggedIn=false;
 		this.loggedOut=true;
-		this.loggedIn=false;
 		$location.path(this.loginView);
 	};
 
 	utils.configureLDAP=function(){
-		$route.reload();
-		console.log("going to configure ldap");
-		this.previousView=$location.path().substr(1);
-		$location.path('configureLDAP/false');
+		if(!this.isFreezed){
+			this.previousView=$location.path().substr(1);
+			$location.path('configureLDAP');
+		}
 	};
 
 	utils.gotoPreviousView=function(){
@@ -244,8 +282,8 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 
 	utils.LDAPConfigDone=function(){
 		$route.reload();
-		console.log(Config.companyEmail);
-		if(Config.companyEmail!==""){
+		console.log(UserUtils.companyEmail);
+		if(UserUtils.companyEmail!==""&&UserUtils.companyEmail!==0){
 			$location.path('LDAPLogin');
 		}
 		else{
@@ -253,19 +291,113 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 		}
 		//$route.reload();
 	};
-	
-	utils.LDAPLoginError=function(invalidEmail){
+
+	utils.moveToFreezeScreen=function(message){
+		this.freezeScreenMessage=message;
 		$route.reload();
-		var str='configureLDAP/'+invalidEmail;
-		$location.path(str);
-	}
+		this.isFreezed=true;
+		this.previousView="freezeScreen";
+		this.loginView="freezeScreen";
+	};
+
+	utils.gotoRestoreTT=function(){
+		this.previousView=$location.path().substr(1);
+		$route.reload();
+		$location.path('restoreTT');
+	};
+
+
+
 
 	return utils;
 
 }]);
 
 
+services.factory('UserUtils',['CSInterface', 'Config', 'EncryptionUtils', function(CSInterface, Config, EncryptionUtils){
+	var utils={};
 
+	utils.username="";
+	utils.password="";
+	utils.keepMeLoggedIn="";
+	utils.firstname="";
+	utils.userid="";
+	utils.companyEmail="";
+	utils.companyName="";
+	utils.companyEmailValue="";
+	utils.oid="";
+	utils.userParams=['username', 'password', 'keepMeLoggedIn', 'firstname', 'userid', 'companyEmail', 'companyName', 'companyEmailValue', 'oid'];
+	utils.update=function(data){
+		console.log("updating user information with ");
+		var obj=JSON.parse(data);
+		for(var i in obj){
+			this[i]=obj[i];
+		}
+	};
+	utils.loadUserInformation=function(done){
+		console.log("Loading user information");
+		CSInterface.evalScript('$._extXML.readUserInformation()', function(data){
+			if(data!="false"){
+				var info=EncryptionUtils.parseData(data);
+				console.log("user information");
+				utils.update(info);
+			}
+			done();
+		});
+	};
+	utils.writeUserInformation=function(callback){
+		var obj={};
+		console.log(utils);
+		var keysToRemove=[];
+		if(utils.keepMeLoggedIn==false){
+			keysToRemove=["password", "userid", "oid"];
+		}
+		for(var i in utils){
+			if(typeof utils[i] != "function"){
+				obj[i]=utils[i];
+			}
+		}
+		for(var i=0;i<keysToRemove.length;i++){
+			delete obj[keysToRemove[i]];
+		}
+		console.log("writing");
+		console.log(obj);
+		var data=EncryptionUtils.encryptData(JSON.stringify(obj));
+		var data1=data.replace(/"/g,'\\"');
+		CSInterface.evalScript('$._extXML.writeUserInformation('+'"'+data1+'"'+')', function(){
+			console.log("user data written successfully");
+			if(callback!==undefined)
+				callback();
+		});
+	};
+	utils.clearUserDetails=function(){
+		utils.username="";
+		utils.password="";
+		utils.userid="";
+		utils.firstname="";
+		utils.oid="";
+	};
+	utils.deleteUserFile=function(){
+		CSInterface.evalScript('$._extXML.deleteUserFile()', function(){
+			console.log("user file deleted successfully");
+		});
+	};
+	return utils;
+}]);
+
+services.factory('EncryptionUtils', [function(){
+	var utils={};
+	utils.parseData=function(data){
+		var dta=sjcl.decrypt("HB0'FD~oYn1D4@e6V^h/@N;4QImPcNB3RSk1%Cl[RD0`3Yqwz7", data);
+		return dta;
+	};
+	utils.encryptData=function(data){
+		console.log(data);
+		var res=sjcl.encrypt("HB0'FD~oYn1D4@e6V^h/@N;4QImPcNB3RSk1%Cl[RD0`3Yqwz7", data);
+		return res;
+	}
+	return utils;
+}]);
 
 
 services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$http,$q){
@@ -275,27 +407,78 @@ services.factory('updateUtils', ['Constants','$http','$q',function(Constants,$ht
 	utils.downloadPath="";
 	var updateParamsUpdate=function(){
 		var deferred=$q.defer();
-		var url=Constants.URL_UPDATE + Constants.URL_VERSION;// + "?" + Constants.EXTENSION_VERSION_NUMBER;
-		//var url="ini.xml";
+		var url=Constants.UPDATE_URL_JSON ;// + "?" + Constants.EXTENSION_VERSION_NUMBER;
+
+		//var url="TimeTrackerDownloads.json";
+		//var httpCacheFactory=$cacheFactory.get('templates');
+		//console.log(httpCacheFactory.info());
 		console.log(url);
-		$http.get(url)
+		$.ajax({
+		    type: 'GET',
+		    url: url,
+		    cache: false,
+		    timeout:3000,
+		    success: function(data, textStatus, jqXHR) {
+	            console.log(data);
+	            console.log(textStatus);
+
+	            console.log("In Success method");
+	            try{
+		            data=JSON.parse(data);
+                    if(data.cs.color_mode)
+                        Constants.color_mode=data.cs.color_mode;
+                    if(data.cs.downloads.cc.version)
+                        utils.version=data.cs.downloads.cc.version;
+                    if(data.cs.downloads.cc.minversion)
+                        utils.minVersion=data.cs.downloads.cc.minversion;
+                    if(data.cs.downloads.cc.downloadURL)
+                        utils.downloadPath=data.cs.downloads.cc.downloadURL;
+
+		            deferred.resolve(1);
+		        }
+		        catch(e){
+		        	deferred.reject(0);
+		        }
+		    },
+
+		    error: function(err) {
+		        var err={};
+	            err.type="Failed to fetch update parameter from config";
+	            deferred.reject(0);
+		    }
+		 });
+
+		/*
+		$http({
+			method:'GET',
+			url:url,
+			cache:false
+		})
 		.success(function(data,status){
-			var x2js = new X2JS();
-			var jsonObj = x2js.xml_str2json(data);
-			console.log(jsonObj);
-			if(jsonObj.ExtensionUpdateInformation.color_mode){
-			Constants.COLOR_MODE=jsonObj.ExtensionUpdateInformation.color_mode;
-			}
-			if(jsonObj.ExtensionUpdateInformation.minversion)
-			utils.minVersion=jsonObj.ExtensionUpdateInformation.minversion;
-			if(jsonObj.ExtensionUpdateInformation.version)
-			utils.version=jsonObj.ExtensionUpdateInformation.version;
-			if(jsonObj.ExtensionUpdateInformation.download)
-			utils.downloadPath=jsonObj.ExtensionUpdateInformation.download;
+			console.log(data);
+			console.log(status);
+
+			console.log("In Success method");
+
+			if(data.cs.downloads.cc.version)
+				utils.version=data.cs.downloads.cc.version;
+			if(data.cs.downloads.cc.minversion)
+				utils.minVersion=data.cs.downloads.cc.minversion;
+			if(data.cs.downloads.cc.downloadURL)
+				utils.downloadPath=data.cs.downloads.cc.downloadURL;
+
 			deferred.resolve(1);
 
 		})
-		.error(function(data){console.log(data);deferred.reject(0);})
+		.error(function(data){
+			var err={};
+			err.type="Failed to fetch update parameter from config";
+			err.message=data;
+
+			console.log(data);
+			deferred.reject(0);
+	})
+		*/
 
 		return deferred.promise;
 	};
@@ -364,8 +547,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	var config={};
 	config.data='';
 
-
-	config.serviceAddress = Constants.URL_SERVICE;
+	config.serviceAddress = Constants.URL_SERVICE_NEW;
 	config.siteAddress = Constants.URL_SITE;
 	config.updateAddress = Constants.URL_UPDATE;
 	config.timeInterval_html5 = Constants.TIMEINTERVAL;
@@ -378,19 +560,22 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 	config.fileUploadAddress = Constants.FILE_UPLOAD_ADDRESS;
 	config.imagesFolderAddress = Constants.IMAGES_FOLDER_NAME;
 	config.logEnabled_html5 = Constants.LOG_ENABLE;
-	config.configversion = 2;
-
-
+	config.configversion = 3;
+	config.homePage = Constants.HOME_PAGE;
 
 	/*
 		Read from the config file and update config values
 	*/
-	config.clearUserDetails=function(){
-		this.username="";
-		this.password="";
-		this.userid="";
-		this.firstname="";
+	config.update=function(model){
+		console.log("updating config with ");
+		console.log(model);
+		var obj=JSON.parse(model);
+		console.log(obj);
+		for(var i in obj){
+			this[i]=obj[i];
+		}
 	};
+
 	return config;
 }]);
 
@@ -410,44 +595,50 @@ function($rootScope){
 	return utils;
 }]);
 
-services.factory('loginUtils',['debuggerUtils','Constants', '$location','$rootScope','Config','$http','$q',
-function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
+services.factory('loginUtils',['debuggerUtils','Constants', '$location','$rootScope','Config','$http','$q', 'APIUtils','UserUtils',
+function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q, APIUtils, UserUtils){
 	var utils={};
 	utils.loginResult='aa';
+	console.log(Config);
 	utils.tryLoginFromConfig=function(){
+		console.log(UserUtils);
 		var deferred=$q.defer();
-		if(Config.keepMeLoggedIn=="false"){
+		if(UserUtils.keepMeLoggedIn==false||UserUtils.keepMeLoggedIn=="false"){
 			/*
 				Fresh Login Required, 100-Fresh Login
 			*/
 			deferred.resolve(100);
 		}
-		else if(Config.keepMeLoggedIn=="true"){
-			utils.login(Config.username, Config.password, Config.companyEmail)
+		else if(UserUtils.keepMeLoggedIn==true||UserUtils.keepMeLoggedIn=="true"){
+			APIUtils.login(UserUtils.username, UserUtils.password, UserUtils.password,UserUtils.companyEmail)
 			.then(function(data){
-				console.log(data);
-				//LDAP email is wrong
-				if(data.error){
-					deferred.resolve(50);
+				APIUtils.getUsers()
+				.then(function(result){
+					if(result.status=="200"){
+						var data=result.data.result;
+						if(data.oid)
+							$rootScope.canEdit=canEdit(data.oid, data.org_settings);
+						else
+							$rootScope.canEdit=true;
+						UserUtils.firstname=data.firstname;
+						UserUtils.userid=data._id;
+						$rootScope.LoggedInItems=true;
+						deferred.resolve(200);
 				}
-				else if(data instanceof Array){
-					
-					//User Authenticated
-					console.log("User Authenticated");
-
-					$rootScope.canEdit=canEdit(data[0].oid, data[0].org_settings);
-					Config.firstname=data[0].firstname;
-					Config.userid=data[0].userid;
-					$rootScope.LoggedInItems=true;
-					deferred.resolve(200);
-				}
-				else{
+				else
 					deferred.resolve(100);
-				}
-			},function(error){
+
+			},
+			//Get User Details Failed
+			function(result){
 				deferred.resolve(100);
-			});
+			})}
+			//Error in Auth
+			,function(error){
+				deferred.resolve(100);
+			})
 		}
+
 		else{
 			deferred.resolve(100);
 		}
@@ -456,41 +647,355 @@ function(debuggerUtils,Constants, $location,$rootScope,Config, $http, $q){
 
 	};
 
-
-	utils.login=function(username, password, companyEmail){
-
-		var deferred=$q.defer();
-		if(username=='undefined'){username=Config.username;}
-		if(password=='undefined'){password=Config.password;}
-		if(companyEmail=='undefined'){companyEmail="";}
-		var params=[];
-		params['username']=username;
-		params['password']=password;
-		params['email']=companyEmail;
-		params['clientversion']=Constants.EXTENSION_VERSION_NUMBER;
-
-		var url=Constants.URL_SERVICE+Constants.LOGIN_ADDRESS;
-		//var url="userDetails.json";
-
-		var t1 = (new Date()).getTime();
-		$http.post(url, params)
-			.success(function(data,status){
-				var t2 = (new Date()).getTime();
-				console.log("Login request is taking time: "+(t2-t1)/1000);
-				console.log(data);
-				deferred.resolve(data);
-			})
-			.error(function(data,status){
-				console.log(data);
-				deferred.reject(data);
-			})
-			return deferred.promise;
-	};
 	return utils;
 }]);
 
-services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q','CSInterface',
-function($rootScope, Constants, Config, $http, $q, CSInterface){
+services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils', 'UserUtils', function(Constants, $q, Config, $http, OAuthUtils, UserUtils){
+
+	var utils={};
+
+
+	//
+	//	Status Codes:
+	//
+	//	400			Bad Request
+	//	401/403		Unauthorized
+	//	404			Not found
+	//	500			Server error
+	//
+
+	utils.SendRequest=function(url,params,method,isOAuth){
+
+		var deferred=$q.defer();
+		var headers={};
+
+		headers["app_ver"]=Constants.EXTENSION_VERSION_NUMBER;
+		headers["app_id"]=Constants.EXTENSION_ID;
+		if(method=="PUT"){
+			headers["Content-Type"]="application/x-www-form-urlencoded";
+			//headers["X-HTTP-Method-Override"]="PUT";
+			//method="POST";
+		}
+
+
+		if(isOAuth){
+			headers["Content-type"]='application/x-www-form-urlencoded';
+            headers["Authorization"]=OAuthUtils.getAuthHeader(url,method,params);
+		}
+
+		$http({
+			method: method,
+			url: url,
+			data: params,
+			headers: headers
+		})
+		.success(function(data,status){
+			var result={};
+			result.data=data;
+			result.status=status;
+			if(data.error){
+				deferred.resolve(result);
+			}else{
+				deferred.resolve(result);
+			}
+		})
+		.error(function(data,status){
+			// request failed
+			console.log(headers.Authorization, data, status);
+			var result={};
+			result.message="New Error";
+			result.type="Error 1";
+			result.data=data;
+			result.status=status;
+			deferred.reject(result);
+		});
+		return deferred.promise;
+	};
+
+
+	utils.validateLDAP=function(companyEmail){
+		var deferred=$q.defer();
+		/**
+			STILL USING THE OLD END POINT
+		*/
+		var url=Config.serviceAddress+Constants.VALIDATE_LDAP_EMAIL+"/"+companyEmail;
+		var params=[];
+		utils.SendRequest(url,params,'GET',false)
+		.then(function(result){
+			deferred.resolve(result);
+		}, function(result){
+			deferred.reject(result);
+		})
+
+		return deferred.promise;
+	};
+
+	utils.login=function(user_email,password,user_password,companyEmail){
+		console.log("Login Called: user_email:",user_email,"companyEmail:",companyEmail,"companyEmail.length:",companyEmail.length);
+		var deferred=$q.defer();
+
+
+		var url=Config.serviceAddress+"/authenticate";
+
+		var method="POST";
+		var params={};
+		if(companyEmail.length>1){
+			params.email=companyEmail;
+			params.password=password;
+			params.username=user_email;
+		}else{
+			params.email=user_email;
+			params.password=password;
+			params.hashed=false;
+		}
+		utils.SendRequest(url,params,method,false)
+
+		.then(function(result){
+		// will check for the response here
+		console.log("Auth Success");
+			if(result.status="200"){
+			//Save user's key and secret
+				OAuthUtils.setConsumerCredentials(result.data.keys.pk,result.data.keys.sk);
+				UserUtils.userid=result.data.keys.uid;
+				deferred.resolve(result);
+			}
+			else
+			//Any unexpected error has occured
+			deferred.reject(result);
+		},function(result){
+			var result1={};
+			result1["message"]="Auth Failure123";
+			result1["name"]="Error5";
+			console.log(result1);
+			Airbrake.push({
+				error:result1
+			});
+			console.log("Auth Failure");
+			deferred.reject(result);
+		})
+
+
+		return deferred.promise;
+	};
+
+
+	utils.getUsers=function(params){
+		var deferred=$q.defer();
+
+
+		var url=Config.serviceAddress+"/user"+"/"+UserUtils.userid;
+
+		var method="GET";
+		var params="";
+
+		this.SendRequest(url,params,method,true)
+		.then(function(result){
+			deferred.resolve(result);
+		},function(result){
+			deferred.reject(result)})
+
+		return deferred.promise;
+	};
+
+	utils.getProjects=function(){
+		var deferred=$q.defer();
+
+		var url=Config.serviceAddress+"/project";
+		var method="GET";
+		var params={};
+		this.SendRequest(url,params,method,true)
+		.then(function(result){
+			deferred.resolve(result);
+		},function(result){
+			deferred.reject(result);
+		})
+
+		return deferred.promise;
+	};
+
+	utils.addProject=function(projectName, userNickName,jobId, budgetHrs, color, colorindex){
+		var deferred=$q.defer();
+		var params={};
+		if(projectName!==undefined){
+			params["name"]=projectName;
+		}
+		if(jobId!==undefined){
+			params["jobid"]=jobId;
+		}
+		if(budgetHrs!==undefined){
+			params["budget"]=budgetHrs;
+		}
+
+		if(userNickName!==undefined){
+			params["alias"]=userNickName;
+		}
+
+
+		/*
+		if(color!==undefined){
+			params["colorcode"]=color;
+		}
+		*/
+		if(colorindex!==undefined){
+			params["color"]=colorindex;
+		}
+
+		var url=Config.serviceAddress+"/project";
+		var method="POST";
+		console.log(params);
+		this.SendRequest(url,params,method,true)
+		.then(function(result){
+			deferred.resolve(result);
+		}, function(result){
+			deferred.reject(result);
+		});
+
+		return deferred.promise;
+	};
+
+	utils.editProject=function(projectId, projectName, userNickName, jobId, budgetHrs, color, colorindex){
+		var deferred=$q.defer();
+		var params={};
+		if(projectName!==undefined){
+			params["name"]=projectName;
+		}
+
+		if(projectName!==undefined){
+			params["jobid"]=jobId;
+		}
+		if(projectName!==undefined){
+			params["budget"]=budgetHrs;
+		}
+		if(projectName!==undefined){
+			params["color"]=colorindex;
+		}
+		if(userNickName!==undefined){
+			params["alias"]=userNickName;
+		}
+		var url=Config.serviceAddress+"/project/"+projectId;
+		var method="PUT";
+
+		this.SendRequest(url,params,method,true)
+		.then(function(result){
+			deferred.resolve(result);
+		}, function(result){
+			Airbrake.push({
+				error:result
+			});
+			deferred.reject(result);
+		});
+
+		return deferred.promise;
+	};
+
+	utils.sendEvents=function(params){
+		var deferred=$q.defer();
+		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
+		var details={};
+
+		var url=Config.serviceAddress+"/event";
+		var method="POST";
+		this.SendRequest(url,params,method,true)
+		.then(function(result){
+			deferred.resolve(result);
+		},function(result){
+			deferred.reject(result);
+		});
+
+		return deferred.promise;
+	};
+
+
+	return utils;
+
+}]);
+
+services.factory('OAuthUtils',['$q',function($q){
+
+	// todo: remove the dependencies
+
+
+	var utils={};
+	utils.oauth_consumer_key="";
+	utils.oauth_consumer_secret="";
+	utils.oauth_token_secret="";
+	utils.oauth_version="1.0";
+	utils.oauth_token="";
+	utils.oauth_timestamp="";
+	utils.oauth_nonce="";
+	utils.oauth_signature_method="HMAC-SHA1";
+	utils.oauth_signature="";
+
+	utils.setConsumerCredentials=function(key,secret){
+		this.oauth_consumer_key=key;
+		this.oauth_consumer_secret=secret;
+	};
+
+	utils.getAuthHeader=function(url,method,params){
+
+		this.oauth_timestamp=this.getTimestamp();
+		this.oauth_nonce=this.getNonce();
+		this.createSignature(url,method,params);
+
+		var authHeader =
+			'OAuth realm="",'+
+			'oauth_consumer_key="'+this.oauth_consumer_key+'",'+
+			'oauth_token="",'+
+			'oauth_signature_method="'+this.oauth_signature_method+'",'+
+			'oauth_timestamp="'+this.oauth_timestamp+'",'+
+			'oauth_nonce="'+this.oauth_nonce+'",'+
+			'oauth_version="'+this.oauth_version+'",'+
+			'oauth_signature="'+encodeURIComponent(this.oauth_signature)+'"';
+
+		return authHeader;
+	};
+
+	utils.getTimestamp=function(){
+		return OAuth.timestamp();
+	};
+
+	utils.getNonce=function(){
+		return OAuth.nonce(11);
+	};
+
+	utils.createSignature=function(url,method,params){
+
+		var accessor = {
+			consumerSecret: this.oauth_consumer_secret,
+			tokenSecret   : this.oauth_token_secret
+		};
+
+		var list = [];
+		if(params){
+			for (var p in params) {
+				list.push([p, params[p]]);
+			}
+		}
+		var message = {
+			method: method,
+			action: url,
+			parameters: list
+		};
+
+		message.parameters.push(["oauth_version", this.oauth_version]);
+		message.parameters.push(["oauth_consumer_key", this.oauth_consumer_key]);
+		message.parameters.push(["oauth_token", this.oauth_token]);
+		message.parameters.push(["oauth_timestamp", this.oauth_timestamp]);
+		message.parameters.push(["oauth_nonce", this.oauth_nonce]);
+		message.parameters.push(["oauth_signature_method", this.oauth_signature_method]);
+
+		console.log(message);
+		console.log(accessor);
+		OAuth.SignatureMethod.sign(message, accessor);
+		this.oauth_signature=OAuth.getParameter(message.parameters, "oauth_signature");
+
+	};
+
+	return utils;
+}]);
+
+services.factory('projectUtils',['$rootScope', 'Constants', 'Config', '$http', '$q','CSInterface', 'APIUtils',
+function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 	$rootScope.projectProperties=new Array();
 	for(i=0;i<Constants.MAX_PROJECTS;i++){
 		$rootScope.projectProperties.push(new projectNo(i));
@@ -541,18 +1046,57 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 	utils.getSelectedProjectId=function(){
 		return(this.selectedprojectId);
 	};
+	utils.getProjectSortKey=function(project){
+		var key='';
+		// FIX: It should be like a `0` or something higher level than `!`, no?
+		if(project.starred) key+='!';
+		if(project.alias && project.alias.user) return (key+project.alias.user).toUpperCase();
+		if(project.alias && project.alias.org) return (key+project.alias.org).toUpperCase();
+		return (key+project.name).toUpperCase();
+	};
+	utils.returnAllProjectsWithDisplayNames=function(projectList){
+		return projectList.map(function(project){
+			project.displayName=project.name;
+			if(project.alias && project.alias.org) project.displayName=project.alias.org;
+			if(project.alias && project.alias.user) project.displayName=project.alias.user;
+			return project;
+		});
+	}
+	utils.sortProjects=function(projectList){
+		//projectList.sort(function(a, b){return (utils.getProjectSortKey(a)>utils.getProjectSortKey(b))});
+		var i,j, min;
+		//Bubble Sort, for checking REPLACE WITH QUICK SORT
+		for(i=0;i<projectList.length;i++){
+			min=i;
+			for(j=i+1;j<projectList.length;j++){
+				//console.log(utils.getProjectSortKey(projectList[j])+"-"+utils.getProjectSortKey(projectList[i])+" : "+(utils.getProjectSortKey(projectList[j])<utils.getProjectSortKey(projectList[i])));
+				if(utils.getProjectSortKey(projectList[j])<utils.getProjectSortKey(projectList[min])){
+					min=j;
+				}
+			}
+			temp=projectList[i];
+			projectList[i]=projectList[min];
+			projectList[min]=temp;
+		}
+	};
 	utils.getProjects=function(username, password, userid){
 		var deferred=$q.defer();
-		var params=[];
-		params['username']=username;
-		params['password']=password;
-		params['userid']=userid;
-		var url=Constants.URL_SERVICE+Constants.PROJECT_RETRIEVE_ADDRESS;
-		//var url='getprojectlist.json';
-		$http.post(url,params)
-		.success(function(data){
+		APIUtils.getProjects()
+		.then(function(result){
+			console.log(result);
+			var data=result.data.result;
+			for(var j=0;j<data.length;j++){
+				console.log(data[j].name);
+			}
+			data = utils.returnAllProjectsWithDisplayNames(data);
+			utils.sortProjects(data);
+			for(var j=0;j<data.length;j++){
+				console.log(data[j].displayName);
+			}
 			utils.projectIndexes={};
 			utils.projectsCopy=data;				//Save the freshly retrieved project list
+
+			//Dynamically increase the project project properties size
 			while(data.length>Constants.MAX_PROJECTS){
 				for(var i=Constants.MAX_PROJECTS;i<2*Constants.MAX_PROJECTS+1;i++){
 					$rootScope.projectProperties.push(new projectNo(i));
@@ -560,58 +1104,48 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 				//Plus 1 for incoperating a new project when no. of projects=2^n
 				Constants.MAX_PROJECTS=2*Constants.MAX_PROJECTS+1;
 			}
+
 			for(var i=0;i<data.length;i++){
-				var pid=data[i].pid;
+				//project's mongo id
+				var pid=data[i]._id;
 				utils.projectIndexes[pid]=i;
+				utils.projectIndexes[data[i].pid]=i;
 				$rootScope.projectProperties[i].style={};
 				$rootScope.projectProperties[i].style.color=data[i].colorcode;
 			}
 			console.log(utils.projectIndexes);
 			deferred.resolve(data);
+		},
+		function(result){
+			console.log(result);
+			//Project List Blank or Authorization Error
+			switch(result.status){
+				case 404:
+					console.log("Project List Empty");
+					deferred.reject([]);
+					break;
+				case 401:
+					console.log("Authorization failed while fetching project list");
+					deferred.reject([]);
+					break;
+				default:
+					deferred.reject(utils.projectsCopy);
+					break;
+			}
+
+
 		})
-		.error(function(data){
-			//In Case of error, send back the last retrieved copy
-			deferred.reject(utils.projectsCopy);
-		})
 		return deferred.promise;
 	};
 
-	utils.addProject=function(projectName, jobId, budgetHrs, color, colorindex){
-		var deferred=$q.defer();
-		var params=[];
-		params['userid']=Config.data.userid;
-		params['name']= projectName;
-		params['jobid']=jobId;
-		params['budget']=budgetHrs;
-		params['color']=color;
-		params['colorindex']=colorindex;
 
-		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
-		.success(function(data){deferred.resolve(data);})
-		.error(function(data){deferred.reject(data);})
-		return deferred.promise;
-	};
-
-	utils.editProject=function(projectId, projectName, jobId, budgetHrs, color, colorindex){
-		var deferred=$q.defer();
-		var params=[];
-		params['projectid']=projectId;
-		params['userid']=Config.data.userid;
-		params['name']= projectName;
-		params['jobid']=jobId;
-		params['budget']=budgetHrs;
-		params['color']=color;
-		params['colorindex']=colorindex;
-		$http.post(Constants.URL_SERVICE+Constants.PROJECT_UPDATE_ADDRESS,params)
-		.success(function(data){deferred.resolve(data);})
-		.error(function(data){deferred.reject(data);})
-		return deferred.promise;
-	};
 
 	utils.selectProject=function(){
 		//Check the current document's XMP
+		console.log(Constants.APP_NAME);
 		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getProjectDetails()', function(data){
-			if(data==""||!utils.projectIndexes.hasOwnProperty(parseInt(data))){
+			console.log(data);
+			if(data==""||!utils.projectIndexes.hasOwnProperty(data)){
 				//The opened document has no associated project, Clear selected Project
 				if(utils.getSelectedProjectIndex()!=-1){
 					$rootScope.$apply(function(){
@@ -630,10 +1164,14 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 					}
 					if(data!=""/* ||data!="EvalScript error." */){
 						console.log("Data from project xmp : "+data);
-						utils.changeStyleToSelected(utils.projectIndexes[parseInt(data)]);
+						utils.changeStyleToSelected(utils.projectIndexes[data]);
 					}
-					utils.setSelectedProjectIndex(utils.projectIndexes[parseInt(data)]);
-					utils.setCurrentProjectId(parseInt(data));
+					utils.setSelectedProjectIndex(utils.projectIndexes[data]);
+					utils.setCurrentProjectId(utils.projectsCopy[utils.projectIndexes[data]]._id);
+					//if pid is old one, replace it with new one
+					if(utils.projectsCopy[utils.projectIndexes[data]].pid==data){
+						CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+utils.projectsCopy[utils.projectIndexes[data]]._id+'\')');
+					}
 				});
 			}
 		});
@@ -649,7 +1187,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface){
 /********** App Watcher *********/
 /********************************/
 
-services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'CSInterface', 'Config', 'WatcherPhotoshop',function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, CSInterface, Config, watcherPS){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'CSInterface', 'Config', 'WatcherPhotoshop','WatcherAICY', 'UserUtils', function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, CSInterface, Config, watcherPS, watcherAICY, UserUtils){
 	var utils={};
 	utils.removeEventListeners=function(){
 		CSInterface.removeEventListener('documentAfterActivate',onDocumentAfterActivate);
@@ -661,6 +1199,34 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	};
 
 	utils.addEventListeners=function(){
+		if(Constants.APP_NAME=='AICY'){
+			console.log("APP=INCopy");
+			watcherAICY.setEventListenersExtendScript();
+		}
+		if(Constants.APP_NAME=="PHXS"||Constants.APP_NAME=="PHSP"){
+			watcherPS.init();
+		}
+		//set the file path
+		if(Constants.APP_NAME=="PPRO"){
+			var osInformation = CSInterface.getOSInformation();
+	    	var TrackerFilePath;
+	    if(osInformation.match(/Mac OS/gi)!= null){
+	        TrackerFilePath = CSInterface.getSystemPath(SystemPath.EXTENSION) + "/assets/Images/";
+	    }
+	    else{
+	        if(osInformation.match(/64-bit/gi) != null){
+	            TrackerFilePath = CSInterface.getSystemPath(SystemPath.EXTENSION) + "/assets/Images/";
+	        }
+	        else{
+	            TrackerFilePath = CSInterface.getSystemPath(SystemPath.EXTENSION) + "/assets/Images/";
+	        }
+	    }
+	    TrackerFilePath = escape(TrackerFilePath);
+	    CSInterface.evalScript('$._ext_PPRO_XMP.setTrackerFilePath("' + TrackerFilePath + '")');
+	    CSInterface.evalScript('$._ext_PPRO_XMP.initTT()');
+
+
+		}
 		//Define Event Listeners
 		CSInterface.addEventListener('documentAfterActivate', onDocumentAfterActivate);
 		CSInterface.addEventListener('documentAfterDeactivate', onDocumentAfterDeactivate);
@@ -669,7 +1235,8 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		CSInterface.addEventListener('applicationBeforeQuit', onApplicationBeforeQuit);
 		CSInterface.addEventListener('projectSelected', onProjectSelected);
 		CSInterface.addEventListener('onCreationComplete', onCreationComplete);
-		watcherPS.init();
+		CSInterface.addEventListener('userActive', onUserActive);
+
 	};
 
 	function onDocumentAfterDeactivate(event){
@@ -679,6 +1246,10 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 				projectUtils.selectProject();
 			}
 		});
+	};
+	function onUserActive(event){
+		console.log("\n"+event.type+" dispatched");
+		Logger.log(event.type);
 	};
 
 	function onProjectSelected(event){
@@ -697,7 +1268,8 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		console.log(event);
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
 		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworxproject file recursively, and get project Id, else get 0.
-		CSInterface.evalScript('$._extCWFile.getProjectID(\"'+Config.userid+'\")', function(pid){
+		var id=(UserUtils.oid)?"oid":"userid";
+		CSInterface.evalScript('$._extCWFile.getProjectID(\"'+UserUtils[id]+'\")', function(pid){
 			console.log("project id from .creativeworx file"+pid);
 			if(pid!=""){
 				//Assign that project id to the current document
@@ -712,6 +1284,26 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 					Logger.log("documentAfterSave");
 				});
 			}
+			else{
+				if(id=="oid"){
+					id="userid";
+					CSInterface.evalScript('$._extCWFile.getProjectID(\"'+UserUtils[id]+'\")', function(pid){
+						if(pid!==""){
+							CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+pid+'\')',function(data){
+								console.log("XMP Inserted");
+								projectUtils.setCurrentProjectId(pid);
+								projectUtils.selectProject();
+								var event=new CSEvent("projectSelected", "APPLICATION");
+								event.type="projectSelected";
+								event.data="<projectSelected />";
+								CSInterface.dispatchEvent(event);
+								Logger.log("documentAfterSave");
+							});
+						}
+					});
+				}
+
+			}
 		});
 
 		}
@@ -720,13 +1312,49 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		}
 	};
 	function onApplicationActivate(event){
-		//console.log(event);
+		console.log(event);
 		Logger.log(event.type);
 	};
 	function onApplicationBeforeQuit(event){
 		Logger.log(event.type);
 	};
 
+	return utils;
+
+}]);
+
+services.factory('WatcherAICY',['Constants', function(Constants){
+	function loadPlugPlugLibrary(){
+		 var csInterface = new CSInterface();
+	    //Determine the plaform, so that we can direct our ExtendScript to the correct version.
+	    var osInformation = csInterface.getOSInformation();
+	    var plugPlugFile;
+	    if(osInformation.match(/Mac OS/gi)!= null){
+	        plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Mac/osx10_64/PlugPlugExternalObject.framework";
+	    }
+	    else{
+	        if(osInformation.match(/64-bit/gi) != null){
+	            plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Win/win64/PlugPlugExternalObject.dll";
+	        }
+	        else{
+	            plugPlugFile = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/libraries/PlugPlugExternalObject-Win/win32/PlugPlugExternalObject.dll";
+	        }
+	    }
+	    plugPlugFile = escape(plugPlugFile);
+	    csInterface.evalScript('$._ext_AICY_EVENTS.loadPlugPlugLibrary("' + plugPlugFile + '")');
+	};
+		function addPlugPlugSuccessEventListener(){
+	    var csInterface = new CSInterface();
+	    csInterface.addEventListener("plugPlugSuccess", function(){
+	        new CSInterface().evalScript('$._ext_AICY_EVENTS.addEventListeners()');
+	    });
+	};
+	var utils={};
+	utils.setEventListenersExtendScript=function(){
+		addPlugPlugSuccessEventListener();
+		loadPlugPlugLibrary();
+
+	}
 	return utils;
 
 }]);
@@ -816,9 +1444,9 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 
 	var PSCallback=function(csEvent) {
         var dataArray = csEvent.data.split(",");
-		//console.log(csEvent);
+		console.log(csEvent);
         var eventID=dataArray[0];
-		//console.log(eventID);
+		console.log(eventID);
 		switch(eventID){
 			case "1935767141":dispatchEvent('documentAfterSave');
 				CSInterface.evalScript('app.activeDocument.fullName',function(name){
@@ -828,7 +1456,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 			case "1131180832":
 				console.log("document closed");
 				CSInterface.evalScript('app.documents.length',function(length){
-		//			console.log("In CsInterface");
+					console.log("In CsInterface");
 					if(length==0){
 						dispatchEvent('documentAfterDeactivate');
 					}
@@ -851,7 +1479,7 @@ services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$inte
 
 				break;
 			case "1298866208":
-		//		console.log("new document");
+				console.log("new document");
 				CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentName()',function(name){
 					previousDocName=name;
 					dispatchEvent('documentAfterActivate');
@@ -923,15 +1551,16 @@ function documentSelected(){
 
 
 
-services.factory('Logger', ['Constants','Config','EventLogger', 'AppModel','CSInterface',function(Constants,Config ,EventLogger, AppModel, CSInterface){
+services.factory('Logger', ['Constants','Config','DBHelper', 'AppModel','CSInterface',function(Constants,Config ,DBHelper, AppModel, CSInterface){
 	/* Get the Data from App Model*/
 	/* Collate items to log like form JSON*/
 	/* Call DB function to log*/
 	var utils={};
 	console.log("In Logger...");
 	utils.log=function(event){
-		//console.log("Updating App Model...");
+		console.log("Updating App Model...");
 		CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.getDetails()', function(data){
+			console.log(JSON.parse(data).projectID);
 			AppModel.updateModel(JSON.parse(data));
 			event=eventIdToName(event);
 			createLoggingData(event);
@@ -962,41 +1591,34 @@ services.factory('Logger', ['Constants','Config','EventLogger', 'AppModel','CSIn
 	};
 
 	var createLoggingData=function(eventType){
-		//console.log("Creating Logging Data");
+		console.log("Creating Logging Data");
 		var addObj={};
 		//addObj.ID="";
-		addObj.eventID=AppModel.documentID+':'+AppModel.eventStartTime.getTime().toString();
-		addObj.userID=AppModel.userID;
+		addObj.event_type=eventType;
+		addObj.event_start=AppModel.eventStartTime.toJSON();
+		addObj.event_end=AppModel.eventEndTime.toJSON();
+		var date=new Date();
+		addObj.event_rec=date.toJSON();
+		addObj.ext_name=Constants.EXTENSION_NAME;
+		addObj.ext_ver=Constants.EXTENSION_VERSION_NUMBER;
+		addObj.host_name=AppModel.hostName;
+		addObj.host_ver=AppModel.hostVers;
 		addObj.computerID="";
-		addObj.projectID=AppModel.projectID;
-		addObj.startTime=AppModel.eventStartTime;
-		addObj.endTime=AppModel.eventEndTime;
-		addObj.imageName="";
-		addObj.eventRecordedTime=new Date();
-		//addObj.status=Constants.STATUS_NEW;
-		//addObj.imageStatus=Constants.IMAGE_STATUS_NEW;
-		var obj={
-			"event": {
-				"type": eventType,
-				"documentID": AppModel.documentID,
-				"instanceID": AppModel.instanceID,
-				"originalID": AppModel.originalID,
-				"documentName": AppModel.documentName,
-				"documentPath": AppModel.documentPath,
-				"hostName": AppModel.hostName,
-				"hostVers": AppModel.hostVers,
-				"extName": Constants.EXTENSION_NAME,
-				"extVers": Constants.EXTENSION_VERSION_NUMBER
-			}
-		};
-		addObj.jsonEventPackage=obj;
-		//console.log(addObj);
-		EventLogger.log(addObj);
+		addObj.document_id=AppModel.documentID;
+		addObj.document_name=AppModel.documentName;
+		addObj.document_path=AppModel.documentPath;
+		addObj.user_id=AppModel.userID;
+		addObj.project_id=AppModel.projectID;
+		console.log(AppModel.hostName);
+				console.log(addObj);
+		console.log(addObj.host_name);
+		console.log(addObj);
+		DBHelper.addItemToEventLogTable(addObj);
 	};
 	return utils;
 }]);
 
-services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Config, Constants, CSInterface){
+services.factory('AppModel', ['Config','Constants', 'CSInterface', 'projectUtils', 'UserUtils', function(Config, Constants, CSInterface, projectUtils, UserUtils){
 	var utils={};
 		 utils.defaultDocumentID = ""; //Used No where
 		 utils.userID = "";
@@ -1006,8 +1628,8 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 		 utils.originalID = "";
 		 utils.documentName = "";
 		 utils.documentPath = "";
-		 utils.eventStartTime = new Date();
-		 utils.eventEndTime = new Date();
+		 utils.eventStartTime ="";
+		 utils.eventEndTime = "";
 		 //utils.jsonEventInfo = "";
 		 utils.hostName="";
 		 utils.hostVers="";
@@ -1018,17 +1640,23 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 
 	/* Call JSX functions to get the required parameters for the document*/
 	utils.updateModel=function(data){
+		console.log(data);
 		this.hostName=getHostName();
 		this.hostVers=CSInterface.hostEnvironment.appVersion;
-		this.projectID=data.projectID;
+		this.projectID=(function(){
+				if(projectUtils.getCurrentProjectId()==-1||projectUtils.getCurrentProjectId()==0){
+					return "";
+				}
+				else return projectUtils.getCurrentProjectId()})();
 		this.instanceID=data.instanceID;
 		this.originalID=data.originalID;
 		this.documentName=data.docName;
 		this.documentPath=data.docPath;
 		this.documentID=data.docID;
-		this.userID=Config.data.userid;
+		this.userID=UserUtils.userid;
 		this.eventStartTime = new Date();
 		this.eventEndTime = new Date();
+		console.log(this);
 
 	};
 	/* Return required parameters (getters)*/
@@ -1038,9 +1666,12 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 	};
 	getHostName=function(){
 		switch(Constants.APP_NAME){
-			case "IDSN":return 'indesign';
-			case "PHXS":return 'photoshop';
-			case "ILST":return 'illustrator';
+			case "IDSN":return 'indesign';break;
+			case "PHXS":return 'photoshop';break;
+			case "PHSP":return 'photoshop';break;
+			case "ILST":return 'illustrator';break
+			case "AICY":return 'incopy';break;
+			case "PPRO":return 'premiere pro';break;
 			default:return '';
 		}
 	};
@@ -1064,138 +1695,10 @@ services.factory('AppModel', ['Config','Constants', 'CSInterface', function(Conf
 
 }]);
 
-services.factory('EventLogger',['$interval','Constants','debuggerUtils', 'TimeWindowMaintainer', 
-function($interval,Constants, debuggerUtils, TimeWindowMaintainer){
-	var logger={};
-	logger.log=function(record){
-		TimeWindowMaintainer.addRecordToHead(record);
-	};
-	return logger;
-}]);
 
+services.factory('DBHelper',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface', 'APIUtils',
+function($http,$interval,Constants,Config, debuggerUtils, CSInterface, APIUtils){
 
-services.factory('TimeWindowMaintainer',['$interval','Constants','debuggerUtils', 'Sender',
-function($interval,Constants, debuggerUtils, Sender){
-	var size=Constants.TIME_WINDOW_ARRAY_SIZE;
-	var utils={};
-	utils.timeWindow=new Array(10);
-	for(var i=0;i<size;i++){
-		utils.timeWindow[i]=new Array();
-	}
-
-	utils.head=0;
-	utils.tail=-1;
-	var incrementHead=function(){
-		utils.tail=utils.head;
-		utils.head=(utils.head+1)%size;
-		console.log("sending head to sender");
-		if(utils.timeWindow[utils.tail].length>0)
-			Sender.processAndSend(utils.timeWindow[utils.tail]);
-		utils.timeWindow[utils.tail]=new Array();
-	};
-	var promise_incrementHead= $interval(incrementHead,1*60*1000);
-	
-	utils.addRecordToHead=function(record){
-		console.log(utils.timeWindow);
-		console.log(utils.head);
-		utils.timeWindow[utils.head].push(record);
-	};
-	return utils;
-
-}]);
-
-
-services.factory('Sender',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface', 'Filer',
-function($http,$interval,Constants,Config, debuggerUtils, CSInterface, Filer){
-	var sender={};
-	sender.processAndSend=function(records){
-		winner=sender.getWinner(records);
-		console.log("Sending ");
-		console.log(winner);
-		sender.send(winner);
-	};
-	sender.getWinner=function(records){
-		console.log("in get winner");
-		console.log(records);
-		var leaderBoard={};
-		for (var i = 0; i < records.length; i++) {
-			if(!leaderBoard.hasOwnProperty(records[i].jsonEventPackage.event.documentName)){
-				leaderBoard[records[i].jsonEventPackage.event.documentName]=new Array();
-				leaderBoard[records[i].jsonEventPackage.event.documentName].push([1,i]);
-			}
-			else{
-				leaderBoard[records[i].jsonEventPackage.event.documentName][0][0]+=1;
-				leaderBoard[records[i].jsonEventPackage.event.documentName][0][1]=i;	
-			}
-
-		};
-		console.log("leaderBoard");
-		console.log(leaderBoard);
-		//Determine the max. number of activities
-		var max=0;
-		var winner=-1;
-		var j;
-		for(j in leaderBoard){
-			if(leaderBoard[j][0][0]>=max){
-				max=leaderBoard[j][0][0];
-			}
-		}
-
-		for(j in leaderBoard){
-			if(leaderBoard[j][0][0]==max&&leaderBoard[j][0][1]>=winner){
-				winner=leaderBoard[j][0][1];
-			}
-		}
-
-		return records[winner];
-	};
-	sender.send=function(record){
-		console.log("In Sender");
-		console.log(record);
-		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
-		var records=new Array();
-		record.jsonEventPackage=JSON.stringify(record.jsonEventPackage);
-		records[0]=record;
-		var batchedRecords=JSON.stringify(records);
-		var details={};
-
-		details['data']=batchedRecords;
-		details['username']=Config.username;
-		details['password']=Config.password;
-
-		$http.post(url,details)
-		.success(function(data){
-			console.log(data);
-			console.log("[Success]Records Send to server");
-			if(data=="Invalid event details."){
-				debuggerUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
-				console.logit(data);
-				Filer.logit(batchedRecords);
-			}
-			else{
-				console.log("Offline records successfully send to server");
-				debuggerUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
-			}
-		}
-		).error(function(data){
-			console.log("Error in sending records"+data);
-			debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
-			Filer.logit(batchedRecords);
-		})
-	};
-	return sender;
-}]);
-
-
-
-
-
-
-
-services.factory('Filer',['$http','$interval','Constants','Config','debuggerUtils', 'CSInterface',
-function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
-
-	var filer={}
 	//Open/Create the Log file(for unsent records)
 	CSInterface.evalScript('$._extFile.openFile()');
 
@@ -1208,108 +1711,113 @@ function($http,$interval,Constants,Config, debuggerUtils, CSInterface){
 	};
 
 	//Setup Interval to read the unsend record file and try to send them.
-	var promise_sendLoggedRecords= $interval(sendLoggedRecords,1*60*1000);
+	var promise_sendLoggedRecords= $interval(sendLoggedRecords,Constants.SEND_UNSENT_EVENTS_TIMER);
 
 
 	//Get the records, batch them if if size>batch size and then send them to server
 	var processAndSend=function(records){
 		//Check Record Size(if recordSize>batch size, break them into batches before sending)
+		console.log(records);
 		var Records=JSON.parse(records);
 		var rec=[];
 		if(Records.length>1){
-			if(Records.length>=Constants.BATCH_SIZE){
-				//console.log("Batching and sending offline records");
+			while(Records.length>=Constants.BATCH_SIZE){
+				console.log("Batching and sending offline records");
 				for(var i=0;i<Constants.BATCH_SIZE;i++){
 					rec.push((Records.splice(0,1))[0]);
 					//Decode documentName and documentPath and hostName
-					rec[i].jsonEventPackage.event.documentName=atob(rec[i].jsonEventPackage.event.documentName);
-					rec[i].jsonEventPackage.event.documentPath=atob(rec[i].jsonEventPackage.event.documentPath);
-					rec[i].jsonEventPackage.event.hostName=atob(rec[i].jsonEventPackage.event.hostName);
+					rec[i].document_name=atob(rec[i].document_name);
+					rec[i].document_path=atob(rec[i].document_path);
+					rec[i].host_name=atob(rec[i].host_name);
 					//Done Decoding
-					rec[i].jsonEventPackage=JSON.stringify(rec[i].jsonEventPackage);
+
 
 				}
-				send(JSON.stringify(rec));
+				send(rec);
 				console.log("send records\n");
-				console.log(JSON.stringify(rec));
+				console.log(rec);
 				rec=[];
 			}
 			for(var i =0;i<Records.length;i++){
 				//Decode documentName and documentPath and hostName
-				Records[i].jsonEventPackage.event.documentName=atob(Records[i].jsonEventPackage.event.documentName);
-				Records[i].jsonEventPackage.event.documentPath=atob(Records[i].jsonEventPackage.event.documentPath);
-				Records[i].jsonEventPackage.event.hostName=atob(Records[i].jsonEventPackage.event.hostName);
+				Records[i].document_name=atob(Records[i].document_name);
+				Records[i].document_path=atob(Records[i].document_path);
+				Records[i].host_name=atob(Records[i].host_name);
 				//Done Decoding
-				Records[i].jsonEventPackage=JSON.stringify(Records[i].jsonEventPackage);
 			}
 			if(Records.length>0){
-				send(JSON.stringify(Records));
+				send(Records);
 				console.log("send records\n");
-				console.log(JSON.stringify(Records));
+				console.log(Records);
 			}
 		}
 	};
 
 	//Send the batched records to server, If records can't be sent, log them.
-	var send=function(records){
+	var send=function(batchedRecords){
 		//Send Batched Records to Server
-		var url=Constants.URL_SERVICE+Constants.BATCHDATA_SEND_ADDRESS;
-		var details={};
-		var batchedRecords=new Array();
-		batchedRecords[0]=records;
-		details['data']=JSON.stringify(batchedRecords);
-		details['username']=Config.username;
-		details['password']=Config.password;
-		console.log(details);
-		console.log(details["data"]);
-		$http.post(url,details)
-		.success(function(data){
-			console.log("[Success]Records Send to server");
-			if(data=="Invalid event details."){
+
+			console.log(batchedRecords[0]);
+			APIUtils.sendEvents(batchedRecords[0])/*Temporarily till server is accecpting individual records*/
+			.then(function(data){
+				console.log("[Success]Records Send to server");
+				console.log("Records successfully send to server");
 				console.log(data);
-				debuggerUtils.updateLogs("[httpResult]: Invalid data error occurred on server " + data);
-				filer.logit(batchedRecords);
-			}
-			else{
-				console.log("Offline records successfully send to server");
 				debuggerUtils.updateLogs("[httpResult]: Records successfully sent to Remote server. " + data);
 
 			}
-		}
-		).error(function(data){
-			//console.log("Error in sending records"+data);
-			console.log(data);
-			debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
-			filer.logit(batchedRecords);
-		})
+			,function(data){
+				console.log("Error in sending records");
+				console.log(JSON.stringify(data.data));
+				debuggerUtils.updateLogs("[httpResult]: Cannot contact to server. " + data);
+				logit(batchedRecords);
+			})
+
 	};
 
 	//Log unsent events to the file
-	filer.logit=function(buffer){
-		//console.log("Writing unsend records to database size : "+buffer.length);
+	var logit=function(buffer){
+		console.log("Writing unsend records to database size : "+buffer.length);
 		debuggerUtils.updateLogs("Logging unsent events to local file");
-		var records=JSON.parse(buffer);
+		var records=buffer;
 		var record;
-		console.log(buffer);
 		for(var i=0;i<records.length;i++){
-			console.log(records[i]);
-			console.log(records[i].jsonEventPackage);
-			records[i].jsonEventPackage=JSON.parse(records[i].jsonEventPackage);
+
 			//Encode documentName and documentPath and hostName
-			records[i].jsonEventPackage.event.documentName=btoa(records[i].jsonEventPackage.event.documentName);
-			records[i].jsonEventPackage.event.documentPath=btoa(records[i].jsonEventPackage.event.documentPath);
-			records[i].jsonEventPackage.event.hostName=btoa(records[i].jsonEventPackage.event.hostName);
+			records[i].document_name=btoa(records[i].document_name);
+			records[i].document_path=btoa(records[i].document_path);
+			records[i].host_name=btoa(records[i].host_name);
 			//Done Encoding
-			records[i].jsonEventPackage=JSON.stringify(records[i].jsonEventPackage);
 			record=JSON.stringify(records[i]);
-			record=record.replace('jsonEventPackage":"','jsonEventPackage":');
-			record=record.replace('}}"}','}}}');
 			console.log("Logged Records \n "+record);
-			CSInterface.evalScript('$._extFile.writeObj(\''+record+'\')', function(data, error){console.log(error)});
+			CSInterface.evalScript('$._extFile.writeObj(\''+record+'\')');
 		}
 	};
 
-return filer;
+
+	dbhelper={};
+	var buffer=[];
+	//Buffer them till the buffer size and then sends them.
+	dbhelper.addItemToEventLogTable=function(obj){
+		console.log("Adding item to event log table");
+		console.log("Batch Size= "+Constants.BATCH_SIZE);
+		if(buffer.length<Constants.BATCH_SIZE-1&&obj.event_type!="documentAfterSave"){
+			console.log("Data Buffered");
+			console.log(buffer.length);
+			console.log(buffer);
+			buffer.push(obj);
+		}
+		else{
+			//Send to server
+			buffer.push(obj);
+			console.log("Sending buffer");
+			console.log(buffer[0]);
+			send(buffer);
+			//empty the buffer
+			buffer=[];
+		}
+	};
+	return dbhelper;
 }]);
 
 

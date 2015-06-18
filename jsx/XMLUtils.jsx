@@ -25,7 +25,7 @@
 		if(!this.isExists()){
 			return "false";
 		}
-		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval_html5","serviceAddress","checkOnlineTimeInterval_html5","imageTimeInterval_html5","batchSize_html5","thresholdCount_html5","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled_html5", "configversion", "companyEmail", "companyName", "companyEmailValue"];
+		var tags=["username","password","keepMeLoggedIn","userid","firstname","timeInterval_html5","serviceAddress","checkOnlineTimeInterval_html5","imageTimeInterval_html5","batchSize_html5","thresholdCount_html5","siteAddress", "updateAddress", "checkStatusAddress", "batchDataSendAddress", "fileUploadAddress", "imagesFolderAddress", "logEnabled_html5", "configversion", "companyEmail", "companyEmailValue" , "companyName", "homePage", "oid"];
 		var obj = new Object();
 		var str="{";
 		for(var i=0;i<tags.length;i++){
@@ -37,9 +37,11 @@
 	},
 	
 	writeConfig:function(config){
+		//alert(config);
 		if(!this.isExists()){
 			var myRootXmlObj = new XML ("<config></config>");
 			configFile = new File(pathToConfigFile);
+			
 			for (c in config) {
 				if(c != "data"){
 					myRootXmlObj.appendChild(new XML ("<"+c+">"+config[c]+"</"+c+">"));
@@ -63,8 +65,14 @@
 					this.setTagValue('userid', config[c]);
 				else if(c == "companyEmail")
 					this.setTagValue('companyEmail', config[c]);
+				
+				else if(c == "oid")
+					this.setTagValue('oid', config[c]);
+				
+					
 				else if(c == "companyName")
 					this.setTagValue('companyName', config[c]);
+				
 				else if(c == "companyEmailValue")
 					this.setTagValue('companyEmailValue', config[c]);
 				
@@ -82,6 +90,8 @@
 					this.setTagValue('logEnabled_html5', config[c]);
 				else if(c == "configversion")
 					this.setTagValue('configversion', config[c]);
+				else if(c == "homePage")
+					this.setTagValue('homePage', config[c]);
 				
 
 			}		
@@ -128,5 +138,60 @@
         file.writeln (XMLHeader);
 		file.write(xml.toXMLString());
 		file.close();
-	}
+	},
+
+	deleteConfigFile:function(){
+		if(this.isExists()){
+			var configFile = new File(pathToConfigFile);
+			var result=configFile.remove();
+			return result.toString();
+		}
+		else{
+			return "true";
+		}
+
+	},
+	deleteUserFile:function(){
+		if(this.isExistsUserFile()){
+			var userInformationFile = new File(pathToUserInformationFile);
+			var result=userInformationFile.remove();
+			return result.toString();
+		}
+		else{
+			return "true";
+		}
+	},
+	isExistsUserFile : function() {
+		var userInformationFile = new File(pathToUserInformationFile);
+		var userInformationFolder=userInformationFile.parent;
+		if(!userInformationFolder.exists){
+			userInformationFolder.create();
+		}
+        if(userInformationFile.exists)
+            return true;
+        else
+            return false;
+    },
+	readUserInformation:function(){
+		if(!this.isExistsUserFile())
+			return false;
+		else{
+			var userInformationFile=new File(pathToUserInformationFile);
+			userInformationFile.open('r');
+			var content=userInformationFile.read();
+			userInformationFile.close();
+			return content;
+		}
+	},
+	writeUserInformation:function(data){
+		this.isExistsUserFile();
+		var file=new File(pathToUserInformationFile);
+		file.encoding = "UTF8";
+		file.open("w", "TEXT", "????");
+		file.write("\uFEFF");
+		file.lineFeed = "unix";
+        file.writeln (data);
+		//file.write(xml.toXMLString());
+		file.close();
+	},
 };

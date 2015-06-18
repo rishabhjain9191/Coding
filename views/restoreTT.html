@@ -1,0 +1,54 @@
+<script type="text/ng-template" id="messageDialogId">
+		<div class="ngdialog-message">
+			<h3>{{ngDialogData.heading}}</h3>
+			<p>{{ngDialogData.message}}</p>
+		</div>
+		<div class="ngdialog-buttons">
+			<button type="button" ng-click="cancel()" class="lightBtn" style="width:auto">Cancel</button>
+
+			<button type="button" ng-click="confirm()" class="lightBtn" style="width:auto">{{ngDialogData.command}}</button>
+		</div>
+</script>
+<script type="text/ng-template" id="errorDialogId">
+		<div class="ngdialog-message">
+			<h3>{{ngDialogData.heading}}</h3>
+			<p>{{ngDialogData.message}}
+			<span ng-click="openFAQ()" class="pointer">FAQ</span>
+			</p>
+
+		</div>
+		<div class="ngdialog-buttons">
+			<button type="button" ng-click="cancel()" class="lightBtn" style="width:auto">I got it!</button>
+
+		</div>
+</script>
+
+<div class="pheader">
+		<span><b>Preferences</b></span>
+		<hr>
+		<span>Reset TimeTracker</span>
+	</div>
+<div style="text-align:center;margin-top:40px">
+	<div>
+	<button style="margin: auto; width:138px" class="darkBtn" ng-click='clearConfig()' ng-disabled="deleteDBWarning" >Restore factory defaults</button>
+	</div>
+	<div style="height:3px"></div>
+	<div>
+	<button style="margin: auto;width:138px" class="darkBtn" ng-click='showDeleteDBWarning()' ng-hide="deleteDBWarning">Flush cache</button>
+
+		<div ng-show="deleteDBWarning">
+			{{deleteDBWarningMessage}}
+			<button style="margin: auto;" class="darkBtn" ng-click='abortDeleteDB()'>Not Now</button>
+			<button style="margin: auto;" class="darkBtn" ng-click='clearDB()'>Proceed</button>
+
+
+		</div>
+	</div>
+
+	<div style="margin-top:60px">
+			<button style="margin: auto; width: 65px;" class="lightBtn" ng-click='cancel()' ng-hide="deleteDBWarning">Return</button>
+
+
+	</div>
+	<modal-dialog show='modalShown'><p>{{alert_message}}<p></modal-dialog>
+</div>

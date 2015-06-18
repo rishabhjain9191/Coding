@@ -1,24 +1,40 @@
 <div ng-click="showColorBox()">
 	<div class="pheader2">
 		<span><b>Select existing project to edit</b></span>
-		<select ng-click="message=''" ng-model='project' ng-change='changeProject(project)' ng-options="p.name for p in projects|filter:{edit:'!false'}">
+		<select ng-click="message=''" ng-model='project' ng-change='changeProject(project)' ng-options="p.displayName for p in projects">
+		<!-- Filter in ng-options |filter:{edit:'!false'}-->
 		</select>
 		<hr>
 	</div>
 	<div class="project">
 		<div class="group">
 			<label for="projectName">Project name</label><br/>
-			<input ng-click="message=''" class="ptext" id="editProject_projectName" ng-model="name" />
+			<input ng-click="message=''" class="ptext" id="editProject_projectName" ng-disabled="disabled" ng-model="name" />
 		</div >
-		<div class="group">
+
+		<div class="aliasGroup">
+			<div ng-show="disabled" class="aliasItem">
+			<label for="orgNickName">Org alias</label><br/>
+			<input class="aliasInput" ng-click="message=''"  id="editProject_orgNickName" ng-disabled="true" ng-model="project.alias.org" />
+			</div>
+
+			<div class="aliasItem">
+			<label for="userNickName">My alias</label><br/>
+			<input class="aliasInput ptext" ng-click="message=''"  id="editProject_userNickName" ng-model="project.alias.user" ng-disabled="false" style="height:9px"/>
+			</div>
+			
+
+		</div >
+		<div class="group" style="clear:both;padding-top:10px">
 			<label for="jobId">Job ID</label><br/>
-			<input ng-click="message=''" class="ptext" id="editProject_jobId" ng-model="project.jobid" />
+			<input ng-click="message=''" class="ptext" ng-disabled="disabled" id="editProject_jobId" ng-model="project.jobid" />
 		</div>
 		<div class="group">
 			<div class="colorDiv" style="float: left; width: 45px;">
 				<span>Color</span>
 				<ui-colorpicker ng-show="showAllColors" ng-model="targetColor"></ui-colorpicker>
-				<div class="colorBtn" ng-hide="showAllColors" ng-model="project.colorcode" ng-style="colorBtnStyle"></div>
+				
+				<div ng-style="colorBtnStyle123" ng-hide="showAllColors" ng-model="project.colorcode" class="colorBtn"></div>
 				<div class="colorsPanel" ng-show="showColorPanel">
 					<div class="colorPreview" ng-style="colorPreviewStyle"></div>
 					<div class="colors">
@@ -28,7 +44,7 @@
 			</div>
 			<div style="float: left; width: 73%; margin-left: 3px;">
 				<span>Budget (in hours)</span>
-				<input ng-click="message=''" class="budget" id="editProject_budget" ng-model="project.budget" />
+				<input ng-click="message=''" class="budget" ng-disabled="disabled" id="editProject_budget" ng-model="project.budget" />
 			</div>
 		</div>
 		<div class="stretch middle">
