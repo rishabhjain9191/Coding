@@ -62,7 +62,8 @@
 				(newProjectJobId)?(jobId=newProjectJobId):(jobId="");
 				(newProjectBudget)?(budgetHrs=newProjectBudget):(budgetHrs="");
 				(newProjectUserNickName)?(userNickName=newProjectUserNickName):(userNickName="");
-
+				console.log(newProject_projectName);
+				console.log(userNickName);
 				/* Angular Code*/
 				//color=$scope.targetColor;
 

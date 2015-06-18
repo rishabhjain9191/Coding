@@ -7,8 +7,8 @@
  * @license    All rights reserved.
  */
 
-app.controller('restoreTTController',['$scope','$rootScope', '$location', 'Constants', '$window','CSInterface','Config', 'viewManager', 'ngDialog',
-function($scope, $rootScope, $location, Constants, $window, CSInterface, Config, viewManager, ngDialog){
+app.controller('restoreTTController',['$scope','$rootScope', '$location', 'Constants', '$window','CSInterface','Config', 'viewManager', 'ngDialog','UserUtils',
+function($scope, $rootScope, $location, Constants, $window, CSInterface, Config, viewManager, ngDialog, UserUtils){
 
 	$scope.deleteDBWarning=false;
 	$scope.deleteDBWarningMessage="This action will reset your extension config file, thereby wiping out any saved passwords, and settings. After reseting, please restart any Adobe apps that are currently running TimeTracker.";
@@ -56,8 +56,8 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 
 	$scope.clearDB=function(){
 
-			Config.clearUserDetails();
-			// UserUtils.clearUserDetails();
+			//Config.clearUserDetails();
+			UserUtils.clearUserDetails();
 			CSInterface.evalScript('$._extFile.deleteDBFile()', function(result){
 			console.log("result of delete DB"+result);
 			if(result=='true'){
@@ -80,15 +80,15 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 
 
 
-app.controller('InsideCtrl',['$scope','$rootScope', '$location', 'Constants', '$window','CSInterface','Config', 'viewManager', 'ngDialog',
-function($scope, $rootScope, $location, Constants, $window, CSInterface, Config, viewManager, ngDialog){
+app.controller('InsideCtrl',['$scope','$rootScope', '$location', 'Constants', '$window','CSInterface','Config', 'viewManager', 'ngDialog','UserUtils',
+function($scope, $rootScope, $location, Constants, $window, CSInterface, Config, viewManager, ngDialog, UserUtils){
 	$scope.cancel=function(){
 		ngDialog.close();
 	};
 
 	function clearConfig(){
 		ngDialog.close();
-		Config.clearUserDetails();
+		UserUtils.clearUserDetails();
 		CSInterface.evalScript('$._extXML.deleteConfigFile()', function(result){
 			if(result=='true'){
 				//logout user
@@ -114,7 +114,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 	function clearDB(){
 				ngDialog.close();
 
-		Config.clearUserDetails();
+		UserUtils.clearUserDetails();
 			CSInterface.evalScript('$._extFile.deleteDBFile()', function(result){
 			console.log("result of delete DB"+result);
 			if(result=='true'){

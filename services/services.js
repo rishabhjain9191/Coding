@@ -368,6 +368,18 @@ services.factory('UserUtils',['CSInterface', 'Config', 'EncryptionUtils', functi
 			console.log("user data written successfully");
 		});
 	};
+	utils.clearUserDetails=function(){
+		this.username="";
+		this.password="";
+		this.userid="";
+		this.firstname="";
+		this.oid="";
+	};
+	utils.deleteUserFile=function(){
+		CSInterface.evalScript('$._extXML.deleteUserFile()', function(){
+			console.log("user file deleted successfully");
+		});
+	};
 	return utils;
 }]);
 
@@ -561,13 +573,7 @@ services.factory('Config', ['Constants','$q','debuggerUtils',function(Constants,
 			this[i]=obj[i];
 		}
 	};
-	config.clearUserDetails=function(){
-		this.username="";
-		this.password="";
-		this.userid="";
-		this.firstname="";
-		this.oid="";
-	};
+	
 	return config;
 }]);
 
@@ -818,9 +824,9 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils', 'Us
 			params["budget"]=budgetHrs;
 		}
 
-		/*if(userNickName!==undefined){
-			params["alias.user"]=userNickName;
-		}*/
+		if(userNickName!==undefined){
+			params["alias"]=userNickName;
+		}
 
 
 		/*
@@ -834,7 +840,7 @@ services.factory('APIUtils',['Constants','$q','Config','$http','OAuthUtils', 'Us
 
 		var url=Config.serviceAddress+"/project";
 		var method="POST";
-
+		console.log(params);
 		this.SendRequest(url,params,method,true)
 		.then(function(result){
 			deferred.resolve(result);

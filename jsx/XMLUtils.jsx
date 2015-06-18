@@ -151,6 +151,16 @@
 		}
 
 	},
+	deleteUserFile:function(){
+		if(this.isExistsUserFile()){
+			var userInformationFile = new File(pathToUserInformationFile);
+			var result=userInformationFile.remove();
+			return result.toString();
+		}
+		else{
+			return "true";
+		}
+	},
 	isExistsUserFile : function() {
 		var userInformationFile = new File(pathToUserInformationFile);
 		var userInformationFolder=userInformationFile.parent;
