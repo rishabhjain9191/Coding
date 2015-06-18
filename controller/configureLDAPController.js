@@ -53,7 +53,9 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		if(companyEmail==""){
 			UserUtils.companyEmail="";
 			UserUtils.companyEmailValue="";
-			UserUtils.writeUserInformation();
+			UserUtils.writeUserInformation(function(){
+				resultWrittentoConfig();
+			});
 		}else{
 			APIUtils.validateLDAP(companyEmail)
 			.then(function(data){
@@ -62,8 +64,9 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 				UserUtils.companyEmail=companyEmail;
 				UserUtils.companyName=data.data.result;
 				UserUtils.companyEmailValue=companyEmail;
-
-				UserUtils.writeUserInformation();
+				UserUtils.writeUserInformation(function(){
+					resultWrittentoConfig();
+				});
 			}
 			,function(data){
 				preloader.hideLoading();
@@ -112,7 +115,7 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 	var resultWrittentoConfig=function(){
 		console.log("Result written in config");
 		preloader.hideLoading();
-		if(Config.companyEmail!==0){
+		if(UserUtils.companyEmail!==0){
 			viewManager.LDAPConfigDone();
 		}
 	};

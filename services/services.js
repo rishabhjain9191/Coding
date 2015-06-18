@@ -345,7 +345,7 @@ services.factory('UserUtils',['CSInterface', 'Config', 'EncryptionUtils', functi
 			done();
 		});
 	};
-	utils.writeUserInformation=function(){
+	utils.writeUserInformation=function(callback){
 		var obj={};
 		console.log(utils);
 		var keysToRemove=[];
@@ -366,14 +366,16 @@ services.factory('UserUtils',['CSInterface', 'Config', 'EncryptionUtils', functi
 		var data1=data.replace(/"/g,'\\"');
 		CSInterface.evalScript('$._extXML.writeUserInformation('+'"'+data1+'"'+')', function(){
 			console.log("user data written successfully");
+			if(callback!==undefined)
+				callback();
 		});
 	};
 	utils.clearUserDetails=function(){
-		this.username="";
-		this.password="";
-		this.userid="";
-		this.firstname="";
-		this.oid="";
+		utils.username="";
+		utils.password="";
+		utils.userid="";
+		utils.firstname="";
+		utils.oid="";
 	};
 	utils.deleteUserFile=function(){
 		CSInterface.evalScript('$._extXML.deleteUserFile()', function(){
