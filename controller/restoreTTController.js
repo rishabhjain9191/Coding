@@ -57,6 +57,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 	$scope.clearDB=function(){
 
 			Config.clearUserDetails();
+			// UserUtils.clearUserDetails();
 			CSInterface.evalScript('$._extFile.deleteDBFile()', function(result){
 			console.log("result of delete DB"+result);
 			if(result=='true'){

@@ -87,13 +87,13 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 						}
 						else
 							$rootScope.canEdit=true;
-						Config.data=data;
+						// Config.data=data;
 
 						console.log(keepMeLoggedIn);
 						UserUtils.keepMeLoggedIn=keepMeLoggedIn;
 						UserUtils.keepMeLoggedIn=$scope.checked;
-						UserUtils.userid=Config.data._id;
-						UserUtils.firstname=Config.data.firstname;
+						UserUtils.userid=data._id;
+						UserUtils.firstname=data.firstname;
 						CSInterface.evalScript('$._extXML.writeConfig('+JSON.stringify(Config)+')', function(data){
 						});
 						UserUtils.writeUserInformation();
@@ -138,7 +138,7 @@ function(viewManager, $scope, $rootScope, $location, $http,Config, Constants, lo
 			Config.username = $scope.user.email;
 			Config.password = hashedPassword;
 
-			loginUtils.login($scope.user.email, hashedPassword, Config.companyEmail)
+			loginUtils.login($scope.user.email, hashedPassword, UserUtils.companyEmail)
 			.then(function(data){
 				preloader.hideLoading();
 				if(data.Msg=="Error: Authentication failed"){$scope.message="Authentication Failure";}

@@ -46,8 +46,8 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 				Constants.update(Config.data);
 
 				Config.serviceAddress=Config.data.serviceAddress;
-			
-		
+
+
 				debuggerUtils.updateLogs("Build : "+Constants.EXTENSION_VERSION_NUMBER);
 				console.log("Build : "+Constants.EXTENSION_VERSION_NUMBER);
 				debuggerUtils.updateLogs("==============");
@@ -58,7 +58,7 @@ function(viewManager, $scope, $rootScope, Constants, preloader, Config, debugger
 				debuggerUtils.updateLogs("Image Time Interval: " + Config.data.imageTimeInterval);
 				debuggerUtils.updateLogs("Batch Size: " + Config.data.batchSize);
 				debuggerUtils.updateLogs("Threshold Count: " + Config.data.thresholdCount);
-				debuggerUtils.updateLogs("Username: " + Config.data.username);
+				debuggerUtils.updateLogs("Username: " + UserUtils.username);
 				debuggerUtils.updateLogs("Logging Enabled: " /*todo*/);
 				debuggerUtils.updateLogs("==============");
 				viewManager.configloaded();

@@ -16,7 +16,7 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
 		constants.EXTENSION_ID = "com.creativeworx.tthtml";
 
-		constants.EXTENSION_VERSION_NUMBER = "2.3.0";
+		constants.EXTENSION_VERSION_NUMBER = "2.4.0";
 
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
@@ -238,11 +238,11 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 	};
 	utils.userInformationLoaded=function(){
 		$route.reload();
-		if(Config.companyEmail&&Config.companyEmail.length>0&&Config.companyEmail!=0){
+		if(UserUtils.companyEmail&&UserUtils.companyEmail.length>0&&UserUtils.companyEmail!=0){
 			$location.path('LDAPLogin');
 		}
 		else{
-			console.log(Config.serviceAddress);
+			console.log(UserUtils.serviceAddress);
 			$location.path('login');
 		}
 	};
@@ -282,8 +282,8 @@ services.factory('viewManager', ['$location','$route', 'CSInterface', 'AppWatche
 
 	utils.LDAPConfigDone=function(){
 		$route.reload();
-		console.log(Config.companyEmail);
-		if(Config.companyEmail!==""&&Config.companyEmail!==0){
+		console.log(UserUtils.companyEmail);
+		if(UserUtils.companyEmail!==""&&UserUtils.companyEmail!==0){
 			$location.path('LDAPLogin');
 		}
 		else{
@@ -1182,7 +1182,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 /********** App Watcher *********/
 /********************************/
 
-services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'CSInterface', 'Config', 'WatcherPhotoshop','WatcherAICY', function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, CSInterface, Config, watcherPS, watcherAICY){
+services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'projectUtils', 'debuggerUtils', 'CSInterface', 'Config', 'WatcherPhotoshop','WatcherAICY', 'UserUtils', function($location, $rootScope, Constants, Logger, projectUtils, debuggerUtils, CSInterface, Config, watcherPS, watcherAICY, UserUtils){
 	var utils={};
 	utils.removeEventListeners=function(){
 		CSInterface.removeEventListener('documentAfterActivate',onDocumentAfterActivate);
@@ -1263,8 +1263,8 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 		console.log(event);
 		console.log("Current project id while saving "+projectUtils.getCurrentProjectId());
 		if(projectUtils.getCurrentProjectId()==-1){//No project Selected, Search for .creativeworxproject file recursively, and get project Id, else get 0.
-		var id=(Config.oid)?"oid":"userid";
-		CSInterface.evalScript('$._extCWFile.getProjectID(\"'+Config[id]+'\")', function(pid){
+		var id=(UserUtils.oid)?"oid":"userid";
+		CSInterface.evalScript('$._extCWFile.getProjectID(\"'+UserUtils[id]+'\")', function(pid){
 			console.log("project id from .creativeworx file"+pid);
 			if(pid!=""){
 				//Assign that project id to the current document
@@ -1282,7 +1282,7 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 			else{
 				if(id=="oid"){
 					id="userid";
-					CSInterface.evalScript('$._extCWFile.getProjectID(\"'+Config[id]+'\")', function(pid){
+					CSInterface.evalScript('$._extCWFile.getProjectID(\"'+UserUtils[id]+'\")', function(pid){
 						if(pid!==""){
 							CSInterface.evalScript('$._ext_'+Constants.APP_NAME+'_XMP.insertXMP(\''+pid+'\')',function(data){
 								console.log("XMP Inserted");

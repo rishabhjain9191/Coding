@@ -117,9 +117,9 @@ app.config(['$routeProvider', function($routeProvider){
 }]);
 
 
-app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route','Config','CSInterface','$templateCache','updateUtils',
+app.controller('viewCtrl',['$rootScope', '$scope', '$location','$http','Constants','preloader','debuggerUtils', '$window', 'viewManager','AppWatcher','projectUtils', '$route','Config','CSInterface','$templateCache','updateUtils', 'UserUtils',
 
-function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface, $templateCache, updateUtils){
+function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUtils,  $window, viewManager,AppWatcher,projectUtils, $route,Config,CSInterface, $templateCache, updateUtils, UserUtils){
 
 	//************************************************
 	//*************************************************
@@ -177,7 +177,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 
 		$rootScope.asgnPrjFldr=function(){
 			function getApprId(){
-				if(Config.oid)
+				if(UserUtils.oid)
 					return "oid"
 				else
 					return "userid";
@@ -185,7 +185,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 			function makeObjectToWrite(){
 				var obj={};
 				obj["id"]=getApprId();
-				obj[getApprId()]=Config[getApprId()];
+				obj[getApprId()]=UserUtils[getApprId()];
 				obj["projectid"]=projectUtils.currentProjectId;
 				return obj;
 			}
@@ -246,7 +246,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		}
 		$rootScope.LoggedInItems=false;
 		$rootScope.userLoggedState=0;
-		Config.clearUserDetails();
+		UserUtils.clearUserDetails();
 		viewManager.userLoggedOut();
 	};
 
