@@ -53,9 +53,6 @@ select{
 select option{
 	padding: 5px 0;
 }
-input::-webkit-input-placeholder{
-	font-style:italic;
-}
 
 .pointer{
 	cursor: pointer;
@@ -120,7 +117,7 @@ pre{
 	font-family: arial;
 	margin-top: 6px;
 }
- 
+
 /***	Login	****/
 
 #loginForm{
@@ -181,7 +178,7 @@ input[type="checkbox"]{
 	width: 12px;
 	display:table-cell;
 	vertical-align:middle;
-	
+
 }
 
 
@@ -283,7 +280,7 @@ li{
 }
 
 .aliasGroup{
-	padding-bottom: 7px;	
+	padding-bottom: 7px;
 }
 
 .aliasInput{
@@ -316,7 +313,7 @@ li{
 .progress{
 	position: absolute;
 	right: 3%;
-	
+
 }
 
 .colorBtn{
@@ -416,8 +413,8 @@ li{
 }
 
 .loggingBtns button{
-	margin: auto; 
-	position: absolute; 
+	margin: auto;
+	position: absolute;
 	right: 6px;
 }
 
@@ -462,7 +459,7 @@ li{
 
 .nav{
 	background: url("../../assets/Images/wheel_off.png") no-repeat center;
-	height: 16px; 
+	height: 16px;
 	width: 20px;
 	cursor: pointer;
 	background-size: 14px 14px;
@@ -537,9 +534,9 @@ li{
 	width: 189px;
 	top: 50%;
 	left: 50%;
-	
+
 	-webkit-transform: translate(-50%, -50%);
-	
+
 	background-color: #fff;
 	box-shadow: 4px 4px 80px #000;
 	background-color: rgb(105, 110, 121);
@@ -615,7 +612,7 @@ li{
   text-indent: -9999px;
   width: 32px;
   height: 32px;
-} 
+}
  */
 /***** tooltip ****/
 
@@ -630,7 +627,7 @@ li{
 	z-index: 9999;
 	max-width: 200px;
 	word-wrap: break-word;
-	
+
 	/*box-shadow: 0 0 5px #aaa;*/
 }
 body .ui-tooltip {
@@ -641,7 +638,7 @@ body .ui-tooltip {
 
 .sp-container{
 	font-family: "Arial";
-	font-size: 10px;	
+	font-size: 10px;
 }
 
 .sp-dd {
@@ -763,7 +760,7 @@ input::-webkit-input-placeholder {
 }
 
 #LDAPcompanyEmail::-webkit-input-placeholder {
-    
+
 	font-size:10px;
 }
 .centered{
@@ -779,7 +776,7 @@ margin: 0 0 0 -48.5%;
 
 
 .wrapper{
- 
+
   -webkit-transform: translateZ(0); /* webkit flicker fix */
 }
 
@@ -822,10 +819,10 @@ margin: 0 0 0 -48.5%;
   left: 0;
   position: absolute;
   width: 100%;
-}  
+}
 
 
-  
+
 .wrapper:hover .tooltip {
   opacity: 1;
   pointer-events: auto;
