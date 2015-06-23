@@ -11,14 +11,13 @@ app.controller('updateCtrl',['viewManager','$scope', '$rootScope','$http','Const
 function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUtils,$interval, $timeout, CSInterface,$rootScope){
 
 		var updateType;
-		var exchangeMsg={"msg1":"Please","msg2":" Enable File Sharing", "msg3":" for automatic updates."};
 		console.log("In Update View");
 		$scope.updateMessage="Update";
 		$scope.downloading=false;
 		$scope.showUpdateView=true;
 		$scope.progressBarValue=0;
 		$scope.updateBtn=true;
-		$scope.returnMessage='Not Now';
+		$scope.returnMessage='Ignore';
 		$scope.showLearnHow=false;
 		var downloadFilePaths;
 
@@ -47,12 +46,10 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	var updateNecessary=function(){
 		console.log("in no update necessary");
 		if(Constants.ISEXCHANGE){
-			$scope.message="A new version is available. Your current version is no longer supported. Please upgrade.";
-				$scope.updateBtn=false;
-			
-			exchangeMsg.msg1="";
-			exchangeMsg.msg2="Enable File Sharing";
-			$scope.exchangeMsg=exchangeMsg;
+			$scope.message="A new version of TimeTracker is available. Your current version is no longer supported. Please upgrade.";
+			$scope.updateBtn=false;
+
+			$scope.exchangeMsg={"msg1":"","msg2":"Enable File Syncing for Creative Cloud", "msg3":" for automatic updates."};;
 
 			$scope.showLearnHow=true;
 		}
@@ -65,14 +62,13 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 
 	var updateOptional=function(){
 		if(Constants.ISEXCHANGE){
-			$scope.message="A new version is available.\n\nEnable File Syncing for Creative Cloud for automatic updates.";
-				exchangeMsg.msg2=" enable File Sharing";
-				$scope.exchangeMsg=exchangeMsg;
-				$scope.updateBtn=false;
+			$scope.message="A new version of TimeTracker is available.\n\nBecause you installed TimeTracker from the Addons store you're eligible for automatic updates.";
+			$scope.exchangeMsg={"msg1":"But you must ","msg2":"enable File Syncing for Creative Cloud", "msg3":" for automatic updates. If you do not wish to enable File Syncing, hit Update below."};
+			$scope.updateBtn=true;
 			$scope.showLearnHow=true;
 		}
 		else{
-			$scope.message="A new version is available.\n\nWould you like to update now?";
+			$scope.message="A new version of TimeTracker is available.\n\nWould you like to update now?";
 		}
 		console.log("in no update optional");
 		$scope.showUpdateView=false;
@@ -81,12 +77,12 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 	};
 
 	var noUpdateRequired=function(){
-			console.log("in no update required");
+		console.log("in no update required");
 		if($rootScope.checkUpdateFromMenuClick==1){
 			$scope.showUpdateView=false;
 			$scope.message="This extension is up-to-date";
 			$scope.canReturn=true;
-						$scope.updateBtn=false;
+			$scope.updateBtn=false;
 			$scope.returnMessage="Return";
 		}
 		else{
@@ -137,6 +133,7 @@ function(viewManager, $scope, $rootScope, $http, Constants, preloader, updateUti
 			$scope.message="";
 			$scope.message+="Extension Manager will launch after download. After installing, quit and restart this application.";
 			$scope.updateMessage="Try Again";
+			$scope.returnMessage='Cancel';
 			$scope.disableUpdateBtn=false;
 			$interval.cancel(promise_downloadComplete);
 			$timeout.cancel(promise_checkDownloaded);

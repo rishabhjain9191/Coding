@@ -7,10 +7,9 @@
     </div>
 
 	<div style="margin: 20px;">
-        <pre style="font-family:Arial;">{{message}}</pre>
-		<div style="display:run-in">
-		<div style="display:run-in">{{exchangeMsg.msg1}}</div>
-        <div style="cursor:pointer; text-decoration:underline" ng-click="gotoExchange()"  ng-show="showLearnHow">{{exchangeMsg.msg2}}</div> <div position="relative" float="left">{{exchangeMsg.msg3}}</div>
+        <pre style="font-family:Arial; font-weight:bold;">{{message}}</pre>
+		<div>
+    		<div style="display:inline">{{exchangeMsg.msg1}}</div> <div style="display:inline; cursor:pointer; text-decoration:underline" ng-click="gotoExchange()"  ng-show="showLearnHow">{{exchangeMsg.msg2}}</div> <div style="display:inline">{{exchangeMsg.msg3}}</div>
 		</div>
 	</div>
 
