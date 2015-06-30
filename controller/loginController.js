@@ -17,8 +17,10 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 	$scope.keepLoggedIn='false';
 	$scope.message="";
 	$scope.user={};
-	$scope.user.email="";
-	$scope.user.password="";
+	
+	if(UserUtils.username.length>0)$scope.user.email=UserUtils.username;
+	if(UserUtils.password.length>0)$scope.user.password=UserUtils.password;
+
 
     if(!viewManager.loggedOut){
         preloader.showLoading();

@@ -88,7 +88,7 @@ function($scope, $rootScope, $location, Constants, $window, CSInterface, Config,
 
 	function clearConfig(){
 		ngDialog.close();
-		UserUtils.clearUserDetails();
+		UserUtils.deleteUserFile();
 		CSInterface.evalScript('$._extXML.deleteConfigFile()', function(result){
 			if(result=='true'){
 				//logout user

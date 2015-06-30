@@ -350,7 +350,7 @@ services.factory('UserUtils',['CSInterface', 'Config', 'EncryptionUtils', functi
 		console.log(utils);
 		var keysToRemove=[];
 		if(utils.keepMeLoggedIn==false){
-			keysToRemove=["password", "userid", "oid"];
+			keysToRemove=["password"];
 		}
 		for(var i in utils){
 			if(typeof utils[i] != "function"){
@@ -371,11 +371,12 @@ services.factory('UserUtils',['CSInterface', 'Config', 'EncryptionUtils', functi
 		});
 	};
 	utils.clearUserDetails=function(){
-		utils.username="";
-		utils.password="";
-		utils.userid="";
-		utils.firstname="";
-		utils.oid="";
+		if(!utils.keepMeLoggedIn)utils.password="";
+		//utils.username="";
+		//utils.password="";
+		//utils.userid="";
+		//utils.firstname="";
+		//utils.oid="";
 	};
 	utils.deleteUserFile=function(){
 		CSInterface.evalScript('$._extXML.deleteUserFile()', function(){

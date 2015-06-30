@@ -134,7 +134,7 @@ function($rootScope, $scope, $location,$http, Constants,  preloader, debuggerUti
 		event.extensionId = Constants.EXTENSION_ID;
 		console.log("Event ");
 		console.log(event);
-		CSInterface.dispatchEvent(event);
+		//CSInterface.dispatchEvent(event);
 	}
 
 
