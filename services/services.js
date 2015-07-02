@@ -388,14 +388,23 @@ services.factory('UserUtils',['CSInterface', 'Config', 'EncryptionUtils', functi
 
 services.factory('EncryptionUtils', [function(){
 	var utils={};
+	var params= { v:1, iter:1000, ks:128, ts:64, mode:"ccm", adata:"", cipher:"aes" };
+
 	utils.parseData=function(data){
-		var dta=sjcl.decrypt("HB0'FD~oYn1D4@e6V^h/@N;4QImPcNB3RSk1%Cl[RD0`3Yqwz7", data);
+		var dta=sjcl.decrypt("HB0'FD~oYn1D4@e6V^h/@N;4QImPcNB3RSk1%Cl[RD0`3Yqwz7", data, params);
 		return dta;
 	};
 	utils.encryptData=function(data){
 		console.log(data);
-		var res=sjcl.encrypt("HB0'FD~oYn1D4@e6V^h/@N;4QImPcNB3RSk1%Cl[RD0`3Yqwz7", data);
-		return res;
+		var res=sjcl.encrypt("HB0'FD~oYn1D4@e6V^h/@N;4QImPcNB3RSk1%Cl[RD0`3Yqwz7", data, params);
+		console.log(params);
+		var resJson=JSON.parse(res);
+		for(var i in params){
+			console.log(i);
+			console.log(resJson[i]);
+			delete resJson[i];
+		}
+		return JSON.stringify(resJson);
 	}
 	return utils;
 }]);
@@ -1058,8 +1067,16 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 	utils.returnAllProjectsWithDisplayNames=function(projectList){
 		return projectList.map(function(project){
 			project.displayName=project.name;
-			if(project.alias && project.alias.org) project.displayName=project.alias.org;
-			if(project.alias && project.alias.user) project.displayName=project.alias.user;
+			project.editProjectDisplayName=project.name
+			if(project.alias && project.alias.org){ 
+				project.displayName=project.alias.org;
+				project.editProjectDisplayName=project.displayName+" ("+project.name+")";
+			}
+			if(project.alias && project.alias.user){
+			 	project.displayName=project.alias.user;
+			 	project.editProjectDisplayName=project.displayName+" ("+project.name+")";
+			}
+
 			return project;
 		});
 	}
@@ -1086,14 +1103,8 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 		.then(function(result){
 			console.log(result);
 			var data=result.data.result;
-			for(var j=0;j<data.length;j++){
-				console.log(data[j].name);
-			}
 			data = utils.returnAllProjectsWithDisplayNames(data);
 			utils.sortProjects(data);
-			for(var j=0;j<data.length;j++){
-				console.log(data[j].displayName);
-			}
 			utils.projectIndexes={};
 			utils.projectsCopy=data;				//Save the freshly retrieved project list
 
