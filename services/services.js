@@ -16,14 +16,14 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
 		constants.EXTENSION_ID = "com.creativeworx.tthtml";
 
-		constants.EXTENSION_VERSION_NUMBER = "2.4.0";
+		constants.EXTENSION_VERSION_NUMBER = "2.4.1";
 
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
 		constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
 		constants.URL_EXCHANGE="https://www.adobeexchange.com/resources/19";
-		constants.ISEXCHANGE=false;
+		constants.ISEXCHANGE=true;
 		constants.STATUS_NEW = "NEW";
 		constants.STATUS_ATTEMPTED = "ATTEMPTED";
 		constants.STATUS_TRANSFERRED = "TRANSFERRED";
@@ -1068,7 +1068,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 		return projectList.map(function(project){
 			project.displayName=project.name;
 			project.editProjectDisplayName=project.name
-			if(project.alias && project.alias.org){ 
+			if(project.alias && project.alias.org){
 				project.displayName=project.alias.org;
 				project.editProjectDisplayName=project.displayName+" ("+project.name+")";
 			}
