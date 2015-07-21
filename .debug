@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ExtensionList>
-    <Extension Id="TimeTracker-CC.extension1">
+    <Extension Id="TimeTrackerCCBasic.extension1">
         <HostList>
             <Host Name="PHXS" Port="8088"/>
             <Host Name="IDSN" Port="8088"/>
