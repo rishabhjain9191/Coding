@@ -44,8 +44,14 @@ int main()
 		scanf("%d%d", &a,&b);
 		AL[a].push_back(b);
 		AL[b].push_back(a);
-	}	
-	fn(1);
+	}
+	for(int i=1;i<n+1;i++){
+		for(int j=0;j<AL[i].size();j++){
+			cout<<AL[i][j]<<"-->";
+		}
+		cout<<"\n";
+	}
+	//fn(1);
 //	for(int i=1;i<=n;i++)
 //		printf("%d %d\n", min1[i],min0[i] );
 	

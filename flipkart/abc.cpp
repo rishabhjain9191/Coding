@@ -1,0 +1,8 @@
+#include <iostream>
+using namespace std;
+int main(){
+    char input[100];
+    cin.getline(input, sizeof(input));
+    cout<<input;
+return 0;
+}
