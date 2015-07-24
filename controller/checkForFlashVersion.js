@@ -13,16 +13,22 @@
 	$scope.message="An older version exists, please uninstall it";
 	var id=[];
 	var res=CSInterface.getExtensions();
-	for(var i =0;i<res.length;i++){
-		id=res[i].id.split('.');
-		if(id[1]=='creativeworx'){
-			if(id[2]=='timetracker')
-				$scope.flashVersionExists=true;
+	//console.log(res);
+	try{
+		for(var i =0;i<res.length;i++){
+			id=res[i].id.split('.');
+			if(id[1]=='creativeworx'){
+				if(id[2]=='timetracker')
+					$scope.flashVersionExists=true;
+			}
+		}
+		
+		if(!$scope.flashVersionExists){
+			viewManager.checkForFlashVersionDone();
 		}
 	}
-	
-	if(!$scope.flashVersionExists){
-		viewManager.checkForFlashVersionDone();
+	catch(e){
+		console.log(e);
 	}
 	$scope.userAlerted=function(){
 		console.log('check for flashversion done');
