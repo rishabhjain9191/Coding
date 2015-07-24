@@ -6,18 +6,18 @@
 	<div class="project">
 		<div class="group">
 			<label for="projectName">Project name</label><br/>
-			<input ng-click="message=''" class="ptext" id="newProject_projectName" ng-model="project.name" />
+			<input ng-click="message=''" class="ptext" id="newProject_projectName" ng-model="project.name"  tabindex="1"/>
 		</div >
 
 		<div class="group">
 			<label for="userNickName">My alias</label><br/>
-			<input ng-click="message=''" class="ptext" id="newProject_userNickName" ng-model="project.userNickName" ng-disabled='false'/>
+			<input ng-click="message=''" class="ptext" id="newProject_userNickName" ng-model="project.userNickName" ng-disabled='false' tabindex="2"/>
 		</div >
 
 		<!-- <div>{{project.name}}</div> -->
 		<div class="group">
 			<label for="jobId">Job ID</label><br/>
-			<input ng-click="message=''" class="ptext" id="newProject_jobId" ng-model="project.jobId" />
+			<input ng-click="message=''" class="ptext" id="newProject_jobId" ng-model="project.jobId"tabindex="3" />
 		</div>
 		<div class="group">
 			<div style="float: left; width: 45px;">
@@ -25,8 +25,9 @@
 				<ui-colorpicker ng-model="targetColor" id="userSelectableColorPanel" ng-show="showAllColors"></ui-colorpicker>
 				
 				
-				<div class="colorBtn" ng-hide="showAllColors" id="preselectedColorPanel" ng-model="project.colorcode" ng-style="colorBtnStyle"></div>
-				<div class="colorsPanel" style="top: 110px;" ng-show="showColorPanel">
+				<div class="colorBtn" ng-hide="showAllColors" id="preselectedColorPanel" ng-model="project.colorcode" ng-style="colorBtnStyle"tabindex="4"ng-keydown="pressEnter($event)"
+				"></div>
+				<div class="colorsPanel"  style="top: 110px;" ng-show="showColorPanel">
 					<div class="colorPreview" ng-style="colorPreviewStyle"></div>
 					<div class="colors">
 						
@@ -39,12 +40,12 @@
 			</div>
 			<div style="float: left; width: 73%; margin-left: 3px;">
 				<span>Budget (in hours)</span>
-				<input ng-click="message=''" class="budget" id="newProject_budget" ng-model="project.budgetHrs" />
+				<input ng-click="message=''" class="budget" id="newProject_budget" ng-model="project.budgetHrs" tabindex="5"  />
 			</div>
 		</div>
 		<div class="stretch middle">
-			<button class="darkBtn" style="width: 70px;" ng-click="cancel()">Cancel</button>&nbsp;
-			<button class="darkBtn" style="width: 70px;" ng-click="create()">Save</button>
+			<button class="darkBtn" style="width: 70px;" ng-click="cancel()" tabindex="6">Cancel</button>&nbsp;
+			<button class="darkBtn" style="width: 70px;" ng-click="create()" tabindex="7">Save</button>
 		</div>
 		<div class="message" ng-show='message'>{{message}}</div>
 	</div>

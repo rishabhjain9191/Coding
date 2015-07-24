@@ -160,6 +160,12 @@
 	$scope.cancel=function(){
 		$location.path('projects');
 	},
+	$scope.pressEnter=function(event)
+		{
+			console.log(event);
+			if(event.keyCode===13||event.keyCode===32||event.keyCode===9)
+				$scope.showColorBox();
+		}
 
 	$scope.showColorBox=function(){
 		/*

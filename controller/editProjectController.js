@@ -44,7 +44,12 @@
 		//color:index; colorcode:hex code
 		setSelectedProject(data);
 	}, function(data){setSelectedProject(data)});
-
+	$scope.pressEnter=function(event)
+		{
+			console.log(event);
+			if(event.keyCode===13||event.keyCode===32||event.keyCode===9)
+				$scope.showColorBox();
+		}
 	var setSelectedProject=function(data){
 		$scope.projects=data;
 		var selectedProjectIndex=projectUtils.getSelectedProjectIndex();
