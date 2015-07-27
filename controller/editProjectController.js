@@ -106,7 +106,11 @@
 		}
 	}, */
 
-
+$scope.save1=function(event){
+	console.log(event);
+	if(event.keyCode===13)
+		$scope.save();
+}
 
 	$scope.save=function(){
 

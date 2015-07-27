@@ -38,6 +38,11 @@
 		obj.colorcode=projectColors[i];
 		$scope.colors.push(obj);
 	 }
+$scope.save1=function(event){
+	console.log(event);
+	if(event.keyCode===13)
+		$scope.create();
+}
 
 
 	$scope.create=function(){

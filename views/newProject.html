@@ -6,18 +6,18 @@
 	<div class="project">
 		<div class="group">
 			<label for="projectName">Project name</label><br/>
-			<input ng-click="message=''" class="ptext" id="newProject_projectName" ng-model="project.name"  tabindex="1"/>
+			<input ng-click="message=''" class="ptext" id="newProject_projectName" ng-model="project.name"  tabindex="1" ng-keypress="save1($event)"/>
 		</div >
 
 		<div class="group">
 			<label for="userNickName">My alias</label><br/>
-			<input ng-click="message=''" class="ptext" id="newProject_userNickName" ng-model="project.userNickName" ng-disabled='false' tabindex="2"/>
+			<input ng-click="message=''" class="ptext" id="newProject_userNickName" ng-model="project.userNickName" ng-disabled='false' tabindex="2"ng-keypress="save1($event)"/>
 		</div >
 
 		<!-- <div>{{project.name}}</div> -->
 		<div class="group">
 			<label for="jobId">Job ID</label><br/>
-			<input ng-click="message=''" class="ptext" id="newProject_jobId" ng-model="project.jobId"tabindex="3" />
+			<input ng-click="message=''" class="ptext" id="newProject_jobId" ng-model="project.jobId"tabindex="3" ng-keypress="save1($event)"/>
 		</div>
 		<div class="group">
 			<div style="float: left; width: 45px;">
@@ -26,7 +26,7 @@
 				
 				
 				<div class="colorBtn" ng-hide="showAllColors" id="preselectedColorPanel" ng-model="project.colorcode" ng-style="colorBtnStyle"tabindex="4"ng-keydown="pressEnter($event)"
-				"></div>
+				></div>
 				<div class="colorsPanel"  style="top: 110px;" ng-show="showColorPanel">
 					<div class="colorPreview" ng-style="colorPreviewStyle"></div>
 					<div class="colors">
@@ -40,7 +40,7 @@
 			</div>
 			<div style="float: left; width: 73%; margin-left: 3px;">
 				<span>Budget (in hours)</span>
-				<input ng-click="message=''" class="budget" id="newProject_budget" ng-model="project.budgetHrs" tabindex="5"  />
+				<input ng-click="message=''" class="budget" id="newProject_budget" ng-model="project.budgetHrs" tabindex="5" ng-keypress="save1($event)" ng-keypress="save1($event)" />
 			</div>
 		</div>
 		<div class="stretch middle">
