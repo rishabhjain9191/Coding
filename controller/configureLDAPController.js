@@ -20,7 +20,11 @@ function(viewManager, $scope, $rootScope, $location, $http, Config, Constants, l
 		$scope.companyEmail=UserUtils.companyEmailValue;
 	}
 
-
+$scope.Enterpressed=function(event){
+	console.log(event);
+	if(keyCode===13)
+		$scope.saveCompanyEmail();
+}
 	$scope.cancel=function(){
 		$scope.companyEmail="";
 		viewManager.gotoPreviousView();
