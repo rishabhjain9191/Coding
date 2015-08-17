@@ -1,3 +1,12 @@
+Function.prototype.method = function (name, func) {
+	this.prototype[name] = func;
+	return this;
+};
+Function.method('inherits', function (Parent) {
+	this.prototype = new Parent();
+	return this;
+});
+
 var csInterface=new CSInterface();
 //Get App information
 var obj={};
@@ -39,12 +48,12 @@ if(appName=='PPRO'){
 						res.on('data', function(data){
 						var result=data.toString('utf8');
 						console.log(result);
-						if(result.indexOf(watcher.packageName)!=-1){
+						if(watcher.isSupportedApp(result)){
 							dispatchUserActiveEvent();
 						}
 					});
 				});
-				x.end(); 
+				x.end();
 	});
 
 	listener.on('exit', function(exitcode) {
@@ -57,12 +66,12 @@ if(appName=='PPRO'){
 						res.on('data', function(data){
 						var result=data.toString('utf8');
 						console.log(result);
-						if(result.indexOf(watcher.packageName)!=-1){
+						if(watcher.isSupportedApp(result)){
 							dispatchUserActiveEvent();
 						}
 					});
 				});
-				x.end(); 
+				x.end();
 	});
 }
 
@@ -74,44 +83,54 @@ function dispatchUserActiveEvent(){
 	csInterface.dispatchEvent(event);
 }
 
+var Watcher = function (config) {
+	config = config || {};
+	this.nodePath = config.nodePath;
+	this.listenerName = config.listenerName;
+	this.cwd = config.cwd;
+	this.getFrontAppServerName = config.getFrontAppServerName;
+	this.supportedAppsPackageNames = config.supportedAppsPackageNames;
+}
+	.method('isSupportedApp', function (appPackageName) {
+		for(var i in this.supportedAppsPackageNames) {
+			if (appPackageName.indexOf(this.supportedAppsPackageNames[i])!=-1) return true;
+		}
+		return false;
+	});
 
-
-function MacWatcher(){
-	//Paths to set:
-	//1.  Node Path
-	//2. Listener Path
-	//3. getFrontAppServer
+var WatcherMac = function () {
 	this.nodePath=csInterface.getSystemPath(SystemPath.EXTENSION) + "/node/node-cwx-bins/osx/node";
 	this.listenerName="listenerMac.js";
 	this.cwd=csInterface.getSystemPath(SystemPath.EXTENSION) + "/node/";
 	this.getFrontAppServerName="getFrontAppMac.js";
-	this.packageName="com.adobe.AdobePremierePro";
-}
+	this.supportedAppsPackageNames=[
+		"com.adobe.AdobePremierePro",
+		"com.adobe.AfterEffects"
+	];
+}.inherits(Watcher);
 
-function WindowsWatcher(){
-	//Paths to set:
-	//1.  Node Path
-	//2. Listener Path
-	//3. getFrontAppServer
+var WatcherWindows = function () {
 	var nodePath=csInterface.getSystemPath(SystemPath.EXTENSION) + "/node/node-cwx-bins/win/64/node.exe";
 	this.nodePath=nodePath.replace(/\//g,"\\\\");
 	this.listenerName="listenerWin.js";
 	var cwd=csInterface.getSystemPath(SystemPath.EXTENSION) + "/node/";
 	this.cwd=cwd.replace(/\//g,"\\\\");
 	this.getFrontAppServerName="getFrontAppWin.js";
-	this.packageName="Premiere";
-}
+	this.supportedAppsPackageNames=[
+		"Premiere"
+	];
+}.inherits(Watcher);
 
 function getWatcher(){
 	//get os information
 	var osInformation=csInterface.getOSInformation();
 	//MAC
 	if(osInformation.match(/Mac OS/gi)!= null){
-		return new MacWatcher();
+		return new WatcherMac();
 	}
 	//WINDOWS-64, PPRO DOES NOT RUN ON x386
 	if(osInformation.match(/64-bit/gi) != null){
-		return new WindowsWatcher();
+		return new WatcherWindows();
 	}
 }
 
@@ -120,12 +139,12 @@ function fork(modulePath, options) {
 	var args, execArgv;
 	var util = require('util');
 	args = [];
-	// Prepare arguments for fork: 
+	// Prepare arguments for fork:
 	execArgv = options.execArgv || process.execArgv;
 	args = execArgv.concat([modulePath], args);
 	console.log(args);
 	// Leave stdin open for the IPC channel. stdout and stderr should be the
-	// same as the parent's if silent isn't set. 
+	// same as the parent's if silent isn't set.
 	options.stdio = options.silent ? ['pipe', 'pipe', 'pipe', 'ipc'] : [0, 1, 2, 'ipc'];
 	var cp = require('child_process');
 	console.log(cp);
