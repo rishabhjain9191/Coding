@@ -38,6 +38,12 @@ $._ext = {
     },
 	
 	getCurrentDoc:function(appName){
+		if(appName=="AEFT"){
+		if(app.project.activeItem){
+		return "1";
+		}
+		return "0";
+		}
 	   if(appName=="PPRO"){
         if(app.isDocumentOpen()){
             return "1";

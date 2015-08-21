@@ -1,4 +1,4 @@
-/**
+﻿/**
  * $_extcommon - Common.jsx
  *
  * @category   CreativeWorx
@@ -48,6 +48,9 @@ $._extcommon={
 	checkDocLength:function(appName){
 		if(appName=='PPRO'){
 			return 1+'';
+		}
+		if(appName=='AEFT'){
+		return 1+'';
 		}
 		var len=app.documents.length;
 		return len+'';

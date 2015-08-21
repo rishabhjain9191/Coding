@@ -16,14 +16,14 @@ services.factory('Constants',['CSInterface',function(CSInterface){
 		constants.EXTENSION_NAME = "TimeTracker-CreativeWorx";
 		constants.EXTENSION_ID = "com.creativeworx.tthtml";
 
-		constants.EXTENSION_VERSION_NUMBER = "2.4.1";
+		constants.EXTENSION_VERSION_NUMBER = "2.4.0";
 
 		constants.MINIMUM_REQUIRED_SERVER_VERSION = Number("1.1");
 
 		constants.CW_NAMESPACE_NAME = "creativeworx";
 		constants.CW_NAMESPACE = "http://www.creativeworx.com/1.0/";
 		constants.URL_EXCHANGE="https://www.adobeexchange.com/resources/19";
-		constants.ISEXCHANGE=true;
+		constants.ISEXCHANGE=false;
 		constants.STATUS_NEW = "NEW";
 		constants.STATUS_ATTEMPTED = "ATTEMPTED";
 		constants.STATUS_TRANSFERRED = "TRANSFERRED";
@@ -1068,7 +1068,7 @@ function($rootScope, Constants, Config, $http, $q, CSInterface, APIUtils){
 		return projectList.map(function(project){
 			project.displayName=project.name;
 			project.editProjectDisplayName=project.name
-			if(project.alias && project.alias.org){
+			if(project.alias && project.alias.org){ 
 				project.displayName=project.alias.org;
 				project.editProjectDisplayName=project.displayName+" ("+project.name+")";
 			}
@@ -1211,6 +1211,28 @@ services.factory('AppWatcher',['$location','$rootScope','Constants','Logger', 'p
 	};
 
 	utils.addEventListeners=function(){
+		if(Constants.APP_NAME=='AEFT'){
+			console.log("APP=AEFT");
+			var osInformation = CSInterface.getOSInformation();
+	    	var TrackerFilePath;
+	    if(osInformation.match(/Mac OS/gi)!= null){
+	        TrackerFilePath = CSInterface.getSystemPath(SystemPath.EXTENSION) + "/assets/Images/";
+	    }
+	    else{
+	        if(osInformation.match(/64-bit/gi) != null){
+	            TrackerFilePath = CSInterface.getSystemPath(SystemPath.EXTENSION) + "/assets/Images/";
+	        }
+	        else{
+	            TrackerFilePath = CSInterface.getSystemPath(SystemPath.EXTENSION) + "/assets/Images/";
+	        }
+	    }
+	    TrackerFilePath = escape(TrackerFilePath);
+	   // CSInterface.evalScript('$._ext_AEFT_XMP.setTrackerFilePath("' + TrackerFilePath + '")');
+	    CSInterface.evalScript('$._ext_AEFT_XMP.getProjectDetails()');
+
+
+		}
+		
 		if(Constants.APP_NAME=='AICY'){
 			console.log("APP=INCopy");
 			watcherAICY.setEventListenersExtendScript();
@@ -1371,7 +1393,166 @@ services.factory('WatcherAICY',['Constants', function(Constants){
 
 }]);
 
+services.factory('watcherAEFT',['Constants','Logger','debuggerUtils','$interval','CSInterface',function(Constants, Logger, debuggerUtils, $interval, CSInterface){
+	var prevHistoryState={};
+	var promise_logUserActiveStatus="";
+	var previousDocName="";
+	var activityTimerHandler = function(){
+		//app.activeDocument.hostObjectDelegate
+		CSInterface.evalScript("$._ext_AEFT_Utils.getHistoryStates()", function(historyStatesArray){
+			if(historyStatesArray.length<=0){
+				return ;
+			}
+			currentHistoryState=JSON.parse(historyStatesArray);
+			currentDocument=Object.keys(currentHistoryState)[0];
+			//Check if the document already exists in the previous State
+			if(prevHistoryState.hasOwnProperty(currentDocument)){
+				//Compare the arrays
+				var docPrevHistoryState=prevHistoryState[currentDocument];
+				if(!match(docPrevHistoryState, currentHistoryState[currentDocument])){
+					console.log("Event trigerred: userActive");
+					//Save Current State in Previous State.
+					prevHistoryState[currentDocument]=currentHistoryState[currentDocument];
+					//Log UserActive Event.
+					//Logger.log("userActive");
+				}
+				else{
+					console.log("User Not Active");
+				}
+			}
+			//else, Log it as new entry and send user active event.
+			else{
+				prevHistoryState[currentDocument]=currentHistoryState[currentDocument];
+				console.log("Event trigerred: userActive");
+				//Logger.log("userActive");
+			}
 
+			console.log(prevHistoryState);
+
+		});
+	}
+	//OnHold. For logging PS events: Make,Delete, Open, Close
+	var documentChanged = function(event){
+		console.log(event);
+		//Logger.log(event.type);
+	};
+
+	var AEFTwatcher={};
+	AEFTwatcher.initialize=function(){
+		promise_logUserActiveStatus= $interval(activityTimerHandler, 5*60*1000);
+
+		unregisterPrevEvents();
+
+		CSInterface.evalScript('app.activeDocument.historyStates[0].name',function(currentDoc){
+			previousDoc=currentDoc;
+		});
+		var event = new CSEvent("com.adobe.AfterEffectsRegisterEvent", "APPLICATION");
+		// Set Event properties: extension id
+		event.extensionId = Constants.EXTENSION_ID;
+		//1935767141-save
+		//1332768288-open
+		//1131180832-close
+		//1936483188-select
+		//1298866208-make
+		event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";
+		// Dispatch the Event
+		CSInterface.dispatchEvent(event);
+		// Attach a callback
+		CSInterface.addEventListener("AfterEffectsCallback", AEFTCallback);
+	};
+	pswatcher.remove=function(){
+		unregisterPrevEvents();
+		$interval.cancel(promise_logUserActiveStatus);
+	};
+
+	var unregisterPrevEvents= function(){
+	var event = new CSEvent("com.adobe.AfterEffectsUnRegisterEvent", "APPLICATION");
+	event.data = "1935767141, 1332768288, 1131180832, 1936483188,  1298866208";
+	event.extensionId = Constants.EXTENSION_ID;
+	CSInterface.dispatchEvent(event);
+	console.log("Unregistering events");
+	};
+
+
+	var AEFTCallback=function(csEvent) {
+        var dataArray = csEvent.data.split(",");
+		console.log(csEvent);
+        var eventID=dataArray[0];
+		console.log(eventID);
+		switch(eventID){
+			case "1935767141":dispatchEvent('documentAfterSave');
+				CSInterface.evalScript('app.activeDocument.fullName',function(name){
+					previousDocName=name;
+				});
+			break;
+			case "1131180832":
+				console.log("document closed");
+				CSInterface.evalScript('app.documents.length',function(length){
+					console.log("In CsInterface");
+					if(length==0){
+						dispatchEvent('documentAfterDeactivate');
+					}
+					else{
+						dispatchEvent('documentAfterActivate');
+				}});
+				break;
+
+			case "1332768288":
+				console.log("Document Opened");
+				CSInterface.evalScript('$._ext_AEFT_XMP.getCurrentDocumentName()',function(name){
+					previousDocName=name;
+					dispatchEvent('documentAfterActivate');
+				});
+				/* CSInterface.evalScript('$._ext_PHXS_XMP.stampCurrentDoc()',function(){
+					dispatchEvent('documentAfterActivate');
+					previousDocTS=(new Date()).getTime().toString();
+				}); */
+
+
+				break;
+			case "1298866208":
+				console.log("new document");
+				CSInterface.evalScript('$._ext_AEFT_XMP.getCurrentDocumentName()',function(name){
+					previousDocName=name;
+					dispatchEvent('documentAfterActivate');
+				});
+				/* CSInterface.evalScript('$._ext_PHXS_XMP.stampCurrentDoc()',function(){
+					dispatchEvent('documentAfterActivate');
+					previousDocTS=(new Date()).getTime().toString();
+				}); */
+				break;
+			case "1936483188":
+				console.log('Document Switched');
+				/* CSInterface.evalScript('app.activeDocument.historyStates[0].name',function(currentDoc){
+				console.log(currentDoc);
+				if(currentDoc!=previousDoc){
+					previousDoc=currentDoc;
+					dispatchEvent('documentAfterActivate');
+				}
+				}); */
+
+				/* CSInterface.evalScript('$._ext_PHXS_XMP.getCurrentDocumentTimeStamp()',function(currentDocTS){
+				if(currentDocTS!=previousDocTS){
+					previousDocTS=currentDocTS;
+					dispatchEvent('documentAfterActivate');
+				}
+				});  */
+
+				CSInterface.evalScript('$._ext_AEFT_XMP.getCurrentDocumentName()',function(currentDocName){
+					if(currentDocName!=previousDocName){
+						previousDocName=currentDocName;
+						dispatchEvent('documentAfterActivate', Constants.EXTENSION_ID);
+					}
+				});
+
+			default:break;
+
+		}
+
+    };
+
+	return AEFTwatcher;
+}])
 services.factory('WatcherPhotoshop',['Constants','Logger','debuggerUtils','$interval','CSInterface',function(Constants, Logger, debuggerUtils, $interval, CSInterface){
 	var prevHistoryState={};
 	var promise_logUserActiveStatus="";
